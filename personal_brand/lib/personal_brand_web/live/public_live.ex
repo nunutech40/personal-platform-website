@@ -395,7 +395,9 @@ defmodule PersonalBrandWeb.PublicLive do
   def contact_page(assigns) do
     ~H"""
     <h1>Contact</h1>
-    <p class="lead">Let's connect. I'm always open to interesting conversations and collaborations.</p>
+    <p class="lead">
+      Let's connect. I'm always open to interesting conversations and collaborations.
+    </p>
     <hr />
     <section>
       <h2>Email</h2>
