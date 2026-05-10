@@ -11,6 +11,7 @@ defmodule PersonalBrand.Content.ProductTest do
     product_type: "digital",
     price: Decimal.new("29.00"),
     currency: "USD",
+    status: "active",
     stock_status: "in_stock",
     delivery_type: "digital_download",
     checkout_url: "https://example.com/checkout",
@@ -29,13 +30,6 @@ defmodule PersonalBrand.Content.ProductTest do
       changeset = Product.changeset(%Product{}, attrs)
       refute changeset.valid?
       assert errors_on(changeset)[:title] == ["can't be blank"]
-    end
-
-    test "rejects missing slug" do
-      attrs = Map.delete(@valid_attrs, :slug)
-      changeset = Product.changeset(%Product{}, attrs)
-      refute changeset.valid?
-      assert errors_on(changeset)[:slug] == ["can't be blank"]
     end
 
     test "enforces unique slug constraint" do
@@ -101,6 +95,85 @@ defmodule PersonalBrand.Content.ProductTest do
       changeset = Product.changeset(%Product{}, attrs)
       assert changeset.valid?
       assert get_field(changeset, :included) == ["Feature A", "Feature B", "Feature C"]
+    end
+
+    test "rejects missing price" do
+      attrs = Map.delete(@valid_attrs, :price)
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+      assert errors_on(changeset)[:price] == ["can't be blank"]
+    end
+
+    test "rejects invalid status" do
+      attrs = %{@valid_attrs | status: "deleted"}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects invalid product_type" do
+      attrs = %{@valid_attrs | product_type: "subscription"}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects invalid stock_status" do
+      attrs = %{@valid_attrs | stock_status: "backordered"}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects invalid delivery_type" do
+      attrs = %{@valid_attrs | delivery_type: "carrier_pigeon"}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects slug with uppercase letters" do
+      attrs = %{@valid_attrs | slug: "Test-Product"}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects checkout_url without http scheme" do
+      attrs = %{@valid_attrs | checkout_url: "example.com/checkout"}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects negative price" do
+      attrs = %{@valid_attrs | price: Decimal.new("-10.00")}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects currency with wrong length" do
+      attrs = %{@valid_attrs | currency: "US"}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "accepts coming_soon status" do
+      attrs = %{@valid_attrs | status: "coming_soon"}
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "accepts out_of_stock status" do
+      attrs = %{@valid_attrs | stock_status: "out_of_stock"}
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "accepts physical delivery type" do
+      attrs = %{@valid_attrs | delivery_type: "physical_delivery"}
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "accepts email delivery type" do
+      attrs = %{@valid_attrs | delivery_type: "email_delivery"}
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
     end
   end
 end

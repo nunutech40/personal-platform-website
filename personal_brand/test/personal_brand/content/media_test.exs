@@ -60,5 +60,35 @@ defmodule PersonalBrand.Content.MediaTest do
         assert changeset.valid?, "Expected #{content_type} to be valid"
       end
     end
+
+    test "rejects url without http scheme" do
+      attrs = %{@valid_attrs | url: "/uploads/photo.jpg"}
+      changeset = Media.changeset(%Media{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects negative size" do
+      attrs = %{@valid_attrs | size: -1}
+      changeset = Media.changeset(%Media{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "accepts zero size" do
+      attrs = %{@valid_attrs | size: 0}
+      changeset = Media.changeset(%Media{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "rejects filename exceeding max length" do
+      attrs = %{@valid_attrs | filename: String.duplicate("a", 256)}
+      changeset = Media.changeset(%Media{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects alt_text exceeding max length" do
+      attrs = %{@valid_attrs | alt_text: String.duplicate("a", 501)}
+      changeset = Media.changeset(%Media{}, attrs)
+      refute changeset.valid?
+    end
   end
 end

@@ -59,5 +59,47 @@ defmodule PersonalBrand.Content.ThemeTest do
       assert changeset.valid?
       assert get_field(changeset, :config) == %{"primary_color" => "#333", "font" => "serif"}
     end
+
+    test "rejects key with hyphens" do
+      attrs = %{@valid_attrs | key: "my-theme"}
+      changeset = Theme.changeset(%Theme{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects key with uppercase letters" do
+      attrs = %{@valid_attrs | key: "MyTheme"}
+      changeset = Theme.changeset(%Theme{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects key shorter than min length" do
+      attrs = %{@valid_attrs | key: "a"}
+      changeset = Theme.changeset(%Theme{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects name shorter than min length" do
+      attrs = %{@valid_attrs | name: "a"}
+      changeset = Theme.changeset(%Theme{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects description exceeding max length" do
+      attrs = %{@valid_attrs | description: String.duplicate("a", 501)}
+      changeset = Theme.changeset(%Theme{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "accepts key with underscores" do
+      attrs = %{@valid_attrs | key: "old_web_classic"}
+      changeset = Theme.changeset(%Theme{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "accepts key with numbers" do
+      attrs = %{@valid_attrs | key: "theme_v2"}
+      changeset = Theme.changeset(%Theme{}, attrs)
+      assert changeset.valid?
+    end
   end
 end

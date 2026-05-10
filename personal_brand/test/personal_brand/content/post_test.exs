@@ -13,7 +13,10 @@ defmodule PersonalBrand.Content.PostTest do
     status: "draft",
     featured: false,
     published_at: ~U[2026-01-01 00:00:00Z],
-    reading_time: 5
+    reading_time: 5,
+    seo_title: nil,
+    seo_description: nil,
+    editor_type: nil
   }
 
   describe "changeset/2" do
@@ -79,6 +82,60 @@ defmodule PersonalBrand.Content.PostTest do
       assert changeset.valid?
       assert get_field(changeset, :seo_title) == "SEO Title"
       assert get_field(changeset, :seo_description) == "SEO Description"
+    end
+
+    test "rejects invalid status" do
+      attrs = %{@valid_attrs | status: "deleted"}
+      changeset = Post.changeset(%Post{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects slug with uppercase letters" do
+      attrs = %{@valid_attrs | slug: "Test-Post"}
+      changeset = Post.changeset(%Post{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects slug with spaces" do
+      attrs = %{@valid_attrs | slug: "test post"}
+      changeset = Post.changeset(%Post{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects reading_time below minimum" do
+      attrs = %{@valid_attrs | reading_time: 0}
+      changeset = Post.changeset(%Post{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects reading_time above maximum" do
+      attrs = %{@valid_attrs | reading_time: 121}
+      changeset = Post.changeset(%Post{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects seo_title exceeding max length" do
+      attrs = %{@valid_attrs | seo_title: String.duplicate("a", 71)}
+      changeset = Post.changeset(%Post{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects seo_description exceeding max length" do
+      attrs = %{@valid_attrs | seo_description: String.duplicate("a", 161)}
+      changeset = Post.changeset(%Post{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "rejects invalid editor_type" do
+      attrs = %{@valid_attrs | editor_type: "wysiwyg"}
+      changeset = Post.changeset(%Post{}, attrs)
+      refute changeset.valid?
+    end
+
+    test "accepts rich_text editor_type" do
+      attrs = %{@valid_attrs | editor_type: "rich_text"}
+      changeset = Post.changeset(%Post{}, attrs)
+      assert changeset.valid?
     end
   end
 end
