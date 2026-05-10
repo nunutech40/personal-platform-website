@@ -21,6 +21,10 @@ defmodule PersonalBrand.Content.Project do
     field :github_url, :string
     field :cover_image_id, :binary_id
 
+    many_to_many :tags, PersonalBrand.Content.Tag,
+      join_through: "project_tags",
+      on_replace: :delete
+
     timestamps()
   end
 

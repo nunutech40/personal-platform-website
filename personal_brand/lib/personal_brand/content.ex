@@ -11,6 +11,7 @@ defmodule PersonalBrand.Content do
   alias PersonalBrand.Content.Media
   alias PersonalBrand.Content.SiteSetting
   alias PersonalBrand.Content.Theme
+  alias PersonalBrand.Content.Tag
 
   import Ecto.Query
 
@@ -167,5 +168,52 @@ defmodule PersonalBrand.Content do
   def get_active_theme do
     settings = get_site_settings!()
     Repo.get_by(Theme, key: settings.active_theme)
+  end
+
+  # ── Tags ──────────────────────────────────────────────────
+
+  def list_tags do
+    Repo.all(from t in Tag, order_by: [asc: t.name])
+  end
+
+  def get_tag_by_slug!(slug) do
+    Repo.get_by!(Tag, slug: slug)
+  end
+
+  def get_tag_by_slug(slug) do
+    Repo.get_by(Tag, slug: slug)
+  end
+
+  def list_projects_by_tag(tag_slug) do
+    Repo.all(
+      from p in Project,
+        join: pt in "project_tags", on: pt.project_id == p.id,
+        join: t in Tag, on: t.id == pt.tag_id,
+        where: t.slug == ^tag_slug and p.status == "published",
+        order_by: [desc: p.year],
+        preload: [:tags]
+    )
+  end
+
+  def list_posts_by_tag(tag_slug) do
+    Repo.all(
+      from p in Post,
+        join: pt in "post_tags", on: pt.post_id == p.id,
+        join: t in Tag, on: t.id == pt.tag_id,
+        where: t.slug == ^tag_slug and p.status == "published",
+        order_by: [desc: p.published_at],
+        preload: [:tag_relations]
+    )
+  end
+
+  def list_products_by_tag(tag_slug) do
+    Repo.all(
+      from p in Product,
+        join: pt in "product_tags", on: pt.product_id == p.id,
+        join: t in Tag, on: t.id == pt.tag_id,
+        where: t.slug == ^tag_slug and p.status == "active",
+        order_by: [asc: p.title],
+        preload: [:tags]
+    )
   end
 end

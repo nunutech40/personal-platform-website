@@ -8,6 +8,7 @@ alias PersonalBrand.Content.Post
 alias PersonalBrand.Content.Product
 alias PersonalBrand.Content.SiteSetting
 alias PersonalBrand.Content.Theme
+alias PersonalBrand.Content.Tag
 
 # ── Themes ─────────────────────────────────────────────────
 themes = [
@@ -237,6 +238,65 @@ Enum.each(products, fn attrs ->
 end)
 
 IO.puts("✅ #{length(products)} products created")
+
+# ── Tags ────────────────────────────────────────────────────
+tags = [
+  %{name: "Flutter", slug: "flutter"},
+  %{name: "Shipping", slug: "shipping"},
+  %{name: "Product", slug: "product"},
+  %{name: "Mobile", slug: "mobile"},
+  %{name: "Design", slug: "design"},
+  %{name: "Elixir", slug: "elixir"},
+  %{name: "Phoenix", slug: "phoenix"},
+  %{name: "PostgreSQL", slug: "postgresql"},
+  %{name: "Firebase", slug: "firebase"},
+  %{name: "AI", slug: "ai"}
+]
+
+tag_records =
+  Enum.map(tags, fn attrs ->
+    Repo.insert!(struct!(Tag, attrs))
+  end)
+
+IO.puts("✅ #{length(tag_records)} tags created")
+
+# ── Tag Associations ────────────────────────────────────────
+# Fetch inserted records
+[habitkit, splitwise, promptboard] = Repo.all(from p in Project, order_by: [asc: p.title])
+[prod_ready, offline_first, design_systems] = Repo.all(from p in Post, order_by: [asc: p.title])
+[flux_icons, snipkit] = Repo.all(from p in Product, order_by: [asc: p.title])
+
+tag_map = Enum.into(tag_records, %{}, fn t -> {t.name, t} end)
+
+# Project tags
+Repo.insert_all("project_tags", [
+  %{id: Ecto.UUID.generate(), project_id: habitkit.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), project_id: habitkit.id, tag_id: tag_map["PostgreSQL"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), project_id: splitwise.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), project_id: splitwise.id, tag_id: tag_map["Firebase"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), project_id: promptboard.id, tag_id: tag_map["AI"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), project_id: promptboard.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()}
+])
+
+# Post tags
+Repo.insert_all("post_tags", [
+  %{id: Ecto.UUID.generate(), post_id: prod_ready.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), post_id: prod_ready.id, tag_id: tag_map["Shipping"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), post_id: offline_first.id, tag_id: tag_map["Product"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), post_id: offline_first.id, tag_id: tag_map["Mobile"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), post_id: design_systems.id, tag_id: tag_map["Design"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), post_id: design_systems.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()}
+])
+
+# Product tags
+Repo.insert_all("product_tags", [
+  %{id: Ecto.UUID.generate(), product_id: flux_icons.id, tag_id: tag_map["Design"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), product_id: flux_icons.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), product_id: snipkit.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
+  %{id: Ecto.UUID.generate(), product_id: snipkit.id, tag_id: tag_map["Product"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()}
+])
+
+IO.puts("✅ Tag associations created")
 
 IO.puts("")
 IO.puts("🎉 Seed complete!")

@@ -21,6 +21,10 @@ defmodule PersonalBrand.Content.Product do
     field :faq, :map
     field :cover_image_id, :binary_id
 
+    many_to_many :tags, PersonalBrand.Content.Tag,
+      join_through: "product_tags",
+      on_replace: :delete
+
     timestamps()
   end
 

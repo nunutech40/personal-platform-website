@@ -22,6 +22,10 @@ defmodule PersonalBrand.Content.Post do
     field :cover_image_id, :binary_id
     field :og_image_id, :binary_id
 
+    many_to_many :tag_relations, PersonalBrand.Content.Tag,
+      join_through: "post_tags",
+      on_replace: :delete
+
     timestamps()
   end
 

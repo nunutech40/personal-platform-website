@@ -62,6 +62,8 @@ defmodule PersonalBrandWeb.Router do
     )
 
     live_resources("/themes", ThemeResource, only: [:index, :show, :new, :edit, :delete])
+
+    live_resources("/tags", TagResource, only: [:index, :show, :new, :edit, :delete])
   end
 
   # Admin auth routes (outside require_admin pipeline)
