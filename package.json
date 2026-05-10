@@ -9,5 +9,8 @@
     "local:start": "bash scripts/start-local.sh",
     "local:stop": "bash scripts/stop-local.sh",
     "local:status": "bash scripts/status-local.sh"
+  },
+  "dependencies": {
+    "daisyui": "^5.5.19"
   }
 }

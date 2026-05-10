@@ -1,26 +1,35 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+# Check status of local development server for Personal Brand Platform
+# Usage: ./scripts/status-local.sh
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PID_FILE="$ROOT_DIR/tmp/local-server.pid"
-LOG_FILE="$ROOT_DIR/tmp/local-server.log"
-HOST="${HOST:-127.0.0.1}"
-PORT="${PORT:-5173}"
+echo "=== Personal Brand Platform Status ==="
 
-if [ ! -f "$PID_FILE" ]; then
-  echo "Local server is not running."
-  exit 0
-fi
-
-PID="$(cat "$PID_FILE")"
-
-if kill -0 "$PID" 2>/dev/null; then
-  echo "Local server is running at http://$HOST:$PORT"
-  echo "PID: $PID"
-  echo "Log: $LOG_FILE"
+# Check PostgreSQL
+if pg_isready -q 2>/dev/null; then
+  echo "PostgreSQL: ✅ Running"
 else
-  echo "Local server PID file exists, but process is not running."
-  echo "Stale PID: $PID"
-  rm -f "$PID_FILE"
-  echo "Removed stale PID file."
+  echo "PostgreSQL: ❌ Not running"
 fi
+
+# Check Phoenix server
+PHX_PID=$(pgrep -f "mix phx.server" 2>/dev/null || true)
+if [ -n "$PHX_PID" ]; then
+  echo "Phoenix:    ✅ Running (PID: $PHX_PID)"
+  # Check if responding
+  if curl -s -o /dev/null -w "%{http_code}" http://localhost:4000 2>/dev/null | grep -q "200"; then
+    echo "HTTP:       ✅ 200 OK at http://localhost:4000"
+  else
+    echo "HTTP:       ⚠️  Not responding yet"
+  fi
+else
+  echo "Phoenix:    ❌ Not running"
+fi
+
+# Check database
+if psql -d personal_brand_dev -c "SELECT 1" 2>/dev/null | grep -q "1"; then
+  echo "Database:   ✅ personal_brand_dev exists"
+else
+  echo "Database:   ❌ personal_brand_dev not found"
+fi
+
+echo "=== Done ==="

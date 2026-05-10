@@ -1,38 +1,39 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+# Start local development server for Personal Brand Platform
+# Usage: ./scripts/start-local.sh
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PID_FILE="$ROOT_DIR/tmp/local-server.pid"
-LOG_FILE="$ROOT_DIR/tmp/local-server.log"
-HOST="${HOST:-127.0.0.1}"
-PORT="${PORT:-5173}"
+set -e
 
-cd "$ROOT_DIR"
-mkdir -p "$ROOT_DIR/tmp"
+echo "=== Starting Personal Brand Platform ==="
 
-if [ -f "$PID_FILE" ]; then
-  PID="$(cat "$PID_FILE")"
-  if kill -0 "$PID" 2>/dev/null; then
-    echo "Local server already running at http://$HOST:$PORT"
-    echo "PID: $PID"
-    exit 0
-  fi
-  rm -f "$PID_FILE"
+# Check if PostgreSQL is running
+if ! pg_isready -q 2>/dev/null; then
+  echo "Starting PostgreSQL..."
+  brew services start postgresql@16
+  sleep 2
 fi
 
-nohup env HOST="$HOST" PORT="$PORT" node server.mjs >"$LOG_FILE" 2>&1 &
-PID="$!"
-echo "$PID" > "$PID_FILE"
-
-sleep 1
-
-if kill -0 "$PID" 2>/dev/null; then
-  echo "Local server started at http://$HOST:$PORT"
-  echo "PID: $PID"
-  echo "Log: $LOG_FILE"
-else
-  rm -f "$PID_FILE"
-  echo "Failed to start local server. Log:"
-  cat "$LOG_FILE"
+# Check if Phoenix project exists
+if [ ! -d "personal_brand" ]; then
+  echo "Error: Phoenix project not found. Run setup first."
   exit 1
 fi
+
+cd personal_brand
+
+# Install dependencies if needed
+if [ ! -d "deps" ]; then
+  echo "Installing dependencies..."
+  mix deps.get
+fi
+
+# Setup database if needed
+echo "Setting up database..."
+mix ecto.setup 2>/dev/null || mix ecto.create 2>/dev/null || true
+
+# Start Phoenix server
+echo "=== Starting Phoenix server at http://localhost:4000 ==="
+echo "=== Public: http://localhost:4000 ==="
+echo "=== Admin:  http://localhost:4000/admin ==="
+echo "=== Login:  admin / admin123 ==="
+mix phx.server

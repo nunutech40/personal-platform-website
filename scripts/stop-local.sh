@@ -1,21 +1,22 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+# Stop local development server for Personal Brand Platform
+# Usage: ./scripts/stop-local.sh
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PID_FILE="$ROOT_DIR/tmp/local-server.pid"
+echo "=== Stopping Personal Brand Platform ==="
 
-if [ ! -f "$PID_FILE" ]; then
-  echo "No local server PID file found."
-  exit 0
+# Kill Phoenix server
+PIDS=$(pgrep -f "mix phx.server" 2>/dev/null || true)
+if [ -n "$PIDS" ]; then
+  echo "Stopping Phoenix server (PID: $PIDS)..."
+  kill $PIDS 2>/dev/null || true
+  sleep 1
 fi
 
-PID="$(cat "$PID_FILE")"
-
-if kill -0 "$PID" 2>/dev/null; then
-  kill "$PID"
-  rm -f "$PID_FILE"
-  echo "Stopped local server. PID: $PID"
-else
-  rm -f "$PID_FILE"
-  echo "Local server was not running. Removed stale PID file."
+# Kill any remaining beam processes
+BEAM_PIDS=$(pgrep -f "beam.smp" 2>/dev/null || true)
+if [ -n "$BEAM_PIDS" ]; then
+  echo "Stopping Erlang VM..."
+  kill $BEAM_PIDS 2>/dev/null || true
 fi
+
+echo "=== Stopped ==="
