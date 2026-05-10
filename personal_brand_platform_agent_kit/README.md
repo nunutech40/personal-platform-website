@@ -5,7 +5,7 @@ Agent kit ini berisi instruksi kerja untuk AI coding agent yang membangun Person
 Target utama:
 
 ```txt
-Phoenix LiveView + Supabase + themeable personal brand platform
+Phoenix LiveView + PostgreSQL + themeable personal brand platform
 ```
 
 ## How To Use
@@ -68,7 +68,7 @@ pbp-integrating-external-checkout
 pbp-testing-and-qa
 ```
 
-Untuk pekerjaan backend, Supabase, Phoenix contexts, LiveView event handlers, atau integrasi eksternal, mulai dari `pbp-coding-elixir-functionally`, lalu lanjutkan ke skill domain yang relevan.
+Untuk pekerjaan backend, PostgreSQL, Phoenix contexts, LiveView event handlers, atau integrasi eksternal, mulai dari `pbp-coding-elixir-functionally`, lalu lanjutkan ke skill domain yang relevan.
 
 Skill lama yang feature-specific sudah dihapus. Kalau butuh detail project seperti field, route, dan phase, ambil dari root docs:
 

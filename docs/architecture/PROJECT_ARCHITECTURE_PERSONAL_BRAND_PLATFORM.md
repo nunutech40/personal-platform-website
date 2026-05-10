@@ -6,7 +6,7 @@ Status per 2026-05-10:
 
 ```txt
 The repository currently contains a runnable static dummy UI prototype.
-The target architecture is still Phoenix LiveView + Supabase.
+The target architecture is still Phoenix LiveView + PostgreSQL.
 ```
 
 Current prototype files:
@@ -75,9 +75,9 @@ Phoenix LiveView App
   ├── Content Management
   └── Commerce Preparation
   ↓
-Supabase Postgres
+PostgreSQL
   ↓
-Supabase Storage
+Media storage adapter
 ```
 
 ### Why this architecture
@@ -102,15 +102,37 @@ One database layer
 One deployment unit
 ```
 
-Supabase is used mainly as:
+PostgreSQL is used as:
 
 ```txt
-Postgres database
-File/image storage
-optional auth later
+primary relational database
+Ecto persistence layer
 ```
 
 Phoenix owns the product logic.
+
+Media files are handled through a storage adapter owned by the Phoenix app:
+
+```txt
+MVP: local disk storage
+Future: S3-compatible object storage if needed
+```
+
+### Why PostgreSQL Directly
+
+Use PostgreSQL directly for the final MVP.
+
+Reasoning:
+
+```txt
+- Ecto maps naturally to PostgreSQL without extra platform assumptions.
+- Phoenix keeps ownership of business logic, auth, admin flows, and validation.
+- Local development is simpler with local PostgreSQL or Docker PostgreSQL.
+- Media upload can start with local disk storage and later move behind an S3-compatible adapter.
+- The project avoids platform-specific auth, RLS, storage, service-role, and hosted-backend behavior until there is a clear need.
+```
+
+This does not block future adapters. If the project later needs hosted Postgres, managed backups, object storage, or external APIs, those should be added behind the existing context/integration boundaries.
 
 ---
 
@@ -142,7 +164,7 @@ Context       -> owns business rules and persistence orchestration
 Schema        -> defines fields, relations, and changesets
 Component     -> renders assigns only
 Theme module  -> renders shared data contract only
-Integration   -> wraps Supabase Storage, Midtrans, and other external APIs
+Integration   -> wraps media storage, Midtrans, and other external APIs
 ```
 
 Implementation preferences:
@@ -153,8 +175,8 @@ Implementation preferences:
 - pattern matching over nested conditionals
 - {:ok, value} / {:error, reason} for fallible operations
 - explicit context APIs instead of direct Repo calls from LiveViews
-- Ecto against Supabase Postgres
-- server-side wrappers for Supabase Storage and Midtrans
+- Ecto against PostgreSQL
+- server-side wrappers for media storage and Midtrans
 ```
 
 This project should not become a JavaScript-style frontend app with backend calls scattered through UI code. Phoenix contexts are the boundary; LiveView is the interface layer.
@@ -197,8 +219,8 @@ This project should not become a JavaScript-style frontend app with backend call
                        │
                        ▼
 ┌─────────────────────────────────────────────┐
-│ Supabase                                    │
-│ Postgres + Storage                          │
+│ PostgreSQL                                  │
+│ relational data source                      │
 └─────────────────────────────────────────────┘
 ```
 
@@ -251,7 +273,7 @@ Catalog
 
 Media
 - media records
-- Supabase Storage integration
+- media storage adapter integration
 - image/file metadata
 
 Settings
@@ -912,7 +934,8 @@ Do not build the full commerce system in MVP unless specifically requested.
 
 ```txt
 Phoenix app → Fly.io / Render / Railway
-Supabase → hosted Postgres + Storage
+PostgreSQL → managed Postgres, VPS Postgres, or local Docker for development
+Media storage → local disk for MVP, S3-compatible storage later
 Assets → Phoenix static assets
 ```
 
@@ -922,9 +945,12 @@ Assets → Phoenix static assets
 DATABASE_URL
 SECRET_KEY_BASE
 PHX_HOST
-SUPABASE_URL
-SUPABASE_SERVICE_ROLE_KEY
-SUPABASE_STORAGE_BUCKET
+UPLOAD_STORAGE_DRIVER
+UPLOADS_DIR
+S3_BUCKET
+S3_REGION
+S3_ACCESS_KEY_ID
+S3_SECRET_ACCESS_KEY
 MIDTRANS_SERVER_KEY
 MIDTRANS_CLIENT_KEY
 MIDTRANS_ENV
@@ -952,7 +978,7 @@ slug generation
 content queries
 status transitions
 featured fallback
-Supabase/Midtrans wrappers with mocked boundaries
+storage/Midtrans wrappers with mocked boundaries
 ```
 
 ### LiveView tests

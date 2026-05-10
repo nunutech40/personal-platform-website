@@ -18,7 +18,7 @@ const data = {
     activeTheme: "old_web_classic",
     headline: "A personal basecamp for work, writing, products, and things currently being built.",
     subheadline:
-      "One data source, many homepage themes. This dummy UI is ready to be wired to Phoenix, Supabase, and future commerce flows.",
+      "One data source, many homepage themes. This dummy UI is ready to be wired to Phoenix, PostgreSQL, and future commerce flows.",
     primaryCtaText: "View Work",
     primaryCtaUrl: "/work",
     secondaryCtaText: "Read Writing",
@@ -59,7 +59,7 @@ const data = {
         "Focus on the core loop: track habits, stay consistent, see progress, and sync across devices.",
       result: ["1,000+ downloads in the first month", "4.8 average rating", "70%+ day-7 retention"],
       role: "Product Engineer",
-      techStack: ["Flutter", "Supabase", "SQLite"],
+      techStack: ["Flutter", "PostgreSQL", "SQLite"],
       year: "2025",
       status: "published",
       featured: true,
@@ -596,7 +596,7 @@ function aboutPage() {
         <ul>
           <li>${link("Flutter", "https://flutter.dev")} for mobile apps</li>
           <li>${link("Elixir", "https://elixir-lang.org")} for scalable backend logic</li>
-          <li>${link("Supabase", "https://supabase.com")} for Postgres and storage</li>
+          <li>${link("PostgreSQL", "https://www.postgresql.org")} for relational data</li>
           <li>${link("Figma", "https://figma.com")} for product design</li>
         </ul>
       </section>

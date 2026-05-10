@@ -1,6 +1,6 @@
 # Coding And Testing Standards
 
-Standar ini berlaku untuk semua implementasi final Personal Brand Platform, terutama saat project dipindahkan dari static prototype ke Phoenix LiveView + Supabase.
+Standar ini berlaku untuk semua implementasi final Personal Brand Platform, terutama saat project dipindahkan dari static prototype ke Phoenix LiveView + PostgreSQL.
 
 ## Foundation
 
@@ -9,8 +9,9 @@ Stack final:
 ```txt
 Elixir / Phoenix / LiveView
 Ecto
-Supabase Postgres
-Supabase Storage
+PostgreSQL
+Local disk media storage for MVP
+S3-compatible object storage later if needed
 Midtrans Payment Link first, API/webhook later
 ```
 
@@ -54,7 +55,7 @@ They must not:
 
 ```txt
 - query database
-- call Supabase
+- call external storage directly
 - call Midtrans
 - mutate business state
 ```
@@ -64,7 +65,7 @@ They must not:
 Side-effect modules:
 
 ```txt
-Media.Storage       -> Supabase Storage
+Media.Storage       -> local disk now, S3-compatible adapter later
 Commerce.Midtrans   -> future Midtrans API
 Mailer              -> future email
 ```
@@ -110,21 +111,35 @@ unique constraints for join table pairs
 
 Changeset validations should align with database constraints.
 
-## Supabase Rules
+## PostgreSQL And Storage Rules
 
-Supabase is infrastructure:
+PostgreSQL is the database source of truth:
 
 ```txt
-Postgres via Ecto
-Storage via server-side integration module
+PostgreSQL via Ecto
+Media files via server-side storage adapter
 ```
 
 Do not:
 
 ```txt
-- put Supabase service role key in frontend
+- put database credentials in frontend
 - call Storage directly from LiveView components
 - use public URLs for future paid digital downloads
+```
+
+MVP storage:
+
+```txt
+local disk uploads through Media.Storage
+metadata in media table
+```
+
+Future storage:
+
+```txt
+S3-compatible adapter if local disk is not enough
+same Media context API
 ```
 
 ## Testing Policy
@@ -137,7 +152,7 @@ Every backend slice should add tests at the lowest useful layer:
 Pure/unit tests     -> slug/status/theme resolver/fallback logic
 Context tests       -> changesets, queries, public visibility, CRUD flows
 LiveView tests      -> routes, assigns, forms, redirects, auth boundaries
-Integration tests   -> wrappers around Supabase/Midtrans with mocked boundaries
+Integration tests   -> wrappers around storage/Midtrans with mocked boundaries
 Manual QA           -> visual navigation and local browser checks
 ```
 
@@ -201,7 +216,7 @@ invalid submit shows changeset errors
 draft/publish/archive action works
 ```
 
-### Media/Supabase slices
+### Media/storage slices
 
 Required:
 
@@ -260,4 +275,3 @@ A slice is done when:
 - docs/build plan are updated if behavior or architecture changed
 - push workflow checks pass before commit
 ```
-

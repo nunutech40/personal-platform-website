@@ -1,6 +1,6 @@
 ---
 name: pbp-coding-elixir-functionally
-description: Applies Elixir/Phoenix functional programming style: pure transformations, explicit context APIs, changesets, pipelines, pattern matching, result tuples, and side-effect boundaries. Use before implementing backend logic, contexts, Ecto schemas, LiveViews, Supabase integrations, or commerce flows.
+description: Applies Elixir/Phoenix functional programming style: pure transformations, explicit context APIs, changesets, pipelines, pattern matching, result tuples, and side-effect boundaries. Use before implementing backend logic, contexts, Ecto schemas, LiveViews, PostgreSQL persistence, storage integrations, or commerce flows.
 ---
 
 # Coding Elixir Functionally
@@ -42,7 +42,7 @@ Context       -> owns business rules and persistence orchestration
 Schema        -> defines fields, relations, and changesets
 Component     -> renders assigns, no data fetching
 Theme module  -> renders the shared data contract, no database calls
-Integration   -> wraps Supabase/Midtrans/API side effects
+Integration   -> wraps storage/Midtrans/API side effects
 ```
 
 ## Ecto Rules
@@ -53,12 +53,13 @@ Integration   -> wraps Supabase/Midtrans/API side effects
 - Avoid leaking raw Ecto query composition into LiveViews.
 - Keep public visibility filters in context/query functions.
 
-## Supabase Integration Rules
+## PostgreSQL And Storage Integration Rules
 
-- Treat Supabase as Postgres + Storage infrastructure.
-- Use Ecto for Postgres data access.
-- Wrap Storage operations in a media/integration module.
-- Keep Supabase service role keys server-side only.
+- Treat PostgreSQL as the database source of truth.
+- Use Ecto for PostgreSQL data access.
+- Wrap file storage operations in a media/integration module.
+- Use local disk storage for MVP unless the architecture explicitly moves to S3-compatible storage.
+- Keep database and storage credentials server-side only.
 - Return explicit success/error tuples from storage operations.
 
 ## Review Checklist

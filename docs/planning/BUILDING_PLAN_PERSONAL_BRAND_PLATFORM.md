@@ -6,7 +6,7 @@ Status per 2026-05-10:
 
 ```txt
 Current repo contains a runnable static dummy UI prototype.
-Final MVP target remains Phoenix LiveView + Supabase.
+Final MVP target remains Phoenix LiveView + PostgreSQL.
 ```
 
 Prototype yang sudah dibuat:
@@ -227,7 +227,7 @@ Slice 5.5 - Admin site settings and theme settings
 Slice 7.1 - Media upload and picker
   Phase: 7
   Skill: pbp-handling-media-assets
-  Output: Supabase upload, media library, alt text, cover selection
+  Output: media upload, media library, alt text, cover selection
 
 Slice 8.1 - SEO, RSS, sitemap
   Phase: 8
@@ -372,8 +372,8 @@ Jangan bangun ini dulu di MVP:
 ```txt
 Frontend/Public UI: Phoenix LiveView
 Backend: Elixir / Phoenix
-Database: Supabase Postgres
-Storage: Supabase Storage
+Database: PostgreSQL
+Storage: local disk storage
 Styling: Tailwind CSS or simple CSS
 Payment MVP: Midtrans Payment Link via checkout_url
 Payment Future: Midtrans API + webhook
@@ -393,6 +393,21 @@ Karena owner project lebih peduli Elixir dan tidak ingin menambah kompleksitas f
 
 Next.js/React belum wajib kecuali nanti butuh frontend experience yang sangat kompleks.
 
+Database decision:
+
+```txt
+Use PostgreSQL directly for the final MVP.
+```
+
+Reason:
+
+```txt
+- simpler Ecto setup and local development
+- fewer platform-specific constraints
+- Phoenix owns auth/admin/business logic
+- media storage can start as local disk and move to S3-compatible storage later
+```
+
 ---
 
 # 3. Core Architecture
@@ -406,7 +421,7 @@ Phoenix LiveView App
    ↓
 Phoenix Contexts / Business Logic
    ↓
-Supabase Postgres + Supabase Storage
+PostgreSQL + app-owned media storage
 ```
 
 ## 3.2 Payment MVP Architecture
@@ -705,7 +720,7 @@ Untuk MVP, field ini bisa diisi Midtrans Payment Link.
 
 ## 5.7 media
 
-Purpose: menyimpan metadata file/gambar dari Supabase Storage.
+Purpose: menyimpan metadata file/gambar dari local disk storage.
 
 Fields:
 
@@ -1383,7 +1398,7 @@ Must support:
 Storage:
 
 ```txt
-Supabase Storage
+local disk storage
 ```
 
 ---
@@ -1653,7 +1668,7 @@ Tasks:
 
 ```txt
 - Create Phoenix project
-- Configure Supabase Postgres connection
+- Configure PostgreSQL connection
 - Setup Tailwind or simple CSS
 - Setup basic public layout
 - Setup basic admin layout
@@ -1710,7 +1725,7 @@ Current prototype note:
 
 ```txt
 Dummy versions of these routes already exist in the static prototype.
-Final implementation must render data from Phoenix contexts/Supabase instead of src/app.js.
+Final implementation must render data from Phoenix contexts/PostgreSQL instead of src/app.js.
 ```
 
 Build routes in this order:
@@ -1876,7 +1891,7 @@ Priority: Medium
 Tasks:
 
 ```txt
-- Upload to Supabase Storage
+- Upload to local disk storage
 - Save media metadata
 - List media in admin
 - Select cover image for projects/posts/products
@@ -1957,7 +1972,7 @@ Done when:
 
 ```txt
 - Phoenix project setup
-- Supabase connection
+- PostgreSQL connection
 - Admin auth
 - Public/admin layouts
 ```
@@ -2194,7 +2209,7 @@ Add section links like View all work/writing/products.
 The MVP is:
 
 ```txt
-A themeable personal brand platform built with Elixir/Phoenix and Supabase,
+A themeable personal brand platform built with Elixir/Phoenix and PostgreSQL,
 with admin-managed portfolio, writing, product catalog,
 and old_web_classic as the first visual identity.
 ```

@@ -59,7 +59,7 @@ product_tags
 - `site_settings.active_theme` references the theme key.
 - Products use `checkout_url` for MVP payment links.
 - Future order/payment tables should not block the content MVP.
-- Use Ecto against Supabase Postgres; do not bypass contexts from UI code.
+- Use Ecto against PostgreSQL; do not bypass contexts from UI code.
 - Prefer explicit context functions such as `list_published_posts/0` over generic Repo access.
 
 ## Elixir Data Rules

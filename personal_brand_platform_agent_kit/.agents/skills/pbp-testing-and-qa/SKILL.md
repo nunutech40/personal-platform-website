@@ -31,7 +31,7 @@ Use this when:
 context tests  -> schemas, changesets, query rules
 LiveView tests -> routes, assigns, forms, redirects
 unit tests     -> pure slug/status/theme resolver functions
-integration   -> Supabase/Midtrans wrappers with mocked boundaries
+integration   -> storage/Midtrans wrappers with mocked boundaries
 theme QA       -> navigation, readability, responsive layout
 manual QA      -> click through public/admin flows
 ```

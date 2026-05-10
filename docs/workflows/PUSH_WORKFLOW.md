@@ -97,7 +97,8 @@ Pastikan tidak ada file rahasia seperti:
 secret keys
 private tokens
 Midtrans server key
-Supabase service role key
+database credentials
+storage credentials
 ```
 
 ### 6. Commit

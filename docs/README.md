@@ -5,10 +5,10 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 ## Folders
 
 - `product/` — product requirements, scope, target users, MVP goals, commerce direction.
-- `technical/` — technical requirements, database direction, Phoenix/Supabase/Midtrans notes.
+- `technical/` — technical requirements, database direction, Phoenix/PostgreSQL/Midtrans notes.
 - `architecture/` — target architecture, Phoenix contexts, Elixir/FP boundaries, route/module structure.
 - `planning/` — build plan, AI execution workflow, work packet format, phased implementation slices.
-- `standards/` — coding and testing standards for Elixir/Phoenix/Supabase work.
+- `standards/` — coding and testing standards for Elixir/Phoenix/PostgreSQL work.
 - `design/` — old-web design document and UI reference screenshots.
 - `workflows/` — repeatable operational workflows such as commit/push.
 

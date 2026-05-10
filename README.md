@@ -12,7 +12,7 @@ Project direction utama tetap mengikuti dokumen:
 
 ## Current Status
 
-Saat ini repo berisi **dummy UI prototype** yang bisa dijalankan lokal sebelum backend Phoenix/Supabase dibuat.
+Saat ini repo berisi **dummy UI prototype** yang bisa dijalankan lokal sebelum backend Phoenix/PostgreSQL dibuat.
 
 Prototype ini dibuat untuk memvalidasi:
 
@@ -25,7 +25,7 @@ Prototype ini dibuat untuk memvalidasi:
 
 Important note:
 
-Prototype ini belum menggantikan arsitektur final. Target final MVP tetap Phoenix LiveView + Supabase seperti di building plan.
+Prototype ini belum menggantikan arsitektur final. Target final MVP tetap Phoenix LiveView + PostgreSQL seperti di building plan.
 
 ## Run Local
 
@@ -109,7 +109,7 @@ Data dummy sekarang ada di `src/app.js` dan sengaja mengikuti contract PRD/TRD:
 - `products`
 - `now`
 
-Nanti ketika backend Phoenix/Supabase sudah siap, bagian data ini bisa diganti dengan Phoenix contexts, LiveView assigns, atau API response.
+Nanti ketika backend Phoenix/PostgreSQL sudah siap, bagian data ini bisa diganti dengan Phoenix contexts, LiveView assigns, atau API response.
 
 Theme switching saat ini memakai `localStorage`. Versi backend cukup menggantinya dengan update:
 
@@ -143,7 +143,7 @@ Prototype ini meng-cover sebagian kecil dari build plan:
 Yang belum dibuat:
 
 - Phoenix project
-- Supabase connection
+- PostgreSQL connection
 - database migrations
 - admin auth
 - real CRUD
@@ -180,7 +180,7 @@ Root documentation tetap menjadi source of truth. Agent kit hanya menyimpan work
 - `docs/technical/` — TRD and implementation requirement docs
 - `docs/architecture/` — target system architecture and Elixir/Phoenix boundaries
 - `docs/planning/` — build plan, AI workflow, work packets, and phase breakdown
-- `docs/standards/` — coding and testing standards for Elixir/Phoenix/Supabase
+- `docs/standards/` — coding and testing standards for Elixir/Phoenix/PostgreSQL
 - `docs/design/` — old-web design direction and UI reference screenshots
 
 ## Git Workflow
