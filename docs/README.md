@@ -24,6 +24,12 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 
 - [workflows/PUSH_WORKFLOW.md](workflows/PUSH_WORKFLOW.md)
 
+## Agent Usage Examples
+
+Contoh prompt untuk menjalankan skill dan melanjutkan build ada di:
+
+- [../personal_brand_platform_agent_kit/README.md](../personal_brand_platform_agent_kit/README.md)
+
 ## Source of Truth
 
 The source of truth lives in this `docs/` folder. The agent kit contains reusable execution skills only, not copies of project documentation.
