@@ -30,19 +30,23 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       },
       summary: %{
         module: Backpex.Fields.Textarea,
-        label: "Summary"
+        label: "Summary",
+        rows: 3
       },
       description: %{
         module: Backpex.Fields.Textarea,
-        label: "Description"
+        label: "Description",
+        rows: 8
       },
       problem: %{
         module: Backpex.Fields.Textarea,
-        label: "Problem"
+        label: "Problem",
+        rows: 5
       },
       solution: %{
         module: Backpex.Fields.Textarea,
-        label: "Solution"
+        label: "Solution",
+        rows: 5
       },
       result: %{
         module: Backpex.Fields.Text,

@@ -30,11 +30,13 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
       },
       summary: %{
         module: Backpex.Fields.Textarea,
-        label: "Summary"
+        label: "Summary",
+        rows: 3
       },
       description: %{
         module: Backpex.Fields.Textarea,
-        label: "Description"
+        label: "Description",
+        rows: 8
       },
       product_type: %{
         module: Backpex.Fields.Select,

@@ -486,7 +486,19 @@ textarea {
 .admin-shell input,
 .admin-shell select,
 .admin-shell textarea {
+  color: inherit;
   font-family: inherit;
+}
+
+.admin-shell label:not(.label) {
+  display: block;
+  gap: 0;
+  font-weight: inherit;
+}
+
+.admin-shell .label {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .admin-shell .bg-base-100 {
@@ -618,8 +630,15 @@ textarea {
 }
 
 .admin-shell :where(.input, .textarea, .select) {
+  width: 100% !important;
+  max-width: none;
   border-color: #cbd5e1;
   background: #ffffff;
+  color: #0f172a;
+}
+
+.admin-shell :where(.input, .textarea, .select)::placeholder {
+  color: #94a3b8;
 }
 
 .admin-shell :where(.input, .textarea, .select):focus,
@@ -627,6 +646,34 @@ textarea {
   border-color: #2563eb;
   outline: 2px solid rgba(37, 99, 235, 0.18);
   outline-offset: 0;
+}
+
+.admin-shell .select,
+.admin-shell select.select {
+  min-height: 3rem;
+  padding-inline: 1rem 2.5rem;
+}
+
+.admin-shell .textarea,
+.admin-shell textarea.textarea {
+  min-height: 7rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.admin-shell .toggle {
+  width: 3rem !important;
+  height: 1.5rem !important;
+  min-height: 1.5rem;
+  border-radius: 999px;
+}
+
+.admin-shell input[type="checkbox"].toggle {
+  flex: none;
+}
+
+.admin-shell input[type="hidden"] {
+  display: none;
 }
 
 .admin-login {

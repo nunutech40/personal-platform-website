@@ -26,11 +26,13 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
       },
       headline: %{
         module: Backpex.Fields.Textarea,
-        label: "Headline"
+        label: "Headline",
+        rows: 3
       },
       subheadline: %{
         module: Backpex.Fields.Textarea,
-        label: "Subheadline"
+        label: "Subheadline",
+        rows: 4
       },
       primary_cta_text: %{
         module: Backpex.Fields.Text,
@@ -70,7 +72,8 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
       },
       profile_bio: %{
         module: Backpex.Fields.Textarea,
-        label: "Bio"
+        label: "Bio",
+        rows: 8
       }
     ]
   end

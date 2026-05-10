@@ -30,11 +30,13 @@ defmodule PersonalBrandWeb.Admin.PostResource do
       },
       excerpt: %{
         module: Backpex.Fields.Textarea,
-        label: "Excerpt"
+        label: "Excerpt",
+        rows: 3
       },
       content_markdown: %{
         module: Backpex.Fields.Textarea,
-        label: "Content (Markdown)"
+        label: "Content (Markdown)",
+        rows: 14
       },
       tags: %{
         module: Backpex.Fields.Text,
@@ -63,7 +65,8 @@ defmodule PersonalBrandWeb.Admin.PostResource do
       },
       seo_description: %{
         module: Backpex.Fields.Textarea,
-        label: "SEO Description"
+        label: "SEO Description",
+        rows: 3
       }
     ]
   end
