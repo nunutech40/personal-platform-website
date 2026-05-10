@@ -1,0 +1,435 @@
+:root {
+  --page: #fffdf7;
+  --paper: #ffffff;
+  --ink: #111111;
+  --muted: #55514a;
+  --line: #1f1f1f;
+  --link: #0000ee;
+  --visited: #551a8b;
+  --soft: #f2efe6;
+  --notice: #fff7cd;
+  color-scheme: light;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--visited);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+.button-link {
+  appearance: none;
+  display: inline-block;
+  border: 2px outset #d8d8d8;
+  background: #efefef;
+  color: #111;
+  padding: 3px 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:active,
+.button-link:active {
+  border-style: inset;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+}
+
+.skip-link:focus {
+  left: 12px;
+  z-index: 5;
+  background: #fff;
+  padding: 6px 10px;
+}
+
+.shell {
+  width: min(100%, 1480px);
+  margin: 0 auto;
+  padding: 28px 42px;
+}
+
+.site-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: end;
+}
+
+.site-title {
+  margin: 0;
+  font-size: clamp(38px, 5vw, 60px);
+  line-height: 0.95;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.site-title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.tagline {
+  margin: 14px 0 8px;
+  font-size: 23px;
+  font-style: italic;
+}
+
+.text-nav,
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.text-nav span,
+.social-links span {
+  color: #333;
+}
+
+hr {
+  border: 0;
+  border-top: 2px solid var(--line);
+  margin: 20px 0;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.08;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+h1 {
+  margin: 18px 0 12px;
+  font-size: clamp(34px, 4.5vw, 48px);
+}
+
+h2 {
+  margin: 24px 0 10px;
+  font-size: clamp(27px, 3.2vw, 36px);
+}
+
+h3 {
+  margin: 18px 0 8px;
+  font-size: 25px;
+}
+
+p {
+  max-width: 84ch;
+  margin: 0 0 10px;
+}
+
+ul {
+  margin-top: 8px;
+  padding-left: 26px;
+}
+
+li + li {
+  margin-top: 6px;
+}
+
+.lead {
+  font-size: 19px;
+}
+
+.home-grid,
+.two-col,
+.detail-grid,
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.55fr);
+  gap: 44px;
+  align-items: start;
+}
+
+.home-lists {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px;
+}
+
+.section-link {
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.media-frame {
+  border: 2px solid var(--line);
+  background: var(--paper);
+  padding: 14px;
+}
+
+.media-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #c8c8c8;
+}
+
+.mock-visual {
+  min-height: 280px;
+  border: 1px solid #bdbdbd;
+  background:
+    linear-gradient(90deg, transparent 31px, #e9e2d5 32px),
+    linear-gradient(#fffef9 31px, #e9e2d5 32px);
+  background-size: 32px 32px;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  text-align: center;
+}
+
+.mock-visual strong {
+  display: block;
+  max-width: 11ch;
+  font-size: 34px;
+  line-height: 1.05;
+}
+
+.item {
+  margin: 0 0 26px;
+}
+
+.item-title {
+  font-size: 26px;
+}
+
+.meta {
+  color: var(--muted);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 8px 0;
+}
+
+.tag {
+  border: 1px solid #777;
+  background: #fff;
+  padding: 1px 7px;
+  font-size: 15px;
+}
+
+.breadcrumb {
+  margin: 8px 0 18px;
+}
+
+.detail-section {
+  border-top: 2px solid var(--line);
+  padding-top: 10px;
+}
+
+.price {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.notice {
+  border: 2px solid #7b6a00;
+  background: var(--notice);
+  padding: 12px 14px;
+  margin: 14px 0;
+}
+
+.footer {
+  margin-top: 32px;
+}
+
+.admin-bar {
+  border: 2px solid #222;
+  background: var(--soft);
+  padding: 12px 14px;
+  margin-bottom: 18px;
+}
+
+.admin-panel {
+  border-top: 2px solid var(--line);
+  padding-top: 14px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid #777;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+  max-width: 760px;
+}
+
+label {
+  display: grid;
+  gap: 4px;
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #555;
+  background: #fff;
+  padding: 7px 8px;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.theme-preview {
+  min-height: 190px;
+  border: 2px solid #333;
+  padding: 12px;
+  background: #fff;
+}
+
+.theme-preview.us_builder {
+  background: #111;
+  color: #fafafa;
+  font-family: Arial, sans-serif;
+}
+
+.theme-preview.simple {
+  background: #f7f8fb;
+  color: #1f2937;
+  font-family: Arial, sans-serif;
+}
+
+.theme-preview.premium_dark {
+  background: #080b12;
+  color: #d5ecff;
+  font-family: "Courier New", monospace;
+}
+
+.simple-theme,
+.us-builder-theme,
+.premium-dark-theme {
+  font-family: Arial, sans-serif;
+}
+
+.simple-theme .site-title,
+.us-builder-theme .site-title,
+.premium-dark-theme .site-title,
+.simple-theme h1,
+.simple-theme h2,
+.us-builder-theme h1,
+.us-builder-theme h2,
+.premium-dark-theme h1,
+.premium-dark-theme h2 {
+  font-family: Arial, sans-serif;
+  font-weight: 800;
+}
+
+.simple-theme {
+  --page: #f8fafc;
+  --paper: #ffffff;
+  --ink: #16202a;
+  --muted: #576575;
+  --line: #c9d2dc;
+  --link: #075985;
+}
+
+.simple-theme .media-frame,
+.simple-theme .notice,
+.simple-theme .admin-bar {
+  border-radius: 8px;
+  border-color: #c9d2dc;
+}
+
+.us-builder-theme {
+  --page: #fff8ea;
+  --paper: #ffffff;
+  --ink: #171717;
+  --muted: #5f5242;
+  --line: #171717;
+  --link: #b42318;
+}
+
+.premium-dark-theme {
+  --page: #07090f;
+  --paper: #0d1320;
+  --ink: #e9f2ff;
+  --muted: #a9b7cc;
+  --line: #51627d;
+  --link: #78dce8;
+  color-scheme: dark;
+}
+
+.premium-dark-theme input,
+.premium-dark-theme select,
+.premium-dark-theme textarea,
+.premium-dark-theme .admin-table,
+.premium-dark-theme .media-frame {
+  background: #0d1320;
+  color: #e9f2ff;
+}
+
+@media (max-width: 860px) {
+  body {
+    font-size: 17px;
+  }
+
+  .shell {
+    padding: 24px 18px;
+  }
+
+  .site-header,
+  .home-grid,
+  .two-col,
+  .detail-grid,
+  .admin-grid,
+  .home-lists {
+    grid-template-columns: 1fr;
+  }
+
+  .tagline {
+    font-size: 22px;
+  }
+
+  .site-title {
+    font-size: 42px;
+  }
+}
