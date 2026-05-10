@@ -2,25 +2,11 @@
 
 Gunakan workflow ini setiap kali mau commit dan push perubahan ke GitHub.
 
-## Quick Command
-
-Kalau perubahan sudah dicek dan siap:
-
-```bash
-git status --short
-git add .
-git commit -m "<short imperative summary>"
-git push
-git status --short
-```
-
-Contoh commit message:
-
-```bash
-git commit -m "Organize documentation and refine agent skills"
-```
+> **⚠️ ATURAN UNTUK AGENT (AI):**
+> Workflow ini WAJIB diikuti LANGKAH DEMI LANGKAH secara berurutan. Jangan pernah menggunakan "Quick Command" atau melewatkan langkah manapun. Setiap kali user menyuruh push, agent harus menjalankan langkah 1 sampai 8 secara berurutan, lalu menulis Handoff Note. Jika ada langkah yang gagal, STOP dan laporkan ke user.
 
 ## Full Workflow
+
 
 ### 1. Sync branch
 
