@@ -38,6 +38,16 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
         label: "Description",
         rows: 8
       },
+      status: %{
+        module: Backpex.Fields.Select,
+        label: "Status",
+        options: [
+          {"Active", "active"},
+          {"Draft", "draft"},
+          {"Archived", "archived"},
+          {"Coming Soon", "coming_soon"}
+        ]
+      },
       product_type: %{
         module: Backpex.Fields.Select,
         label: "Product Type",

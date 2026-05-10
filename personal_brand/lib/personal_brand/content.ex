@@ -126,10 +126,18 @@ defmodule PersonalBrand.Content do
     Repo.all(from p in Product, order_by: [asc: p.title])
   end
 
+  def list_active_products do
+    Repo.all(
+      from p in Product,
+        where: p.status == "active",
+        order_by: [asc: p.title]
+    )
+  end
+
   def list_featured_products do
     Repo.all(
       from p in Product,
-        where: p.featured == true,
+        where: p.featured == true and p.status == "active",
         order_by: [asc: p.title]
     )
   end
@@ -140,6 +148,14 @@ defmodule PersonalBrand.Content do
 
   def get_product_by_slug(slug) do
     Repo.get_by(Product, slug: slug)
+  end
+
+  def get_active_product_by_slug!(slug) do
+    Repo.get_by!(Product, slug: slug, status: "active")
+  end
+
+  def get_active_product_by_slug(slug) do
+    Repo.get_by(Product, slug: slug, status: "active")
   end
 
   # ── Themes ───────────────────────────────────────────────

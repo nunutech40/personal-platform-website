@@ -2,7 +2,7 @@
 
 ## Current Implementation Snapshot
 
-Status per 2026-05-10:
+Status per 2026-05-10 (updated):
 
 ```txt
 Current repo contains a Phoenix LiveView app with PostgreSQL/Ecto contexts,
@@ -54,7 +54,7 @@ Phase 3: mostly done - old_web_classic public UI is ported
 Phase 4: partial - active_theme is persisted; full theme renderer/preview validation is not complete
 Phase 5: partial - admin auth/dashboard and Backpex CRUD exist; admin editor UX, filters, badges, and media picker workflows need work
 Phase 6: partial - checkout_url exists as external link; no Midtrans API/webhook/orders
-Phase 7: partial - media table/admin resource exists; upload/picker/storage adapter workflow not complete
+Phase 7: done - media upload with Backpex.Fields.Upload, local disk storage, alt text, and file management
 Phase 8+: not started or not verified - SEO/RSS/sitemap/robots need dedicated implementation
 ```
 

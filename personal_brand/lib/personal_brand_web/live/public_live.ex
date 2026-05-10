@@ -45,10 +45,14 @@ defmodule PersonalBrandWeb.PublicLive do
         {:noreply, assign(socket, page: :writing_detail, post: post, page_title: post.title)}
 
       :product_detail ->
-        product = Content.get_product_by_slug!(slug)
+        case Content.get_active_product_by_slug(slug) do
+          nil ->
+            {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}
 
-        {:noreply,
-         assign(socket, page: :product_detail, product: product, page_title: product.title)}
+          product ->
+            {:noreply,
+             assign(socket, page: :product_detail, product: product, page_title: product.title)}
+        end
 
       _ ->
         {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}

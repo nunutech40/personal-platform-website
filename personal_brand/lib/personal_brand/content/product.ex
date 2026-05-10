@@ -12,6 +12,7 @@ defmodule PersonalBrand.Content.Product do
     field :product_type, :string, default: "digital"
     field :price, :decimal
     field :currency, :string, default: "USD"
+    field :status, :string, default: "active"
     field :stock_status, :string, default: "in_stock"
     field :delivery_type, :string, default: "digital_download"
     field :checkout_url, :string
@@ -33,6 +34,7 @@ defmodule PersonalBrand.Content.Product do
       :product_type,
       :price,
       :currency,
+      :status,
       :stock_status,
       :delivery_type,
       :checkout_url,
