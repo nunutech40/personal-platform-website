@@ -26,9 +26,23 @@ defmodule PersonalBrand.Content.Project do
 
   def changeset(project, attrs) do
     project
-    |> cast(attrs, [:title, :slug, :summary, :description, :problem, :solution,
-                    :result, :role, :tech_stack, :year, :status, :featured,
-                    :demo_url, :github_url, :cover_image_id])
+    |> cast(attrs, [
+      :title,
+      :slug,
+      :summary,
+      :description,
+      :problem,
+      :solution,
+      :result,
+      :role,
+      :tech_stack,
+      :year,
+      :status,
+      :featured,
+      :demo_url,
+      :github_url,
+      :cover_image_id
+    ])
     |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
   end

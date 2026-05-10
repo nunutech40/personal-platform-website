@@ -31,6 +31,8 @@ defmodule PersonalBrandWeb.Layouts do
     default: nil,
     doc: "the current [scope](https://hexdocs.pm/phoenix/scopes.html)"
 
+  attr :current_url, :string, default: nil, doc: "the current url"
+
   slot :inner_block, required: true
 
   def app(assigns) do

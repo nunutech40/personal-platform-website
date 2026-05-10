@@ -18,8 +18,15 @@ defmodule PersonalBrand.Content.Media do
 
   def changeset(media, attrs) do
     media
-    |> cast(attrs, [:filename, :content_type, :size, :url, :alt_text,
-                    :attachable_type, :attachable_id])
+    |> cast(attrs, [
+      :filename,
+      :content_type,
+      :size,
+      :url,
+      :alt_text,
+      :attachable_type,
+      :attachable_id
+    ])
     |> validate_required([:filename, :url])
   end
 end

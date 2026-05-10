@@ -12,8 +12,8 @@ defmodule PersonalBrandWeb.Admin.AuthController do
 
         conn
         |> put_session(:admin_token, token)
-        |> redirect(to: "/admin")
         |> configure_session(renew: true)
+        |> redirect(to: "/admin")
 
       {:error, :invalid_credentials} ->
         render(conn, :new,

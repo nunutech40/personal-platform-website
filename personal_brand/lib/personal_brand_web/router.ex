@@ -20,37 +20,41 @@ defmodule PersonalBrandWeb.Router do
     plug PersonalBrandWeb.Plugs.RequireAdmin
   end
 
-  # Root redirect - cek session, kalo udah login ke /admin, kalo belum ke /admin/login
+  # ── Public Routes ────────────────────────────────────────
   scope "/", PersonalBrandWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", PublicLive, :index
+    live "/work", PublicLive, :work_index
+    live "/work/:slug", PublicLive, :work_detail
+    live "/writing", PublicLive, :writing_index
+    live "/writing/:slug", PublicLive, :writing_detail
+    live "/products", PublicLive, :products_index
+    live "/products/:slug", PublicLive, :product_detail
+    live "/about", PublicLive, :about_page
+    live "/now", PublicLive, :now_page
   end
 
-  # Admin routes (protected)
+  # ── Admin Routes (protected) ─────────────────────────────
   scope "/admin", PersonalBrandWeb.Admin do
     pipe_through [:browser, :require_admin]
 
     live "/", DashboardLive, :index
 
     # Backpex LiveResources
-    live_resources "/projects", ProjectResource,
-      only: [:index, :show, :new, :edit, :delete]
+    live_resources("/projects", ProjectResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources "/posts", PostResource,
-      only: [:index, :show, :new, :edit, :delete]
+    live_resources("/posts", PostResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources "/products", ProductResource,
-      only: [:index, :show, :new, :edit, :delete]
+    live_resources("/products", ProductResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources "/media", MediaResource,
-      only: [:index, :show, :new, :edit, :delete]
+    live_resources("/media", MediaResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources "/site-settings", SiteSettingResource,
+    live_resources("/site-settings", SiteSettingResource,
       only: [:index, :show, :new, :edit, :delete]
+    )
 
-    live_resources "/themes", ThemeResource,
-      only: [:index, :show, :new, :edit, :delete]
+    live_resources("/themes", ThemeResource, only: [:index, :show, :new, :edit, :delete])
   end
 
   # Admin auth routes (outside require_admin pipeline)

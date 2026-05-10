@@ -18,7 +18,9 @@ defmodule PersonalBrandWeb.Admin.DashboardLive do
           <div class="stat-title">Projects</div>
           <div class="stat-value text-primary">0</div>
           <div class="stat-actions">
-            <.link navigate="/admin/projects" class="btn btn-sm btn-outline btn-primary">Manage</.link>
+            <.link navigate="/admin/projects" class="btn btn-sm btn-outline btn-primary">
+              Manage
+            </.link>
           </div>
         </div>
         <div class="stat bg-base-100 rounded-box shadow-sm border border-base-200">

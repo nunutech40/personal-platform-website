@@ -52,12 +52,20 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
       stock_status: %{
         module: Backpex.Fields.Select,
         label: "Stock Status",
-        options: [{"In Stock", "in_stock"}, {"Out of Stock", "out_of_stock"}, {"Pre-order", "pre_order"}]
+        options: [
+          {"In Stock", "in_stock"},
+          {"Out of Stock", "out_of_stock"},
+          {"Pre-order", "pre_order"}
+        ]
       },
       delivery_type: %{
         module: Backpex.Fields.Select,
         label: "Delivery Type",
-        options: [{"Digital Download", "digital_download"}, {"Email Delivery", "email_delivery"}, {"Physical", "physical_delivery"}]
+        options: [
+          {"Digital Download", "digital_download"},
+          {"Email Delivery", "email_delivery"},
+          {"Physical", "physical_delivery"}
+        ]
       },
       checkout_url: %{
         module: Backpex.Fields.Text,

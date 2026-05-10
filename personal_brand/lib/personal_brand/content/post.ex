@@ -27,10 +27,24 @@ defmodule PersonalBrand.Content.Post do
 
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :slug, :excerpt, :content_markdown, :content_html,
-                    :editor_type, :editor_json, :tags, :status, :featured,
-                    :published_at, :reading_time, :seo_title, :seo_description,
-                    :cover_image_id, :og_image_id])
+    |> cast(attrs, [
+      :title,
+      :slug,
+      :excerpt,
+      :content_markdown,
+      :content_html,
+      :editor_type,
+      :editor_json,
+      :tags,
+      :status,
+      :featured,
+      :published_at,
+      :reading_time,
+      :seo_title,
+      :seo_description,
+      :cover_image_id,
+      :og_image_id
+    ])
     |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
   end

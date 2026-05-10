@@ -25,9 +25,22 @@ defmodule PersonalBrand.Content.Product do
 
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:title, :slug, :summary, :description, :product_type,
-                    :price, :currency, :stock_status, :delivery_type,
-                    :checkout_url, :featured, :included, :faq, :cover_image_id])
+    |> cast(attrs, [
+      :title,
+      :slug,
+      :summary,
+      :description,
+      :product_type,
+      :price,
+      :currency,
+      :stock_status,
+      :delivery_type,
+      :checkout_url,
+      :featured,
+      :included,
+      :faq,
+      :cover_image_id
+    ])
     |> validate_required([:title, :slug])
     |> unique_constraint(:slug)
   end

@@ -27,11 +27,23 @@ defmodule PersonalBrand.Content.SiteSetting do
 
   def changeset(site_setting, attrs) do
     site_setting
-    |> cast(attrs, [:site_name, :headline, :subheadline,
-                    :primary_cta_text, :primary_cta_url,
-                    :secondary_cta_text, :secondary_cta_url,
-                    :active_theme, :profile_name, :profile_title,
-                    :profile_location, :profile_email, :profile_bio,
-                    :social_links, :featured_project_ids, :featured_product_ids])
+    |> cast(attrs, [
+      :site_name,
+      :headline,
+      :subheadline,
+      :primary_cta_text,
+      :primary_cta_url,
+      :secondary_cta_text,
+      :secondary_cta_url,
+      :active_theme,
+      :profile_name,
+      :profile_title,
+      :profile_location,
+      :profile_email,
+      :profile_bio,
+      :social_links,
+      :featured_project_ids,
+      :featured_product_ids
+    ])
   end
 end

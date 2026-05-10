@@ -2,14 +2,9 @@ defmodule PersonalBrandWeb.PageController do
   use PersonalBrandWeb, :controller
 
   def index(conn, _params) do
-    token = get_session(conn, :admin_token)
-
-    case token && PersonalBrand.Accounts.verify_session_token(token) do
-      {:ok, _admin_id} ->
-        redirect(conn, to: "/admin")
-
-      _ ->
-        redirect(conn, to: "/admin/login")
-    end
+    # Public homepage is now handled by PublicLive LiveView
+    # This controller is kept for backward compatibility
+    # and will redirect to the LiveView route
+    redirect(conn, to: "/")
   end
 end
