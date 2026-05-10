@@ -661,6 +661,139 @@ textarea {
   resize: vertical;
 }
 
+.admin-markdown-editor {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.admin-markdown-editor .fieldset {
+  padding: 0;
+}
+
+.admin-markdown-editor label {
+  display: block;
+}
+
+.admin-markdown-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  border-bottom: 1px solid #d8e0ec;
+  background: #f8fafc;
+  padding: 10px;
+}
+
+.admin-markdown-tool {
+  min-height: 2.25rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.admin-markdown-tool:hover,
+.admin-markdown-tool.is-active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.admin-markdown-preview-toggle {
+  margin-left: auto;
+}
+
+.admin-shell .admin-markdown-textarea,
+.admin-shell .admin-markdown-editor textarea {
+  min-height: 28rem;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-family:
+    "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 15px;
+}
+
+.admin-shell .admin-markdown-textarea:focus,
+.admin-shell .admin-markdown-editor textarea:focus {
+  outline-offset: -2px;
+}
+
+.admin-markdown-preview {
+  border-top: 1px solid #d8e0ec;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 18px;
+}
+
+.admin-markdown-preview h1,
+.admin-markdown-preview h2,
+.admin-markdown-preview h3 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-weight: 750;
+}
+
+.admin-markdown-preview h1 {
+  font-size: 28px;
+}
+
+.admin-markdown-preview h2 {
+  font-size: 23px;
+}
+
+.admin-markdown-preview h3 {
+  font-size: 19px;
+}
+
+.admin-markdown-preview p,
+.admin-markdown-preview li,
+.admin-markdown-preview blockquote {
+  color: #334155;
+}
+
+.admin-markdown-preview p {
+  margin: 0 0 12px;
+}
+
+.admin-markdown-preview ul {
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.admin-markdown-preview blockquote {
+  margin: 0 0 12px;
+  border-left: 3px solid #93c5fd;
+  padding-left: 12px;
+}
+
+.admin-markdown-preview code {
+  border-radius: 6px;
+  background: #e2e8f0;
+  color: #0f172a;
+  padding: 2px 5px;
+  font-size: 0.92em;
+}
+
+.admin-markdown-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid #d8e0ec;
+}
+
+.admin-markdown-preview-empty {
+  margin: 0;
+  color: #64748b;
+}
+
 .admin-shell .toggle {
   width: 3rem !important;
   height: 1.5rem !important;

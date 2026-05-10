@@ -114,7 +114,8 @@ Use Backpex field modules in this project:
 | Module | Usage | Common options |
 |------|-------|---------|
 | `Backpex.Fields.Text` | Short text input/value | `label`, `searchable`, `orderable` |
-| `Backpex.Fields.Textarea` | Long text / markdown | `label` |
+| `Backpex.Fields.Textarea` | Long text except post body markdown | `label`, `rows` |
+| `PersonalBrandWeb.Admin.Fields.MarkdownEditor` | Post `content_markdown` authoring with toolbar/preview | `label`, `rows`, `help_text` |
 | `Backpex.Fields.Select` | Dropdown/status fields | `label`, `options: [{display, value}]` |
 | `Backpex.Fields.Date` | Date picker/value | `label` |
 | `Backpex.Fields.DateTime` | DateTime picker/value | `label` |

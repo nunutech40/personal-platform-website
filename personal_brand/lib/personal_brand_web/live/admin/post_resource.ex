@@ -34,9 +34,10 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         rows: 3
       },
       content_markdown: %{
-        module: Backpex.Fields.Textarea,
+        module: PersonalBrandWeb.Admin.Fields.MarkdownEditor,
         label: "Content (Markdown)",
-        rows: 14
+        rows: 18,
+        help_text: "Use Markdown for headings, links, lists, images, and code."
       },
       tags: %{
         module: Backpex.Fields.Text,

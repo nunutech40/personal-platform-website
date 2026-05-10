@@ -65,7 +65,7 @@ Do not duplicate changeset validation in LiveView. The LiveView should present e
 - Preserve user input after validation failure.
 - Never expose service role keys or secret payment keys to the browser.
 - Public previews of drafts must require admin auth.
-- For posts, MVP editor direction is Markdown-first with preview, SEO fields, status, and publish controls.
+- For posts, `content_markdown` must use the app-local Backpex field `PersonalBrandWeb.Admin.Fields.MarkdownEditor`, not a plain `Backpex.Fields.Textarea`. It provides the Markdown toolbar and preview expected by the admin design.
 - For resource forms, prefer a main content area plus a right settings panel when custom layout is justified.
 
 ## Done Checklist

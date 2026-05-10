@@ -30,7 +30,7 @@ defmodule PersonalBrandWeb.PublicLive do
 
   # ── Route Handling ───────────────────────────────────────
 
-  def handle_params(%{"slug" => slug} = params, _uri, socket) do
+  def handle_params(%{"slug" => slug}, _uri, socket) do
     path = socket.assigns.live_action
 
     case path do
