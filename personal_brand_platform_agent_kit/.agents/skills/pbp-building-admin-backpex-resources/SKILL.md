@@ -7,7 +7,9 @@ description: Builds admin CRUD using Backpex LiveResource with daisyUI template.
 
 ## Principle
 
-Admin CRUD should use Backpex LiveResource, not manual LiveViews. Backpex provides table listing, form rendering, validation display, and action buttons out of the box. The daisyUI template is already configured in `admin.html.heex` layout.
+Admin CRUD should use Backpex LiveResource, not manual LiveViews, unless the workflow needs a custom editor that Backpex cannot provide cleanly. Backpex provides table listing, form rendering, validation display, and action buttons out of the box.
+
+The admin shell lives in `lib/personal_brand_web/components/layouts/admin.html.heex`. It is intentionally separate from the public `old_web_classic` theme. Do not reuse public old-web CSS for admin CRUD.
 
 Use `pbp-coding-elixir-functionally` with this skill when implementing context functions, changesets, or custom form fields.
 
@@ -33,10 +35,20 @@ The admin panel uses:
 - **Heroicons** for icons
 
 CSS is already configured in `assets/css/app.css`:
+
 ```css
 @import "tailwindcss";
 @plugin "daisyui";
 ```
+
+Important admin UI rules:
+
+- Do not edit files under `deps/backpex/`; customize the app layout/resources instead.
+- Keep `data-theme="light"` on the admin shell unless dark mode is implemented deliberately.
+- Keep admin colors scoped under `.admin-shell` so public old-web CSS does not override Backpex/daisyUI.
+- Backpex tables and forms must be readable: light surface, dark text, visible borders, clear hover state.
+- After admin UI changes, verify `/admin`, one index resource such as `/admin/projects`, and one form route such as `/admin/projects/new`.
+- If a table becomes dark with dark text, fix the app CSS variables/overrides under `.admin-shell`; do not patch generated Backpex HTML.
 
 ## Workflow
 
@@ -52,44 +64,35 @@ CSS is already configured in `assets/css/app.css`:
 defmodule PersonalBrandWeb.Admin.MyResource do
   use Backpex.LiveResource,
     adapter: Backpex.Adapters.Ecto,
-    layout: {PersonalBrandWeb.Layouts, :admin},
-    schema: PersonalBrand.Content.MySchema,
-    repo: PersonalBrand.Repo,
-    subject: PersonalBrand.Content,
-    name: "My Resource",
-    description: "Manage my resources"
+    adapter_config: [
+      schema: PersonalBrand.Content.MySchema,
+      repo: PersonalBrand.Repo
+    ]
+
+  @impl true
+  def singular_name, do: "My Resource"
+
+  @impl true
+  def plural_name, do: "My Resources"
+
+  @impl true
+  def layout(_assigns), do: {PersonalBrandWeb.Layouts, :admin}
 
   @impl true
   def fields do
     [
       title: %{
-        type: :text,
-        label: "Title",
-        form_position: 0,
-        table_column: %{order: 0}
+        module: Backpex.Fields.Text,
+        label: "Title"
       },
       slug: %{
-        type: :text,
-        label: "Slug",
-        form_position: 1,
-        table_column: %{order: 1}
+        module: Backpex.Fields.Text,
+        label: "Slug"
       },
       status: %{
-        type: :select,
+        module: Backpex.Fields.Select,
         label: "Status",
-        options: [
-          {"Draft", "draft"},
-          {"Published", "published"},
-          {"Archived", "archived"}
-        ],
-        form_position: 2,
-        table_column: %{order: 2}
-      },
-      inserted_at: %{
-        type: :date,
-        label: "Created",
-        form_position: :none,
-        table_column: %{order: 3}
+        options: [{"Draft", "draft"}, {"Published", "published"}, {"Archived", "archived"}]
       }
     ]
   end
@@ -106,18 +109,20 @@ live_resources "/my-resources", MyResource,
 
 ## Field Type Reference
 
-| Type | Usage | Options |
-|------|-------|---------|
-| `:text` | Short text input | `label`, `form_position`, `table_column` |
-| `:textarea` | Long text / markdown | `label`, `form_position` |
-| `:select` | Dropdown | `label`, `options: [{display, value}]` |
-| `:date` | Date picker | `label`, `form_position`, `table_column` |
-| `:datetime` | DateTime picker | `label`, `form_position` |
-| `:boolean` | Checkbox toggle | `label`, `form_position` |
-| `:number` | Number input | `label`, `form_position` |
-| `:file` | File upload | `label`, `form_position` |
+Use Backpex field modules in this project:
 
-Set `form_position: :none` to exclude a field from the form (e.g., timestamps).
+| Module | Usage | Common options |
+|------|-------|---------|
+| `Backpex.Fields.Text` | Short text input/value | `label`, `searchable`, `orderable` |
+| `Backpex.Fields.Textarea` | Long text / markdown | `label` |
+| `Backpex.Fields.Select` | Dropdown/status fields | `label`, `options: [{display, value}]` |
+| `Backpex.Fields.Date` | Date picker/value | `label` |
+| `Backpex.Fields.DateTime` | DateTime picker/value | `label` |
+| `Backpex.Fields.Boolean` | Checkbox/toggle | `label` |
+| `Backpex.Fields.Number` | Number input/value | `label` |
+| `Backpex.Fields.Upload` | File upload | use only after media storage rules are clear |
+
+Prefer the field configuration style already used in `lib/personal_brand_web/live/admin/*_resource.ex`.
 
 ## Custom Actions
 
@@ -151,3 +156,6 @@ end
 - [ ] Form creates and updates records
 - [ ] Table lists records with search/filter if needed
 - [ ] Custom actions work (publish, archive, etc.)
+- [ ] Admin index table is readable in the browser with sufficient contrast
+- [ ] Admin resource uses `PersonalBrandWeb.Layouts.admin`
+- [ ] Public old-web theme is not affected by admin CSS changes

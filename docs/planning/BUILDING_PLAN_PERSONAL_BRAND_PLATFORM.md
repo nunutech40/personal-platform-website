@@ -5,56 +5,68 @@
 Status per 2026-05-10:
 
 ```txt
-Current repo contains a runnable static dummy UI prototype.
-Final MVP target remains Phoenix LiveView + PostgreSQL.
+Current repo contains a Phoenix LiveView app with PostgreSQL/Ecto contexts,
+seed-backed public pages, and Backpex-based admin CRUD resources.
+The older static dummy prototype is no longer the implementation baseline.
 ```
 
-Prototype yang sudah dibuat:
+What is implemented in the Phoenix app:
 
 ```txt
-- local static server via npm run dev
-- homepage with active theme
-- public routes for work, writing, products, about, now
-- detail routes by slug for work/writing/products
-- admin mock routes for dashboard, projects, posts, products, site settings, themes
-- old_web_classic visual direction
-- placeholder future themes: simple, us_builder, premium_dark
-- theme switching stored in localStorage
+- Phoenix app under personal_brand/
+- PostgreSQL/Ecto schemas for projects, posts, products, media, site_settings, themes
+- Content context APIs for public data reads and admin dashboard summary
+- seed data for public content and admin validation
+- public LiveView routes for home, work, writing, products, about, now
+- public detail routes by slug for work/writing/products
+- old_web_classic public theme with placeholder future theme classes
+- active_theme stored in site_settings
+- admin auth with simple configured credential flow
+- protected /admin dashboard with counts, active theme, recent content, and quick actions
+- Backpex LiveResources for projects, posts, products, media, site settings, and themes
 - products with checkout_url for manual Midtrans Payment Link flow
 ```
 
-Prototype ini adalah bridge untuk validasi UI/UX dan data contract. Saat masuk implementasi Phoenix, pindahkan data dummy dari `src/app.js` menjadi seed data, contexts, dan LiveView assigns.
+The old static prototype remains useful only as UI/data-contract reference.
+Do not treat `src/app.js` as the current source of truth for implementation status.
 
-Current prototype to final mapping:
+Current implementation mapping:
 
 ```txt
-src/app.js data.profile       -> profiles
-src/app.js data.siteSettings  -> site_settings
-src/app.js data.themes        -> themes
-src/app.js data.projects      -> projects
-src/app.js data.posts         -> posts
-src/app.js data.products      -> products
-localStorage active_theme     -> site_settings.active_theme
-product.checkoutUrl           -> products.checkout_url
+profile/site copy             -> site_settings
+themes                        -> themes
+projects                      -> projects
+posts                         -> posts
+products                      -> products
+media                         -> media
+active public theme           -> site_settings.active_theme
+product checkout URL          -> products.checkout_url
+admin CRUD                    -> Backpex LiveResources
 ```
 
-Current prototype coverage against phases:
+Current Phoenix coverage against phases:
 
 ```txt
-Phase 0: partial local dev script only, Phoenix not created yet
-Phase 1: not started, only dummy data exists
-Phase 2: dummy public routes available
-Phase 3: dummy old_web_classic available
-Phase 4: dummy frontend theme switching available
-Phase 5: admin mock available, real CRUD not started
-Phase 6: checkout_url behavior available as external link
-Phase 7+: not started
+Phase 0: done - Phoenix project exists and runs locally
+Phase 1: mostly done - core content/settings/theme/media schemas and tests exist
+Phase 2: mostly done - public routes and slug detail pages exist
+Phase 3: mostly done - old_web_classic public UI is ported
+Phase 4: partial - active_theme is persisted; full theme renderer/preview validation is not complete
+Phase 5: partial - admin auth/dashboard and Backpex CRUD exist; admin editor UX, filters, badges, and media picker workflows need work
+Phase 6: partial - checkout_url exists as external link; no Midtrans API/webhook/orders
+Phase 7: partial - media table/admin resource exists; upload/picker/storage adapter workflow not complete
+Phase 8+: not started or not verified - SEO/RSS/sitemap/robots need dedicated implementation
 ```
 
 Next recommended step:
 
 ```txt
-Create Phoenix project and port this prototype into LiveView components while preserving the data contract.
+Finish Phase 5 admin UX on top of Backpex:
+1. keep admin visually separate from old_web_classic public CSS
+2. fix/readability-test Backpex tables/forms in the admin shell
+3. add status filters/badges and safer publish/archive actions
+4. add a Markdown-first post editor or improved Backpex form panels
+5. document/admin-test the route/form behavior that changes
 ```
 
 ## AI Execution Workflow
@@ -91,16 +103,17 @@ New chat continuing a specific unfinished slice:
 ### Skill Selection
 
 ```txt
-Elixir/FP backend implementation     -> pbp-coding-elixir-functionally
-Project setup / context boundary     -> pbp-architecting-phoenix-platforms
-Database, migrations, seed data      -> pbp-modeling-content-data
-Public/admin LiveViews               -> pbp-building-liveview-pages
-Admin CRUD forms                     -> pbp-building-admin-forms
-Themes and old_web_classic UI        -> pbp-theming-public-interfaces
-Draft/publish/slug/tag logic         -> pbp-managing-publishing-workflows
-Images/uploads/media library         -> pbp-handling-media-assets
-Buy Now / checkout_url / Midtrans    -> pbp-integrating-external-checkout
-Verification before finishing        -> pbp-testing-and-qa
+Elixir/FP backend implementation       -> pbp-coding-elixir-functionally
+Project setup / context boundary       -> pbp-architecting-phoenix-platforms
+Database, migrations, seed data        -> pbp-modeling-content-data
+Public/admin LiveViews                 -> pbp-building-liveview-pages
+Admin CRUD with Backpex                -> pbp-building-admin-backpex-resources
+Custom admin forms/workflows           -> pbp-building-admin-forms
+Themes and old_web_classic UI          -> pbp-theming-public-interfaces
+Draft/publish/slug/tag logic           -> pbp-managing-publishing-workflows
+Images/uploads/media library           -> pbp-handling-media-assets
+Buy Now / checkout_url / Midtrans      -> pbp-integrating-external-checkout
+Verification before finishing          -> pbp-testing-and-qa
 ```
 
 ### Build Loop

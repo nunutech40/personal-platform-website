@@ -1,16 +1,102 @@
-<Backpex.HTML.Layout.app_shell
-  fluid={assigns[:fluid?] || true}
-  live_resource={assigns[:live_resource]}
-  class="admin-shell min-h-screen bg-slate-100 text-slate-900"
->
-  <:topbar class="admin-topbar border-slate-200 bg-white">
-    <div class="flex w-full items-center justify-between gap-4">
-      <div class="min-w-0">
-        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-          Personal Brand CMS
-        </p>
-        <div class="truncate text-sm font-medium text-slate-500 sm:text-base">
-          {admin_breadcrumb(assigns)}
+<div class="admin-shell min-h-screen bg-slate-100 text-slate-900" data-theme="light">
+  <input id="admin-drawer" type="checkbox" class="peer hidden" />
+
+  <label
+    for="admin-drawer"
+    class="fixed inset-0 z-30 hidden bg-slate-950/40 peer-checked:block md:!hidden"
+    aria-hidden="true"
+  >
+  </label>
+
+  <aside class="admin-sidebar fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col overflow-y-auto bg-slate-950 px-4 py-6 text-slate-300 transition-transform duration-200 peer-checked:translate-x-0 md:translate-x-0">
+    <.link navigate={~p"/admin"} class="mb-8 block px-3 no-underline">
+      <span class="block text-2xl font-bold tracking-normal text-white">Nunu Admin</span>
+      <span class="mt-1 block text-sm font-medium text-slate-400">Personal Brand CMS</span>
+    </.link>
+
+    <nav aria-label="Admin navigation" class="flex-1">
+      <p class="px-3 pb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+        Content
+      </p>
+      <ul class="space-y-1">
+        <li>
+          <.link navigate={~p"/admin"} class={admin_nav_class(assigns, "/admin")}>
+            <.icon name="hero-squares-2x2" class="size-5" /> Dashboard
+          </.link>
+        </li>
+        <li>
+          <.link
+            navigate={~p"/admin/projects"}
+            class={admin_nav_class(assigns, "/admin/projects")}
+          >
+            <.icon name="hero-briefcase" class="size-5" /> Projects
+          </.link>
+        </li>
+        <li>
+          <.link navigate={~p"/admin/posts"} class={admin_nav_class(assigns, "/admin/posts")}>
+            <.icon name="hero-document-text" class="size-5" /> Posts
+          </.link>
+        </li>
+        <li>
+          <.link
+            navigate={~p"/admin/products"}
+            class={admin_nav_class(assigns, "/admin/products")}
+          >
+            <.icon name="hero-shopping-bag" class="size-5" /> Products
+          </.link>
+        </li>
+        <li>
+          <.link navigate={~p"/admin/media"} class={admin_nav_class(assigns, "/admin/media")}>
+            <.icon name="hero-photo" class="size-5" /> Media
+          </.link>
+        </li>
+      </ul>
+
+      <p class="px-3 pb-2 pt-7 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+        Settings
+      </p>
+      <ul class="space-y-1">
+        <li>
+          <.link
+            navigate={~p"/admin/site-settings"}
+            class={admin_nav_class(assigns, "/admin/site-settings")}
+          >
+            <.icon name="hero-adjustments-horizontal" class="size-5" /> Site Settings
+          </.link>
+        </li>
+        <li>
+          <.link navigate={~p"/admin/themes"} class={admin_nav_class(assigns, "/admin/themes")}>
+            <.icon name="hero-swatch" class="size-5" /> Themes
+          </.link>
+        </li>
+      </ul>
+
+      <p class="px-3 pb-2 pt-7 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+        Commerce
+      </p>
+      <span class="admin-nav-item cursor-not-allowed text-slate-500">
+        <.icon name="hero-receipt-percent" class="size-5" /> Orders (later)
+      </span>
+    </nav>
+  </aside>
+
+  <div class="min-h-screen md:pl-72">
+    <header class="admin-topbar sticky top-0 z-20 flex h-16 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 md:px-8">
+      <div class="flex min-w-0 items-center gap-3">
+        <label
+          for="admin-drawer"
+          class="btn btn-square btn-ghost md:hidden"
+          aria-label="Open admin menu"
+        >
+          <.icon name="hero-bars-3" class="size-6" />
+        </label>
+        <div class="min-w-0">
+          <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            Personal Brand CMS
+          </p>
+          <div class="truncate text-sm font-medium text-slate-500 sm:text-base">
+            {admin_breadcrumb(assigns)}
+          </div>
         </div>
       </div>
 
@@ -28,79 +114,13 @@
           Logout
         </.link>
       </div>
-    </div>
-  </:topbar>
+    </header>
 
-  <:sidebar class="admin-sidebar bg-slate-950 text-slate-300">
-    <li class="px-4 py-5">
-      <.link navigate={~p"/admin"} class="block no-underline">
-        <span class="block text-2xl font-bold tracking-normal text-white">Nunu Admin</span>
-        <span class="mt-1 block text-sm font-medium text-slate-400">Personal Brand CMS</span>
-      </.link>
-    </li>
-
-    <li class="menu-title px-4 pt-4 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-      Content
-    </li>
-    <Backpex.HTML.Layout.sidebar_item
-      current_url={admin_current_url(assigns)}
-      navigate={~p"/admin"}
-    >
-      <.icon name="hero-squares-2x2" class="size-5" /> Dashboard
-    </Backpex.HTML.Layout.sidebar_item>
-    <Backpex.HTML.Layout.sidebar_item
-      current_url={admin_current_url(assigns)}
-      navigate={~p"/admin/projects"}
-    >
-      <.icon name="hero-briefcase" class="size-5" /> Projects
-    </Backpex.HTML.Layout.sidebar_item>
-    <Backpex.HTML.Layout.sidebar_item
-      current_url={admin_current_url(assigns)}
-      navigate={~p"/admin/posts"}
-    >
-      <.icon name="hero-document-text" class="size-5" /> Posts
-    </Backpex.HTML.Layout.sidebar_item>
-    <Backpex.HTML.Layout.sidebar_item
-      current_url={admin_current_url(assigns)}
-      navigate={~p"/admin/products"}
-    >
-      <.icon name="hero-shopping-bag" class="size-5" /> Products
-    </Backpex.HTML.Layout.sidebar_item>
-    <Backpex.HTML.Layout.sidebar_item
-      current_url={admin_current_url(assigns)}
-      navigate={~p"/admin/media"}
-    >
-      <.icon name="hero-photo" class="size-5" /> Media
-    </Backpex.HTML.Layout.sidebar_item>
-
-    <li class="menu-title px-4 pt-6 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-      Settings
-    </li>
-    <Backpex.HTML.Layout.sidebar_item
-      current_url={admin_current_url(assigns)}
-      navigate={~p"/admin/site-settings"}
-    >
-      <.icon name="hero-adjustments-horizontal" class="size-5" /> Site Settings
-    </Backpex.HTML.Layout.sidebar_item>
-    <Backpex.HTML.Layout.sidebar_item
-      current_url={admin_current_url(assigns)}
-      navigate={~p"/admin/themes"}
-    >
-      <.icon name="hero-swatch" class="size-5" /> Themes
-    </Backpex.HTML.Layout.sidebar_item>
-
-    <li class="menu-title px-4 pt-6 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-      Commerce
-    </li>
-    <li>
-      <span class="cursor-not-allowed gap-3 px-4 text-slate-500">
-        <.icon name="hero-receipt-percent" class="size-5" /> Orders (later)
-      </span>
-    </li>
-  </:sidebar>
-
-  <Backpex.HTML.Layout.flash_messages flash={assigns[:flash] || %{}} />
-  <div class="admin-page">
-    {render_slot(@inner_block)}
+    <main class="px-4 py-6 sm:px-6 md:px-8">
+      <Backpex.HTML.Layout.flash_messages flash={assigns[:flash] || %{}} />
+      <div class="admin-page">
+        {render_slot(@inner_block)}
+      </div>
+    </main>
   </div>
-</Backpex.HTML.Layout.app_shell>
+</div>

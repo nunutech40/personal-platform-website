@@ -167,6 +167,15 @@ defmodule PersonalBrandWeb.Layouts do
     assigns[:current_url] || admin_resource_path(assigns[:live_resource]) || "/admin"
   end
 
+  def admin_nav_class(assigns, path) do
+    active? = admin_active_path?(admin_current_url(assigns), path)
+
+    [
+      "admin-nav-item",
+      active? && "admin-nav-item-active"
+    ]
+  end
+
   defp admin_breadcrumb_parts(nil), do: ["Dashboard"]
   defp admin_breadcrumb_parts("/admin"), do: ["Dashboard"]
   defp admin_breadcrumb_parts("/admin/"), do: ["Dashboard"]
@@ -196,5 +205,19 @@ defmodule PersonalBrandWeb.Layouts do
     name
     |> String.downcase()
     |> String.replace(" ", "-")
+  end
+
+  defp admin_active_path?(current_url, "/admin") do
+    URI.parse(current_url).path in ["/admin", "/admin/"]
+  end
+
+  defp admin_active_path?(current_url, path) do
+    current_url
+    |> URI.parse()
+    |> Map.get(:path)
+    |> case do
+      nil -> false
+      current_path -> current_path == path or String.starts_with?(current_path, path <> "/")
+    end
   end
 end
