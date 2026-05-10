@@ -2,7 +2,7 @@ defmodule PersonalBrandWeb.Admin.AuthController do
   use PersonalBrandWeb, :controller
 
   def new(conn, _params) do
-    render(conn, :new, layout: {PersonalBrandWeb.Layouts, :root})
+    render(conn, :new)
   end
 
   def create(conn, %{"username" => username, "password" => password}) do
@@ -16,10 +16,7 @@ defmodule PersonalBrandWeb.Admin.AuthController do
         |> redirect(to: "/admin")
 
       {:error, :invalid_credentials} ->
-        render(conn, :new,
-          layout: {PersonalBrandWeb.Layouts, :root},
-          error: "Invalid username or password"
-        )
+        render(conn, :new, error: "Invalid username or password")
     end
   end
 

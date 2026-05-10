@@ -43,13 +43,10 @@ defmodule PersonalBrand.Content.ProjectTest do
       |> Project.changeset(@valid_attrs)
       |> Repo.insert!()
 
-      changeset =
-        %Project{}
-        |> Project.changeset(%{@valid_attrs | title: "Another Project"})
-        |> Repo.insert()
-
-      assert {:error, changeset} = changeset
-      assert {:error, _} = Repo.insert(changeset)
+      assert {:error, _changeset} =
+               %Project{}
+               |> Project.changeset(%{@valid_attrs | title: "Another Project"})
+               |> Repo.insert()
     end
 
     test "sets default status to draft" do

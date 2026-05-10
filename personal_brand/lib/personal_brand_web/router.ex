@@ -35,6 +35,12 @@ defmodule PersonalBrandWeb.Router do
     live "/now", PublicLive, :now_page
   end
 
+  # Backpex routes (for cookies, etc.)
+  scope "/", PersonalBrandWeb do
+    pipe_through :browser
+    backpex_routes()
+  end
+
   # ── Admin Routes (protected) ─────────────────────────────
   scope "/admin", PersonalBrandWeb.Admin do
     pipe_through [:browser, :require_admin]

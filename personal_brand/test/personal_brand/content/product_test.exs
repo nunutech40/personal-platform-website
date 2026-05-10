@@ -43,12 +43,10 @@ defmodule PersonalBrand.Content.ProductTest do
       |> Product.changeset(@valid_attrs)
       |> Repo.insert!()
 
-      changeset =
-        %Product{}
-        |> Product.changeset(%{@valid_attrs | title: "Another Product"})
-        |> Repo.insert()
-
-      assert {:error, changeset} = changeset
+      assert {:error, _changeset} =
+               %Product{}
+               |> Product.changeset(%{@valid_attrs | title: "Another Product"})
+               |> Repo.insert()
     end
 
     test "sets default product_type to digital" do

@@ -35,12 +35,10 @@ defmodule PersonalBrand.Content.ThemeTest do
       |> Theme.changeset(@valid_attrs)
       |> Repo.insert!()
 
-      changeset =
-        %Theme{}
-        |> Theme.changeset(%{@valid_attrs | name: "Another Theme"})
-        |> Repo.insert()
-
-      assert {:error, changeset} = changeset
+      assert {:error, _changeset} =
+               %Theme{}
+               |> Theme.changeset(%{@valid_attrs | name: "Another Theme"})
+               |> Repo.insert()
     end
 
     test "sets default is_active to false" do

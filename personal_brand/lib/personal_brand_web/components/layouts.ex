@@ -153,4 +153,48 @@ defmodule PersonalBrandWeb.Layouts do
     </div>
     """
   end
+
+  def admin_breadcrumb(assigns) do
+    assigns
+    |> admin_current_url()
+    |> URI.parse()
+    |> Map.get(:path)
+    |> admin_breadcrumb_parts()
+    |> Enum.join(" / ")
+  end
+
+  def admin_current_url(assigns) do
+    assigns[:current_url] || admin_resource_path(assigns[:live_resource]) || "/admin"
+  end
+
+  defp admin_breadcrumb_parts(nil), do: ["Dashboard"]
+  defp admin_breadcrumb_parts("/admin"), do: ["Dashboard"]
+  defp admin_breadcrumb_parts("/admin/"), do: ["Dashboard"]
+
+  defp admin_breadcrumb_parts(path) do
+    path
+    |> String.trim_leading("/admin")
+    |> String.trim("/")
+    |> String.split("/", trim: true)
+    |> Enum.map(&format_breadcrumb_part/1)
+    |> then(&["Content" | &1])
+  end
+
+  defp format_breadcrumb_part(part) do
+    part
+    |> String.replace("-", " ")
+    |> String.capitalize()
+  end
+
+  defp admin_resource_path(nil), do: nil
+
+  defp admin_resource_path(live_resource) do
+    "/admin/" <> resource_slug(live_resource.plural_name())
+  end
+
+  defp resource_slug(name) do
+    name
+    |> String.downcase()
+    |> String.replace(" ", "-")
+  end
 end

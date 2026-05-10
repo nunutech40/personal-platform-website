@@ -41,12 +41,10 @@ defmodule PersonalBrand.Content.PostTest do
       |> Post.changeset(@valid_attrs)
       |> Repo.insert!()
 
-      changeset =
-        %Post{}
-        |> Post.changeset(%{@valid_attrs | title: "Another Post"})
-        |> Repo.insert()
-
-      assert {:error, changeset} = changeset
+      assert {:error, _changeset} =
+               %Post{}
+               |> Post.changeset(%{@valid_attrs | title: "Another Post"})
+               |> Repo.insert()
     end
 
     test "sets default status to draft" do
