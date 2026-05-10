@@ -93,6 +93,9 @@ defmodule PersonalBrandWeb.PublicLive do
         :now_page ->
           assign(socket, page: :now_page, page_title: "Now")
 
+        :contact_page ->
+          assign(socket, page: :contact_page, page_title: "Contact")
+
         _ ->
           assign(socket, page: :not_found, page_title: "Not Found")
       end
@@ -123,6 +126,8 @@ defmodule PersonalBrandWeb.PublicLive do
         <.about_page profile_bio={@profile_bio} />
       <% :now_page -> %>
         <.now_page />
+      <% :contact_page -> %>
+        <.contact_page profile_email={@profile_email} social_links={@social_links} />
       <% _ -> %>
         <.not_found />
     <% end %>
@@ -150,6 +155,7 @@ defmodule PersonalBrandWeb.PublicLive do
         | <a href="/products">See products</a>
         | <a href="/about">About Nunu</a>
         | <a href="/now">Now</a>
+        | <a href="/contact">Contact</a>
       </p>
     </section>
     <hr />
@@ -377,6 +383,37 @@ defmodule PersonalBrandWeb.PublicLive do
     <p>Elixir, Phoenix LiveView, commerce flows, and better writing habits.</p>
     <h2>Shipping</h2>
     <p>Personal brand platform MVP with product catalog and theme switching.</p>
+    """
+  end
+
+  # ── Contact Page ─────────────────────────────────────────
+
+  def contact_page(assigns) do
+    ~H"""
+    <h1>Contact</h1>
+    <p class="lead">Let's connect. I'm always open to interesting conversations and collaborations.</p>
+    <hr />
+    <section>
+      <h2>Email</h2>
+      <p>
+        <a href={"mailto:#{@profile_email}"}>{@profile_email}</a>
+      </p>
+    </section>
+    <section>
+      <h2>Social</h2>
+      <ul>
+        <li :for={{label, url} <- @social_links}>
+          <a href={url}>{label}</a>
+        </li>
+      </ul>
+    </section>
+    <section>
+      <h2>Collaboration</h2>
+      <p>
+        I'm interested in product collaborations, speaking opportunities, and building useful things together.
+        Feel free to reach out via email or social media.
+      </p>
+    </section>
     """
   end
 

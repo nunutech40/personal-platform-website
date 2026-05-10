@@ -33,6 +33,7 @@ defmodule PersonalBrandWeb.Router do
     live "/products/:slug", PublicLive, :product_detail
     live "/about", PublicLive, :about_page
     live "/now", PublicLive, :now_page
+    live "/contact", PublicLive, :contact_page
   end
 
   # Backpex routes (for cookies, etc.)

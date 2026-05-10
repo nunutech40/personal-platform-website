@@ -9,6 +9,7 @@ defmodule PersonalBrand.Content.Media do
     field :content_type, :string
     field :size, :integer
     field :url, :string
+    field :file_path, :string
     field :alt_text, :string
     field :attachable_type, :string
     field :attachable_id, :binary_id
@@ -23,6 +24,7 @@ defmodule PersonalBrand.Content.Media do
       :content_type,
       :size,
       :url,
+      :file_path,
       :alt_text,
       :attachable_type,
       :attachable_id
