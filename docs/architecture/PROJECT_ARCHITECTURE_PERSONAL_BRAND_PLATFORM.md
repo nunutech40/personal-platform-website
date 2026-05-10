@@ -114,6 +114,47 @@ Phoenix owns the product logic.
 
 ---
 
+## 1.1 Elixir / Functional Programming Philosophy
+
+The backend should be written in an Elixir-first, functional style.
+
+Core rules:
+
+```txt
+Data in, data out.
+Business rules in contexts.
+Validation in changesets.
+Side effects at the edges.
+Rendering receives assigns; it does not fetch data.
+```
+
+Architecture boundaries:
+
+```txt
+LiveView      -> orchestrates UI state and calls context APIs
+Context       -> owns business rules and persistence orchestration
+Schema        -> defines fields, relations, and changesets
+Component     -> renders assigns only
+Theme module  -> renders shared data contract only
+Integration   -> wraps Supabase Storage, Midtrans, and other external APIs
+```
+
+Implementation preferences:
+
+```txt
+- small pure functions for transformations
+- pipelines for readable data flow
+- pattern matching over nested conditionals
+- {:ok, value} / {:error, reason} for fallible operations
+- explicit context APIs instead of direct Repo calls from LiveViews
+- Ecto against Supabase Postgres
+- server-side wrappers for Supabase Storage and Midtrans
+```
+
+This project should not become a JavaScript-style frontend app with backend calls scattered through UI code. Phoenix contexts are the boundary; LiveView is the interface layer.
+
+---
+
 ## 2. High-Level System Diagram
 
 ```txt

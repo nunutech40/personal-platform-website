@@ -57,6 +57,209 @@ Next recommended step:
 Create Phoenix project and port this prototype into LiveView components while preserving the data contract.
 ```
 
+## AI Execution Workflow
+
+Bagian ini adalah workflow untuk AI coding agent yang mengerjakan project dari fresh chat, new chat, atau meneruskan pekerjaan agent lain.
+
+### Context Loading Rule
+
+Agent tidak harus selalu membaca semua dokumen. Pakai aturan ini:
+
+```txt
+Fresh chat / no context:
+  1. Read README.md
+  2. Read Current Implementation Snapshot in this file
+  3. Read docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md
+  4. Read the target phase/slice in this file
+  5. Read the relevant skill from personal_brand_platform_agent_kit/.agents/skills
+
+Continuing same chat with known context:
+  1. Do not reread all docs
+  2. Check git status
+  3. Read only files/sections touched by the task
+  4. Read the relevant skill if the work type changed
+
+New chat continuing a specific unfinished slice:
+  1. Read README.md
+  2. Read this AI Execution Workflow
+  3. Read the specific Work Packet if provided by previous agent
+  4. Read only the phase/slice section being continued
+  5. Inspect current files and git status before editing
+```
+
+### Skill Selection
+
+```txt
+Elixir/FP backend implementation     -> pbp-coding-elixir-functionally
+Project setup / context boundary     -> pbp-architecting-phoenix-platforms
+Database, migrations, seed data      -> pbp-modeling-content-data
+Public/admin LiveViews               -> pbp-building-liveview-pages
+Admin CRUD forms                     -> pbp-building-admin-forms
+Themes and old_web_classic UI        -> pbp-theming-public-interfaces
+Draft/publish/slug/tag logic         -> pbp-managing-publishing-workflows
+Images/uploads/media library         -> pbp-handling-media-assets
+Buy Now / checkout_url / Midtrans    -> pbp-integrating-external-checkout
+Verification before finishing        -> pbp-testing-and-qa
+```
+
+### Build Loop
+
+Setiap AI task harus mengikuti loop ini:
+
+```txt
+1. Identify phase and slice
+2. Load only required context
+3. Inspect current implementation
+4. Make the smallest coherent change
+5. Run relevant tests/checks
+6. Update docs only if behavior/architecture/build order changed
+7. Leave a handoff note if the slice is incomplete
+```
+
+### Work Packet Format
+
+Gunakan format ini saat memberikan task ke AI lain atau saat memecah pekerjaan untuk new chat:
+
+```txt
+Work Packet
+Phase:
+Slice:
+Goal:
+Read first:
+Relevant skill:
+Files likely touched:
+Do not touch:
+Acceptance checks:
+Handoff note required:
+```
+
+Example:
+
+```txt
+Work Packet
+Phase: Phase 2 - Public Website Basic
+Slice: Work list and work detail
+Goal: Port /work and /work/:slug from static prototype to Phoenix LiveView.
+Read first: README.md, this workflow, Phase 2, Public Pages section, docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md route architecture.
+Relevant skill: pbp-building-liveview-pages, pbp-theming-public-interfaces
+Files likely touched: router, public LiveViews, portfolio context, old_web components, tests
+Do not touch: future commerce tables, unrelated admin CRUD
+Acceptance checks: /work lists published projects; /work/:slug 404s missing/draft; nav remains visible
+Handoff note required: yes if not all tests pass
+```
+
+### Work Breakdown for Multi-Agent / New Chat Execution
+
+Pecah implementasi menjadi slice kecil berikut. Satu agent sebaiknya mengambil satu slice saja kecuali user meminta lebih.
+
+```txt
+Slice 0.1 - Repo and Phoenix setup
+  Phase: 0
+  Skill: pbp-coding-elixir-functionally, pbp-architecting-phoenix-platforms
+  Output: Phoenix app runs locally, static prototype preserved or porting plan documented
+
+Slice 1.1 - Core identity/settings/theme schema
+  Phase: 1
+  Skill: pbp-coding-elixir-functionally, pbp-modeling-content-data
+  Output: profiles, site_settings, themes migrations/schemas/seeds
+
+Slice 1.2 - Content/catalog/media/tag schema
+  Phase: 1
+  Skill: pbp-coding-elixir-functionally, pbp-modeling-content-data
+  Output: projects, posts, products, media, tags, join tables
+
+Slice 2.1 - Public layout and homepage
+  Phase: 2 and 3
+  Skill: pbp-building-liveview-pages, pbp-theming-public-interfaces
+  Output: / renders old_web_classic homepage from seed/context data
+
+Slice 2.2 - Work pages
+  Phase: 2
+  Skill: pbp-building-liveview-pages, pbp-managing-publishing-workflows
+  Output: /work and /work/:slug
+
+Slice 2.3 - Writing pages
+  Phase: 2
+  Skill: pbp-building-liveview-pages, pbp-managing-publishing-workflows
+  Output: /writing and /writing/:slug
+
+Slice 2.4 - Product pages and external checkout
+  Phase: 2 and 6
+  Skill: pbp-building-liveview-pages, pbp-integrating-external-checkout
+  Output: /products and /products/:slug with Buy Now using checkout_url
+
+Slice 2.5 - About, now, contact
+  Phase: 2
+  Skill: pbp-building-liveview-pages, pbp-theming-public-interfaces
+  Output: /about, /now, /contact
+
+Slice 4.1 - Theme resolver
+  Phase: 4
+  Skill: pbp-theming-public-interfaces
+  Output: active_theme selects theme module with fallback
+
+Slice 5.1 - Admin auth and dashboard
+  Phase: 5
+  Skill: pbp-architecting-phoenix-platforms, pbp-building-admin-forms
+  Output: protected /admin with counts and quick actions
+
+Slice 5.2 - Admin projects
+  Phase: 5
+  Skill: pbp-building-admin-forms, pbp-managing-publishing-workflows
+  Output: project index/new/edit/archive/publish
+
+Slice 5.3 - Admin posts
+  Phase: 5
+  Skill: pbp-building-admin-forms, pbp-managing-publishing-workflows
+  Output: post index/new/edit/archive/publish
+
+Slice 5.4 - Admin products
+  Phase: 5 and 6
+  Skill: pbp-building-admin-forms, pbp-integrating-external-checkout
+  Output: product CRUD including checkout_url and status
+
+Slice 5.5 - Admin site settings and theme settings
+  Phase: 5
+  Skill: pbp-building-admin-forms, pbp-theming-public-interfaces
+  Output: edit homepage copy, featured IDs, active_theme
+
+Slice 7.1 - Media upload and picker
+  Phase: 7
+  Skill: pbp-handling-media-assets
+  Output: Supabase upload, media library, alt text, cover selection
+
+Slice 8.1 - SEO, RSS, sitemap
+  Phase: 8
+  Skill: pbp-testing-and-qa
+  Output: meta tags, OG data, sitemap, robots, writing RSS
+```
+
+### Handoff Note Format
+
+Jika agent berhenti sebelum semua selesai, tulis handoff note di final response atau di docs bila user meminta:
+
+```txt
+Handoff
+Completed:
+Changed files:
+Checks run:
+Known issues:
+Next recommended slice:
+Context to read next:
+```
+
+### Definition of Done for Every Slice
+
+```txt
+- slice is scoped and does not include unrelated refactors
+- data remains separate from theme
+- public/admin behavior is documented if changed
+- relevant tests or manual QA are run
+- no draft content leaks publicly
+- product checkout remains external-link only until future commerce phase
+- git status is clean after commit when user asks to commit
+```
+
 ## Purpose
 
 Dokumen ini adalah execution plan untuk membangun **Personal Brand Platform** milik Nunu Nugraha.

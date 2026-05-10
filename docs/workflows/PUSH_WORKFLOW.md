@@ -1,0 +1,156 @@
+# Push Workflow
+
+Gunakan workflow ini setiap kali mau commit dan push perubahan ke GitHub.
+
+## Quick Command
+
+Kalau perubahan sudah dicek dan siap:
+
+```bash
+git status --short
+git add .
+git commit -m "<short imperative summary>"
+git push
+git status --short
+```
+
+Contoh commit message:
+
+```bash
+git commit -m "Organize documentation and refine agent skills"
+```
+
+## Full Workflow
+
+### 1. Sync branch
+
+```bash
+git checkout main
+git pull --ff-only
+```
+
+Kalau `git pull --ff-only` gagal, jangan paksa merge/reset. Cek dulu konflik atau remote changes.
+
+### 2. Review changes
+
+```bash
+git status --short
+git diff --stat
+```
+
+Kalau ada file pindahan, pastikan Git menangkapnya sebagai delete + add atau rename yang memang disengaja.
+
+Untuk perubahan docs/skills, cek struktur:
+
+```bash
+find docs -maxdepth 3 -type f | sort
+find personal_brand_platform_agent_kit -maxdepth 4 -type f | sort
+```
+
+### 3. Run lightweight checks
+
+Untuk prototype static saat ini:
+
+```bash
+node --check src/app.js
+node --check server.mjs
+```
+
+Kalau nanti sudah Phoenix:
+
+```bash
+mix format --check-formatted
+mix test
+```
+
+### 4. Stage
+
+Untuk semua perubahan yang memang mau dikirim:
+
+```bash
+git add .
+```
+
+Kalau mau lebih hati-hati:
+
+```bash
+git add README.md docs personal_brand_platform_agent_kit
+```
+
+### 5. Verify staged changes
+
+```bash
+git status --short
+git diff --cached --stat
+```
+
+Pastikan tidak ada file rahasia seperti:
+
+```txt
+.env
+secret keys
+private tokens
+Midtrans server key
+Supabase service role key
+```
+
+### 6. Commit
+
+Gunakan imperative summary, singkat dan jelas:
+
+```bash
+git commit -m "<verb> <object>"
+```
+
+Contoh:
+
+```bash
+git commit -m "Refine agent build workflow"
+git commit -m "Organize project documentation"
+git commit -m "Add Elixir functional coding skill"
+```
+
+### 7. Push
+
+```bash
+git push
+```
+
+Kalau branch belum punya upstream:
+
+```bash
+git push -u origin main
+```
+
+### 8. Final verification
+
+```bash
+git status --short
+git log --oneline --decorate -1
+git remote -v
+```
+
+Expected:
+
+```txt
+git status --short
+# no output
+```
+
+## Handoff Note
+
+Setelah push, tulis ringkasan:
+
+```txt
+Pushed:
+- commit: <hash> <message>
+- branch: main
+- remote: origin
+
+Checks:
+- <commands run>
+
+Notes:
+- <anything the next agent/user should know>
+```
+

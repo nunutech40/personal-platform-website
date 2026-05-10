@@ -4,11 +4,11 @@ Personal Brand Platform untuk Nunu Nugraha: portfolio, writing/blog, product cat
 
 Project direction utama tetap mengikuti dokumen:
 
-- [BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md](BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md)
-- [PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md](PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md)
-- `PRD_Personal_Brand_Platform_COMMERCE_READY.docx`
-- `TRD_Personal_Brand_Platform_COMMERCE_READY.docx`
-- `Design_Document_Old_Web_Personal_Brand_Platform.docx`
+- [docs/planning/BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md](docs/planning/BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md)
+- [docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md](docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md)
+- [docs/product/PRD_Personal_Brand_Platform_COMMERCE_READY.docx](docs/product/PRD_Personal_Brand_Platform_COMMERCE_READY.docx)
+- [docs/technical/TRD_Personal_Brand_Platform_COMMERCE_READY.docx](docs/technical/TRD_Personal_Brand_Platform_COMMERCE_READY.docx)
+- [docs/design/Design_Document_Old_Web_Personal_Brand_Platform.docx](docs/design/Design_Document_Old_Web_Personal_Brand_Platform.docx)
 
 ## Current Status
 
@@ -61,6 +61,8 @@ http://127.0.0.1:5173
 - `src/app.js` — dummy data, simple router, renderers, admin mock, theme switching
 - `server.mjs` — tiny local static server with SPA fallback
 - `package.json` — local run script
+- `docs/` — product, technical, architecture, planning, and design documentation
+- `personal_brand_platform_agent_kit/` — reusable AI agent skills and short handoff docs
 
 ## Data Contract
 
@@ -116,24 +118,39 @@ Yang belum dibuat:
 - SEO/RSS/sitemap
 - proper Midtrans integration
 
+## Agent Kit
+
+Agent skills ada di:
+
+```txt
+personal_brand_platform_agent_kit/.agents/skills
+```
+
+Skill generik yang direkomendasikan:
+
+- `pbp-architecting-phoenix-platforms`
+- `pbp-coding-elixir-functionally`
+- `pbp-modeling-content-data`
+- `pbp-building-liveview-pages`
+- `pbp-building-admin-forms`
+- `pbp-theming-public-interfaces`
+- `pbp-managing-publishing-workflows`
+- `pbp-handling-media-assets`
+- `pbp-integrating-external-checkout`
+- `pbp-testing-and-qa`
+
+Root documentation tetap menjadi source of truth. Agent kit hanya menyimpan workflow/skills yang reusable, bukan salinan building plan atau architecture.
+
+## Documentation Structure
+
+- `docs/product/` — PRD and product requirement docs
+- `docs/technical/` — TRD and implementation requirement docs
+- `docs/architecture/` — target system architecture and Elixir/Phoenix boundaries
+- `docs/planning/` — build plan, AI workflow, work packets, and phase breakdown
+- `docs/design/` — old-web design direction and UI reference screenshots
+
 ## Git Workflow
 
-Gunakan workflow commit yang kecil dan jelas:
+Workflow commit/push terpisah ada di:
 
-```bash
-git status --short
-git add README.md BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md index.html styles.css src/app.js server.mjs package.json .gitignore
-git commit -m "Document prototype and add runnable dummy UI"
-git push
-```
-
-Untuk perubahan berikutnya:
-
-```bash
-git checkout main
-git pull --ff-only
-git status --short
-git add <changed-files>
-git commit -m "<short imperative summary>"
-git push
-```
+- [docs/workflows/PUSH_WORKFLOW.md](docs/workflows/PUSH_WORKFLOW.md)
