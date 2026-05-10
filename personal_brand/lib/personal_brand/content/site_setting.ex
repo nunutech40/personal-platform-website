@@ -45,5 +45,23 @@ defmodule PersonalBrand.Content.SiteSetting do
       :featured_project_ids,
       :featured_product_ids
     ])
+    |> validate_required([
+      :site_name,
+      :headline,
+      :primary_cta_text,
+      :primary_cta_url,
+      :active_theme,
+      :profile_name,
+      :profile_email
+    ])
+    |> validate_length(:site_name, min: 1, max: 100)
+    |> validate_length(:headline, max: 300)
+    |> validate_length(:subheadline, max: 500)
+    |> validate_length(:profile_name, min: 1, max: 100)
+    |> validate_length(:profile_title, max: 200)
+    |> validate_length(:profile_location, max: 200)
+    |> validate_format(:profile_email, ~r/^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "must be a valid email address")
+    |> validate_format(:primary_cta_url, ~r/^\//, message: "must start with /")
+    |> validate_format(:secondary_cta_url, ~r/^\//, message: "must start with /")
   end
 end

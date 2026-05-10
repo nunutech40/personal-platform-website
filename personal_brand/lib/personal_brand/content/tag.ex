@@ -15,6 +15,9 @@ defmodule PersonalBrand.Content.Tag do
     tag
     |> cast(attrs, [:name, :slug])
     |> validate_required([:name, :slug])
+    |> validate_length(:name, min: 1, max: 100)
+    |> validate_length(:slug, min: 1, max: 100)
+    |> validate_format(:slug, ~r/^[a-z0-9-]+$/, message: "must be lowercase alphanumeric with hyphens only")
     |> unique_constraint(:name)
     |> unique_constraint(:slug)
   end

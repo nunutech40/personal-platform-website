@@ -47,7 +47,18 @@ defmodule PersonalBrand.Content.Product do
       :faq,
       :cover_image_id
     ])
-    |> validate_required([:title, :slug])
+    |> validate_required([:title, :slug, :product_type, :status, :price, :currency])
+    |> validate_length(:title, min: 2, max: 200)
+    |> validate_length(:slug, min: 2, max: 200)
+    |> validate_length(:summary, max: 500)
+    |> validate_inclusion(:status, ["active", "draft", "archived", "coming_soon"])
+    |> validate_inclusion(:product_type, ["digital", "physical", "service"])
+    |> validate_inclusion(:stock_status, ["in_stock", "out_of_stock", "pre_order"])
+    |> validate_inclusion(:delivery_type, ["digital_download", "email_delivery", "physical_delivery"])
+    |> validate_format(:slug, ~r/^[a-z0-9-]+$/, message: "must be lowercase alphanumeric with hyphens only")
+    |> validate_format(:checkout_url, ~r/^https?:\/\//, message: "must start with http:// or https://")
+    |> validate_number(:price, greater_than_or_equal_to: 0)
+    |> validate_length(:currency, is: 3, message: "must be a 3-letter currency code (e.g. USD)")
     |> unique_constraint(:slug)
   end
 end

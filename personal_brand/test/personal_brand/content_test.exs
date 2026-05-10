@@ -30,9 +30,9 @@ defmodule PersonalBrand.ContentTest do
     end
 
     test "list_projects/0 returns all projects ordered by year desc" do
-      p1 = project_fixture(%{slug: "project-a", year: "2024", title: "A"})
-      p2 = project_fixture(%{slug: "project-b", year: "2026", title: "B"})
-      p3 = project_fixture(%{slug: "project-c", year: "2025", title: "C"})
+      p1 = project_fixture(%{slug: "project-a", year: "2024", title: "Alpha"})
+      p2 = project_fixture(%{slug: "project-b", year: "2026", title: "Beta"})
+      p3 = project_fixture(%{slug: "project-c", year: "2025", title: "Gamma"})
 
       projects = Content.list_projects()
       assert Enum.map(projects, & &1.id) == [p2.id, p3.id, p1.id]
@@ -153,8 +153,10 @@ defmodule PersonalBrand.ContentTest do
       title: "Test Product",
       slug: "test-product",
       summary: "A test product",
+      product_type: "digital",
       price: Decimal.new("29.00"),
-      currency: "USD"
+      currency: "USD",
+      status: "active"
     }
 
     def product_fixture(attrs \\ %{}) do
@@ -239,8 +241,8 @@ defmodule PersonalBrand.ContentTest do
     end
 
     test "list_themes/0 returns all themes ordered by name asc" do
-      t1 = theme_fixture(%{key: "theme-b", name: "Beta"})
-      t2 = theme_fixture(%{key: "theme-a", name: "Alpha"})
+      t1 = theme_fixture(%{key: "theme_b", name: "Beta"})
+      t2 = theme_fixture(%{key: "theme_a", name: "Alpha"})
 
       themes = Content.list_themes()
       assert Enum.map(themes, & &1.id) == [t2.id, t1.id]

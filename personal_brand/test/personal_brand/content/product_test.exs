@@ -84,10 +84,10 @@ defmodule PersonalBrand.Content.ProductTest do
     end
 
     test "accepts preorder stock status" do
-      attrs = %{@valid_attrs | stock_status: "preorder"}
+      attrs = %{@valid_attrs | stock_status: "pre_order"}
       changeset = Product.changeset(%Product{}, attrs)
       assert changeset.valid?
-      assert get_field(changeset, :stock_status) == "preorder"
+      assert get_field(changeset, :stock_status) == "pre_order"
     end
 
     test "accepts decimal price" do

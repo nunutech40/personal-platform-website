@@ -47,7 +47,15 @@ defmodule PersonalBrand.Content.Project do
       :github_url,
       :cover_image_id
     ])
-    |> validate_required([:title, :slug])
+    |> validate_required([:title, :slug, :status, :year])
+    |> validate_length(:title, min: 2, max: 200)
+    |> validate_length(:slug, min: 2, max: 200)
+    |> validate_length(:summary, max: 500)
+    |> validate_length(:role, max: 100)
+    |> validate_inclusion(:status, ["draft", "published", "archived"])
+    |> validate_format(:slug, ~r/^[a-z0-9-]+$/, message: "must be lowercase alphanumeric with hyphens only")
+    |> validate_format(:demo_url, ~r/^https?:\/\//, message: "must start with http:// or https://")
+    |> validate_format(:github_url, ~r/^https?:\/\//, message: "must start with http:// or https://")
     |> unique_constraint(:slug)
   end
 end

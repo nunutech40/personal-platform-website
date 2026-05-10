@@ -7,7 +7,7 @@ defmodule PersonalBrand.Content.MediaTest do
     filename: "photo.jpg",
     content_type: "image/jpeg",
     size: 1024,
-    url: "/uploads/photo.jpg",
+    url: "https://example.com/uploads/photo.jpg",
     alt_text: "A photo"
   }
 

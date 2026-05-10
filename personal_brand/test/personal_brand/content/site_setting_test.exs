@@ -25,9 +25,10 @@ defmodule PersonalBrand.Content.SiteSettingTest do
       assert changeset.valid?
     end
 
-    test "accepts minimal attrs" do
+    test "rejects missing required fields" do
       changeset = SiteSetting.changeset(%SiteSetting{}, %{site_name: "My Site"})
-      assert changeset.valid?
+      refute changeset.valid?
+      assert errors_on(changeset)[:headline] == ["can't be blank"]
     end
 
     test "sets default site_name" do
@@ -49,6 +50,12 @@ defmodule PersonalBrand.Content.SiteSettingTest do
     test "accepts social_links as map" do
       attrs = %{
         site_name: "My Site",
+        headline: "Welcome",
+        primary_cta_text: "Get Started",
+        primary_cta_url: "/start",
+        active_theme: "old_web_classic",
+        profile_name: "John Doe",
+        profile_email: "john@example.com",
         social_links: %{"GitHub" => "https://github.com/john", "X" => "https://x.com/john"}
       }
 
@@ -67,6 +74,12 @@ defmodule PersonalBrand.Content.SiteSettingTest do
 
       attrs = %{
         site_name: "My Site",
+        headline: "Welcome",
+        primary_cta_text: "Get Started",
+        primary_cta_url: "/start",
+        active_theme: "old_web_classic",
+        profile_name: "John Doe",
+        profile_email: "john@example.com",
         featured_project_ids: [id1, id2],
         featured_product_ids: [id2]
       }

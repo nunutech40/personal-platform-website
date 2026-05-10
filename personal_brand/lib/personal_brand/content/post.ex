@@ -49,7 +49,16 @@ defmodule PersonalBrand.Content.Post do
       :cover_image_id,
       :og_image_id
     ])
-    |> validate_required([:title, :slug])
+    |> validate_required([:title, :slug, :status])
+    |> validate_length(:title, min: 2, max: 300)
+    |> validate_length(:slug, min: 2, max: 300)
+    |> validate_length(:excerpt, max: 500)
+    |> validate_length(:seo_title, max: 70)
+    |> validate_length(:seo_description, max: 160)
+    |> validate_inclusion(:status, ["draft", "published", "archived"])
+    |> validate_inclusion(:editor_type, ["markdown", "rich_text"])
+    |> validate_format(:slug, ~r/^[a-z0-9-]+$/, message: "must be lowercase alphanumeric with hyphens only")
+    |> validate_number(:reading_time, greater_than_or_equal_to: 1, less_than_or_equal_to: 120)
     |> unique_constraint(:slug)
   end
 end
