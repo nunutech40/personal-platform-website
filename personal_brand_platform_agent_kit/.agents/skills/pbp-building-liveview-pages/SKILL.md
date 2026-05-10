@@ -11,6 +11,8 @@ LiveViews load data through contexts, assign a small page contract, and render t
 
 Use `pbp-coding-elixir-functionally` with this skill when adding event handlers, context calls, or state transformations.
 
+Use `docs/standards/CODING_AND_TESTING_STANDARDS.md` for minimum LiveView route/detail tests.
+
 ## When To Use
 
 Use this when:

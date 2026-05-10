@@ -39,6 +39,39 @@ Lalu buka:
 http://127.0.0.1:5173
 ```
 
+Atau pakai helper script:
+
+```bash
+npm run local:start
+npm run local:status
+npm run local:stop
+```
+
+Kalau sedang berada di folder `scripts`, bisa langsung:
+
+```bash
+./start-local.sh
+./status-local.sh
+./stop-local.sh
+```
+
+Atau dari root project:
+
+```bash
+./scripts/start-local.sh
+./scripts/status-local.sh
+./scripts/stop-local.sh
+```
+
+Kalau dijalankan dari terminal lokal biasa, `local:start` akan berjalan di background. Di beberapa sandbox/agent runner, background process bisa otomatis dimatikan oleh environment; gunakan terminal lokal untuk cek visual di browser.
+
+Script ini menyimpan PID dan log di:
+
+```txt
+tmp/local-server.pid
+tmp/local-server.log
+```
+
 ## Current Prototype Routes
 
 - `/` homepage dengan active theme
@@ -147,6 +180,7 @@ Root documentation tetap menjadi source of truth. Agent kit hanya menyimpan work
 - `docs/technical/` — TRD and implementation requirement docs
 - `docs/architecture/` — target system architecture and Elixir/Phoenix boundaries
 - `docs/planning/` — build plan, AI workflow, work packets, and phase breakdown
+- `docs/standards/` — coding and testing standards for Elixir/Phoenix/Supabase
 - `docs/design/` — old-web design direction and UI reference screenshots
 
 ## Git Workflow

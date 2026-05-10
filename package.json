@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node server.mjs",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "local:start": "bash scripts/start-local.sh",
+    "local:stop": "bash scripts/stop-local.sh",
+    "local:status": "bash scripts/status-local.sh"
   }
 }

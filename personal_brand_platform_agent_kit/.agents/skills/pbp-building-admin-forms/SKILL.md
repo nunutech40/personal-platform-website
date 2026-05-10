@@ -11,6 +11,8 @@ Admin UI should be boring, fast, and hard to misuse. Prefer clear tables and cha
 
 Use `pbp-coding-elixir-functionally` with this skill when implementing form events, validation, or save flows.
 
+Use `docs/standards/CODING_AND_TESTING_STANDARDS.md` for minimum admin form tests.
+
 ## When To Use
 
 Use this when:
@@ -62,3 +64,4 @@ Do not duplicate changeset validation in LiveView. The LiveView should present e
 - [ ] Draft/publish/archive action works
 - [ ] Save flow uses explicit success/error tuples
 - [ ] Tests cover success and failure paths
+- [ ] Auth boundary is tested for protected admin routes

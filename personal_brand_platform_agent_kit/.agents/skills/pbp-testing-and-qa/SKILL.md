@@ -11,6 +11,8 @@ Every shipped slice should prove both behavior and navigation. Visual simplicity
 
 Use this together with `pbp-coding-elixir-functionally` to verify both pure rules and side-effect orchestration.
 
+Detailed test policy lives in `docs/standards/CODING_AND_TESTING_STANDARDS.md`.
+
 ## When To Use
 
 Use this when:
@@ -50,6 +52,8 @@ manual QA      -> click through public/admin flows
 
 - [ ] Relevant automated tests pass
 - [ ] Pure function tests cover core rules
+- [ ] Backend slices include unit/context tests
+- [ ] LiveView/admin behavior changes include LiveView tests
 - [ ] Public route manually checked
 - [ ] Admin path manually checked if touched
 - [ ] Theme switching checked if touched

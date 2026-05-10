@@ -70,8 +70,9 @@ Fresh chat / no context:
   1. Read README.md
   2. Read Current Implementation Snapshot in this file
   3. Read docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md
-  4. Read the target phase/slice in this file
-  5. Read the relevant skill from personal_brand_platform_agent_kit/.agents/skills
+  4. Read docs/standards/CODING_AND_TESTING_STANDARDS.md if the task touches implementation
+  5. Read the target phase/slice in this file
+  6. Read the relevant skill from personal_brand_platform_agent_kit/.agents/skills
 
 Continuing same chat with known context:
   1. Do not reread all docs
@@ -111,7 +112,7 @@ Setiap AI task harus mengikuti loop ini:
 2. Load only required context
 3. Inspect current implementation
 4. Make the smallest coherent change
-5. Run relevant tests/checks
+5. Run relevant tests/checks from docs/standards/CODING_AND_TESTING_STANDARDS.md
 6. Update docs only if behavior/architecture/build order changed
 7. Leave a handoff note if the slice is incomplete
 ```
@@ -255,6 +256,8 @@ Context to read next:
 - data remains separate from theme
 - public/admin behavior is documented if changed
 - relevant tests or manual QA are run
+- backend slices include unit/context tests for business rules
+- LiveView/admin slices include route/form tests where behavior changes
 - no draft content leaks publicly
 - product checkout remains external-link only until future commerce phase
 - git status is clean after commit when user asks to commit

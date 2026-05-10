@@ -11,6 +11,8 @@ Use Phoenix LiveView as the MVP monolith. Keep business logic in contexts, rende
 
 Use `pbp-coding-elixir-functionally` together with this skill when architecture decisions affect context APIs, side-effect boundaries, or domain rules.
 
+Architecture decisions must remain compatible with `docs/standards/CODING_AND_TESTING_STANDARDS.md`.
+
 ## When To Use
 
 Use this when:
@@ -62,3 +64,4 @@ theme switcher        -> Settings context + Themes registry
 - [ ] Public/admin route ownership is clear
 - [ ] MVP/future scope is documented
 - [ ] Data is not coupled to a theme
+- [ ] Testing boundary is clear for the slice

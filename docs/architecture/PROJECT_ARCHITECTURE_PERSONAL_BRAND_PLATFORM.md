@@ -118,6 +118,12 @@ Phoenix owns the product logic.
 
 The backend should be written in an Elixir-first, functional style.
 
+Detailed coding and testing rules live in:
+
+```txt
+docs/standards/CODING_AND_TESTING_STANDARDS.md
+```
+
 Core rules:
 
 ```txt
@@ -930,6 +936,12 @@ For MVP, Midtrans keys may not be needed if only using manually created Payment 
 
 ## 13. Testing Strategy
 
+Testing is mandatory for backend behavior. Use the detailed standard:
+
+```txt
+docs/standards/CODING_AND_TESTING_STANDARDS.md
+```
+
 ### Unit tests
 
 ```txt
@@ -938,6 +950,9 @@ schema changesets
 theme registry
 slug generation
 content queries
+status transitions
+featured fallback
+Supabase/Midtrans wrappers with mocked boundaries
 ```
 
 ### LiveView tests
@@ -949,6 +964,8 @@ post detail renders published post
 product detail renders checkout link
 admin CRUD creates content
 theme setting updates active_theme
+invalid forms show changeset errors
+unauthenticated admin access is blocked
 ```
 
 ### Manual QA

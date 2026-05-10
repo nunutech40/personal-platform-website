@@ -8,6 +8,7 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 - `technical/` — technical requirements, database direction, Phoenix/Supabase/Midtrans notes.
 - `architecture/` — target architecture, Phoenix contexts, Elixir/FP boundaries, route/module structure.
 - `planning/` — build plan, AI execution workflow, work packet format, phased implementation slices.
+- `standards/` — coding and testing standards for Elixir/Phoenix/Supabase work.
 - `design/` — old-web design document and UI reference screenshots.
 - `workflows/` — repeatable operational workflows such as commit/push.
 
@@ -23,6 +24,10 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 ## Operational Workflows
 
 - [workflows/PUSH_WORKFLOW.md](workflows/PUSH_WORKFLOW.md)
+
+## Standards
+
+- [standards/CODING_AND_TESTING_STANDARDS.md](standards/CODING_AND_TESTING_STANDARDS.md)
 
 ## Agent Usage Examples
 

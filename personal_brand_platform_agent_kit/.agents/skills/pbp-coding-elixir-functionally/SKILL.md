@@ -9,6 +9,8 @@ description: Applies Elixir/Phoenix functional programming style: pure transform
 
 Elixir code should be data-in, data-out. Keep transformations pure where possible, make side effects explicit, and let contexts own business rules.
 
+Project-wide code and test standards live in `docs/standards/CODING_AND_TESTING_STANDARDS.md`.
+
 ## When To Use
 
 Use this when:

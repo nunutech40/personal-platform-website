@@ -15,7 +15,8 @@ Untuk fresh/new chat, agent harus membaca:
 1. `../README.md`
 2. `../docs/planning/BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md`
 3. `../docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md`
-4. skill yang relevan di `.agents/skills/*/SKILL.md`
+4. `../docs/standards/CODING_AND_TESTING_STANDARDS.md` kalau task menyentuh implementasi
+5. skill yang relevan di `.agents/skills/*/SKILL.md`
 
 Untuk chat yang sudah punya konteks dan baru meneruskan task kecil:
 
@@ -129,6 +130,7 @@ Goal: Buat migrations, schemas, changesets, contexts, dan seed data untuk profil
 Read first:
 - docs/planning/BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md bagian Slice 1.1
 - docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md bagian contexts dan FP philosophy
+- docs/standards/CODING_AND_TESTING_STANDARDS.md bagian Database/schema slices
 Acceptance checks:
 - migrations ada
 - schemas + changesets ada

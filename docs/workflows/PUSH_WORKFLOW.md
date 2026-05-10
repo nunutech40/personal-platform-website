@@ -63,6 +63,12 @@ mix format --check-formatted
 mix test
 ```
 
+Untuk menentukan test minimal per slice, lihat:
+
+```txt
+docs/standards/CODING_AND_TESTING_STANDARDS.md
+```
+
 ### 4. Stage
 
 Untuk semua perubahan yang memang mau dikirim:
@@ -153,4 +159,3 @@ Checks:
 Notes:
 - <anything the next agent/user should know>
 ```
-

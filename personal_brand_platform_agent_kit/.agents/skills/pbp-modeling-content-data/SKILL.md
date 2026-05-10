@@ -11,6 +11,8 @@ Model content by what it is, not by how one theme displays it.
 
 Use `pbp-coding-elixir-functionally` with this skill when writing schemas, changesets, context APIs, and query functions.
 
+Follow `docs/standards/CODING_AND_TESTING_STANDARDS.md` for required schema/context tests.
+
 ## When To Use
 
 Use this when:
@@ -76,3 +78,4 @@ product_tags
 - [ ] Public query functions hide draft content
 - [ ] Seed data updated if needed
 - [ ] Tests cover validation and relationships
+- [ ] Context tests cover public visibility and failure paths
