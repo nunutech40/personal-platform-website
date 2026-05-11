@@ -329,6 +329,15 @@ Urutan input data yang disarankan:
 
 ## 11. Implementation Slices
 
+Status implementation per 2026-05-11:
+
+- Slice 1: Done in code. Slug bisa auto-generate saat create, duplicate title diberi suffix, dan manual slug invalid tetap ditolak.
+- Slice 2: Done in code. Field taxonomy/project portfolio sudah masuk migration, schema, changeset validation, dan tests.
+- Slice 3: Mostly done. Admin create/edit memakai Backpex field baru, array field tetap textarea per baris, dan cover image sudah memakai relation picker dari Media. Custom section layout dan preview link khusus masih bisa dipoles nanti.
+- Slice 4: Done in code. `/work` menampilkan card recruiter-focused, filter discipline/platform, dan sort order.
+- Slice 5: Done in code. `/work/:slug` punya section ownership, technical approach, architecture notes, trade-offs, implementation highlights, results, metrics, dan links.
+- Slice 6: Done for initial seed. Seed portfolio berisi 5 project prioritas dari CV dengan copy Bahasa Indonesia dan batas detail proprietary.
+
 ### Slice 1 - Slug Generation
 
 Output:

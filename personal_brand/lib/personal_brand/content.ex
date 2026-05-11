@@ -82,23 +82,42 @@ defmodule PersonalBrand.Content do
   # ── Projects ─────────────────────────────────────────────
 
   def list_projects do
-    Repo.all(from p in Project, order_by: [desc: p.year])
+    Repo.all(from p in Project, order_by: [asc: p.sort_order, desc: p.year, desc: p.inserted_at])
   end
 
-  def list_published_projects do
+  def list_published_projects(opts \\ []) do
+    discipline = Keyword.get(opts, :discipline)
+    platform = Keyword.get(opts, :platform)
+
     Repo.all(
       from p in Project,
         where: p.status == "published",
-        order_by: [desc: p.year]
+        order_by: [asc: p.sort_order, desc: p.year, desc: p.inserted_at]
     )
+    |> filter_projects_by(:discipline, discipline)
+    |> filter_projects_by(:platform, platform)
   end
 
   def list_featured_projects do
     Repo.all(
       from p in Project,
         where: p.featured == true and p.status == "published",
-        order_by: [desc: p.year]
+        order_by: [asc: p.sort_order, desc: p.year, desc: p.inserted_at]
     )
+  end
+
+  def create_project(attrs) do
+    attrs = put_unique_project_slug(attrs)
+
+    %Project{}
+    |> Project.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_project(%Project{} = project, attrs) do
+    project
+    |> Project.changeset(attrs)
+    |> Repo.update()
   end
 
   def get_project_by_slug!(slug) do
@@ -107,6 +126,28 @@ defmodule PersonalBrand.Content do
 
   def get_project_by_slug(slug) do
     Repo.get_by(Project, slug: slug)
+  end
+
+  def get_published_project_by_slug(slug) do
+    Repo.get_by(Project, slug: slug, status: "published")
+  end
+
+  def unique_project_slug(attrs) when is_map(attrs) do
+    resolve_unique_project_slug(attrs)
+  end
+
+  def put_unique_project_slug(attrs) when is_map(attrs) do
+    if attr(attrs, :slug) in [nil, ""] do
+      slug = unique_project_slug(attrs)
+
+      cond do
+        slug == "" -> attrs
+        Map.has_key?(attrs, "slug") -> Map.put(attrs, "slug", slug)
+        true -> Map.put(attrs, :slug, slug)
+      end
+    else
+      attrs
+    end
   end
 
   # ── Posts ────────────────────────────────────────────────
@@ -236,4 +277,49 @@ defmodule PersonalBrand.Content do
         preload: [:tags]
     )
   end
+
+  defp filter_projects_by(projects, _field, nil), do: projects
+  defp filter_projects_by(projects, _field, ""), do: projects
+
+  defp filter_projects_by(projects, :discipline, discipline) do
+    Enum.filter(projects, &(discipline in (&1.disciplines || [])))
+  end
+
+  defp filter_projects_by(projects, :platform, platform) do
+    Enum.filter(projects, &(platform in (&1.platforms || [])))
+  end
+
+  defp resolve_unique_project_slug(attrs) do
+    base_slug =
+      attrs
+      |> attr(:slug)
+      |> fallback(attr(attrs, :title))
+      |> Project.slugify()
+
+    do_resolve_unique_project_slug(base_slug, 1)
+  end
+
+  defp do_resolve_unique_project_slug("", _counter), do: ""
+
+  defp do_resolve_unique_project_slug(base_slug, 1) do
+    if Repo.exists?(from p in Project, where: p.slug == ^base_slug) do
+      do_resolve_unique_project_slug(base_slug, 2)
+    else
+      base_slug
+    end
+  end
+
+  defp do_resolve_unique_project_slug(base_slug, counter) do
+    candidate = "#{base_slug}-#{counter}"
+
+    if Repo.exists?(from p in Project, where: p.slug == ^candidate) do
+      do_resolve_unique_project_slug(base_slug, counter + 1)
+    else
+      candidate
+    end
+  end
+
+  defp attr(attrs, key), do: Map.get(attrs, key) || Map.get(attrs, Atom.to_string(key))
+  defp fallback(value, fallback_value) when value in [nil, ""], do: fallback_value
+  defp fallback(value, _fallback_value), do: value
 end

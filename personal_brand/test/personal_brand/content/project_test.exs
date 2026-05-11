@@ -17,7 +17,20 @@ defmodule PersonalBrand.Content.ProjectTest do
     status: "draft",
     featured: false,
     demo_url: nil,
-    github_url: nil
+    github_url: nil,
+    app_store_url: nil,
+    project_type: "personal_project",
+    platforms: ["web"],
+    disciplines: ["fullstack_engineering"],
+    ownership: "Solo builder",
+    duration: "2026",
+    impact_summary: "Recruiter-ready case study",
+    technical_highlights: ["Phoenix LiveView"],
+    architecture_notes: "Context-driven architecture",
+    tradeoffs: "Kept taxonomy as arrays for MVP speed",
+    metrics: ["150 tests passing"],
+    case_study_visibility: "public",
+    sort_order: 1
   }
 
   describe "changeset/2" do
@@ -33,11 +46,18 @@ defmodule PersonalBrand.Content.ProjectTest do
       assert errors_on(changeset)[:title] == ["can't be blank"]
     end
 
-    test "rejects missing slug" do
+    test "generates slug from title when slug is missing" do
       attrs = Map.delete(@valid_attrs, :slug)
       changeset = Project.changeset(%Project{}, attrs)
-      refute changeset.valid?
-      assert errors_on(changeset)[:slug] == ["can't be blank"]
+      assert changeset.valid?
+      assert get_field(changeset, :slug) == "test-project"
+    end
+
+    test "generates slug from title when slug is blank" do
+      attrs = %{@valid_attrs | slug: ""}
+      changeset = Project.changeset(%Project{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :slug) == "test-project"
     end
 
     test "enforces unique slug constraint" do
@@ -73,13 +93,26 @@ defmodule PersonalBrand.Content.ProjectTest do
       attrs = %{
         @valid_attrs
         | result: "Result A\nResult B",
-          tech_stack: "Elixir\nPhoenix LiveView\nPostgreSQL"
+          tech_stack: "Elixir\nPhoenix LiveView\nPostgreSQL",
+          platforms: "ios\nmacos",
+          disciplines: "ios_development\narchitecture",
+          technical_highlights: "SPM modularization\nCoordinator routing",
+          metrics: "Reduced UI hangs\nImproved maintainability"
       }
 
       changeset = Project.changeset(%Project{}, attrs)
       assert changeset.valid?
       assert get_field(changeset, :result) == ["Result A", "Result B"]
       assert get_field(changeset, :tech_stack) == ["Elixir", "Phoenix LiveView", "PostgreSQL"]
+      assert get_field(changeset, :platforms) == ["ios", "macos"]
+      assert get_field(changeset, :disciplines) == ["ios_development", "architecture"]
+
+      assert get_field(changeset, :technical_highlights) == [
+               "SPM modularization",
+               "Coordinator routing"
+             ]
+
+      assert get_field(changeset, :metrics) == ["Reduced UI hangs", "Improved maintainability"]
     end
 
     test "accepts published status" do
@@ -109,6 +142,23 @@ defmodule PersonalBrand.Content.ProjectTest do
       refute changeset.valid?
     end
 
+    test "rejects invalid taxonomy values" do
+      attrs = %{
+        @valid_attrs
+        | project_type: "random",
+          platforms: ["ios", "desktop"],
+          disciplines: ["ios_development", "random"],
+          case_study_visibility: "secret"
+      }
+
+      changeset = Project.changeset(%Project{}, attrs)
+      refute changeset.valid?
+      assert "is invalid" in errors_on(changeset)[:project_type]
+      assert "is invalid" in errors_on(changeset)[:case_study_visibility]
+      assert ["contains invalid values: desktop"] == errors_on(changeset)[:platforms]
+      assert ["contains invalid values: random"] == errors_on(changeset)[:disciplines]
+    end
+
     test "rejects slug with uppercase letters" do
       attrs = %{@valid_attrs | slug: "Test-Project"}
       changeset = Project.changeset(%Project{}, attrs)
@@ -133,6 +183,12 @@ defmodule PersonalBrand.Content.ProjectTest do
       refute changeset.valid?
     end
 
+    test "rejects app_store_url without http scheme" do
+      attrs = %{@valid_attrs | app_store_url: "apps.apple.com/app/example"}
+      changeset = Project.changeset(%Project{}, attrs)
+      refute changeset.valid?
+    end
+
     test "accepts demo_url with https" do
       attrs = %{@valid_attrs | demo_url: "https://example.com"}
       changeset = Project.changeset(%Project{}, attrs)
@@ -141,6 +197,12 @@ defmodule PersonalBrand.Content.ProjectTest do
 
     test "accepts github_url with https" do
       attrs = %{@valid_attrs | github_url: "https://github.com/user/repo"}
+      changeset = Project.changeset(%Project{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "accepts app_store_url with https" do
+      attrs = %{@valid_attrs | app_store_url: "https://apps.apple.com/app/example"}
       changeset = Project.changeset(%Project{}, attrs)
       assert changeset.valid?
     end

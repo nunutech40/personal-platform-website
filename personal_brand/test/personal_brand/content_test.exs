@@ -17,7 +17,11 @@ defmodule PersonalBrand.ContentTest do
       tech_stack: ["Elixir"],
       year: "2026",
       status: "draft",
-      featured: false
+      featured: false,
+      project_type: "personal_project",
+      platforms: ["web"],
+      disciplines: ["fullstack_engineering"],
+      case_study_visibility: "public"
     }
 
     def project_fixture(attrs \\ %{}) do
@@ -30,9 +34,9 @@ defmodule PersonalBrand.ContentTest do
     end
 
     test "list_projects/0 returns all projects ordered by year desc" do
-      p1 = project_fixture(%{slug: "project-a", year: "2024", title: "Alpha"})
-      p2 = project_fixture(%{slug: "project-b", year: "2026", title: "Beta"})
-      p3 = project_fixture(%{slug: "project-c", year: "2025", title: "Gamma"})
+      p1 = project_fixture(%{slug: "project-a", year: "2024", title: "Alpha", sort_order: 3})
+      p2 = project_fixture(%{slug: "project-b", year: "2026", title: "Beta", sort_order: 1})
+      p3 = project_fixture(%{slug: "project-c", year: "2025", title: "Gamma", sort_order: 2})
 
       projects = Content.list_projects()
       assert Enum.map(projects, & &1.id) == [p2.id, p3.id, p1.id]
@@ -46,6 +50,27 @@ defmodule PersonalBrand.ContentTest do
       published = Content.list_published_projects()
       assert length(published) == 1
       assert hd(published).slug == "pub-project"
+    end
+
+    test "list_published_projects/1 filters by discipline and platform" do
+      project_fixture(%{
+        slug: "ios-project",
+        status: "published",
+        platforms: ["ios"],
+        disciplines: ["ios_development"]
+      })
+
+      project_fixture(%{
+        slug: "backend-project",
+        status: "published",
+        platforms: ["backend"],
+        disciplines: ["backend_engineering"]
+      })
+
+      assert [%{slug: "ios-project"}] =
+               Content.list_published_projects(discipline: "ios_development")
+
+      assert [%{slug: "backend-project"}] = Content.list_published_projects(platform: "backend")
     end
 
     test "list_featured_projects/0 returns only featured published projects" do
@@ -74,6 +99,47 @@ defmodule PersonalBrand.ContentTest do
       assert_raise Ecto.NoResultsError, fn ->
         Content.get_project_by_slug!("nonexistent")
       end
+    end
+
+    test "get_published_project_by_slug/1 hides drafts" do
+      project_fixture(%{slug: "draft-project", status: "draft"})
+      published = project_fixture(%{slug: "published-project", status: "published"})
+
+      assert Content.get_published_project_by_slug("draft-project") == nil
+      assert Content.get_published_project_by_slug("published-project").id == published.id
+    end
+
+    test "create_project/1 auto-generates unique slug when blank" do
+      assert {:ok, first} =
+               Content.create_project(%{
+                 @valid_attrs
+                 | title: "RajaOngkir iOS App",
+                   slug: "",
+                   status: "published"
+               })
+
+      assert {:ok, second} =
+               Content.create_project(%{
+                 @valid_attrs
+                 | title: "RajaOngkir iOS App",
+                   slug: "",
+                   status: "published"
+               })
+
+      assert first.slug == "rajaongkir-ios-app"
+      assert second.slug == "rajaongkir-ios-app-2"
+    end
+
+    test "create_project/1 rejects invalid manual slug" do
+      assert {:error, changeset} =
+               Content.create_project(%{
+                 @valid_attrs
+                 | title: "Manual Slug Project",
+                   slug: "Manual Slug"
+               })
+
+      refute changeset.valid?
+      assert errors_on(changeset)[:slug] == ["must be lowercase alphanumeric with hyphens only"]
     end
   end
 

@@ -262,20 +262,33 @@ Field project saat ini:
 | Field | Fungsi | Catatan |
 |-------|--------|---------|
 | `title` | Nama project | Contoh: `RajaOngkir iOS App`, `Postie`, `Personal Platform Website` |
-| `slug` | URL publik `/work/:slug` | Saat ini masih manual. Target improvement: auto-generate dari title dan auto-resolve duplicate. |
+| `slug` | URL publik `/work/:slug` | Boleh dikosongkan saat create; sistem auto-generate dari title dan auto-resolve duplicate. |
 | `summary` | One-line recruiter pitch | Tampilkan impact singkat, bukan deskripsi panjang. |
 | `description` | Overview case study | Menjawab konteks dan scope project. |
 | `problem` | Problem yang diselesaikan | Harus mempertimbangkan kebutuhan user/business. |
 | `solution` | Solusi teknis | Jelaskan architecture, decision, dan ownership. |
+| `architecture_notes` | Catatan arsitektur | Jelaskan boundary, dependency direction, dan pattern penting. |
+| `tradeoffs` | Trade-off teknis | Jelaskan constraint dan alasan keputusan. |
 | `result` | Outcome per baris | Bisa diisi satu hasil per baris di admin. |
 | `role` | Peran di project | Contoh: `Senior iOS Engineer`, `Mobile Engineering Lead`, `Full-stack Software Engineer`. |
+| `ownership` | Scope tanggung jawab | Contoh: `Solo builder`, `Lead mobile engineer`, `iOS contributor`. |
+| `project_type` | Tipe project | Controlled value: `professional_work`, `client_work`, `open_source`, `personal_project`, `architecture_demo`, `internal_tool`, `case_study`. |
+| `platforms` | Platform per baris | Controlled value: `ios`, `android`, `flutter`, `macos`, `web`, `backend`, `cross_platform`. |
+| `disciplines` | Discipline per baris | Controlled value: `ios_development`, `mobile_engineering_lead`, `mobile_devops`, `flutter_development`, `backend_engineering`, `frontend_engineering`, `fullstack_engineering`, `macos_development`, `architecture`, `performance_optimization`. |
 | `tech_stack` | Teknologi per baris | Bisa diisi satu teknologi per baris di admin. |
 | `year` | Tahun / periode | Contoh: `2025`, `2021-2024`. |
+| `duration` | Durasi/periode tampil | Lebih fleksibel dari `year`, contoh: `2021-2026`, `Contract project`. |
 | `status` | `draft`, `published`, `archived` | Hanya published yang ditampilkan publik. |
 | `featured` | Prioritas tampil | Untuk project penting di home/work. |
+| `sort_order` | Urutan manual | Angka lebih kecil tampil lebih dulu. |
+| `impact_summary` | Ringkasan impact | Dipakai di card `/work` dan detail result. |
+| `technical_highlights` | Highlight teknis per baris | Dipakai untuk menunjukkan seniority. |
+| `metrics` | Metric/outcome per baris | Isi angka jika ada; boleh qualitative jika project proprietary. |
+| `case_study_visibility` | Batas detail case study | `public`, `limited`, atau `private_summary`. |
 | `demo_url` | Link demo/live | Optional. |
 | `github_url` | Link repository | Optional, terutama untuk open-source/demo. |
-| `cover_image_id` | UUID media cover | Saat ini manual. Target improvement: media picker dari admin. |
+| `app_store_url` | Link App Store | Optional untuk project iOS/mobile. |
+| `cover_image` | Media cover | Pilih dari Admin > Media; tidak perlu copy UUID manual untuk workflow umum. |
 
 Untuk portfolio yang ditujukan ke recruiter, project detail perlu menjawab:
 
@@ -287,13 +300,13 @@ Untuk portfolio yang ditujukan ke recruiter, project detail perlu menjawab:
 - Result/impact yang bisa dipercaya.
 - Screenshot/media dan link pendukung jika tersedia.
 
-Gap yang sudah dicatat untuk improvement berikutnya:
+Yang sudah masuk di implementation slice portfolio:
 
-- Slug masih diketik manual dan rawan typo/redundant.
-- `role`, `tech_stack`, platform, dan discipline masih free text sehingga rawan inkonsisten.
-- Cover media masih pakai UUID manual.
-- Public `/work` belum punya filter berdasarkan discipline/platform.
-- Project detail belum punya section khusus untuk ownership, architecture decision, trade-off, metrics, dan recruiter-facing impact.
+- Slug auto-generate saat create jika kosong, termasuk duplicate suffix.
+- Platform, discipline, project type, dan visibility divalidasi dengan controlled values.
+- Cover media dipilih melalui Backpex relation field dari Admin > Media.
+- Public `/work` punya filter berdasarkan discipline/platform.
+- Project detail punya section ownership, technical approach, architecture notes, trade-offs, highlights, metrics, dan impact.
 
 ## Data Contract
 

@@ -2,6 +2,7 @@ defmodule PersonalBrandWeb.PublicLive do
   use PersonalBrandWeb, :live_view
 
   alias PersonalBrand.Content
+  alias PersonalBrand.Content.Project
 
   # ── Mount ────────────────────────────────────────────────
 
@@ -37,7 +38,7 @@ defmodule PersonalBrandWeb.PublicLive do
 
     case path do
       :work_detail ->
-        case Content.get_project_by_slug(slug) do
+        case Content.get_published_project_by_slug(slug) do
           nil ->
             {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}
 
@@ -75,7 +76,7 @@ defmodule PersonalBrandWeb.PublicLive do
     end
   end
 
-  def handle_params(_params, _uri, socket) do
+  def handle_params(params, _uri, socket) do
     path = socket.assigns.live_action
 
     socket =
@@ -98,12 +99,15 @@ defmodule PersonalBrandWeb.PublicLive do
           )
 
         :work_index ->
-          projects = Content.list_published_projects()
+          active_filter = work_filter_from_params(params)
+          projects = Content.list_published_projects(active_filter_query(active_filter))
 
           assign(socket,
             page: :work_index,
             page_title: "Work",
             projects: projects,
+            work_filters: work_filters(),
+            active_filter: active_filter,
             project_media: media_by_id(projects)
           )
 
@@ -145,7 +149,12 @@ defmodule PersonalBrandWeb.PublicLive do
           products={@products}
         />
       <% :work_index -> %>
-        <.work_index projects={@projects} project_media={@project_media} />
+        <.work_index
+          projects={@projects}
+          project_media={@project_media}
+          filters={@work_filters}
+          active_filter={@active_filter}
+        />
       <% :work_detail -> %>
         <.work_detail project={@project} cover_media={@cover_media} />
       <% :writing_index -> %>
@@ -181,18 +190,6 @@ defmodule PersonalBrandWeb.PublicLive do
       </p>
     </section>
     <hr />
-    <section>
-      <h2>Start Here</h2>
-      <p>
-        <a href="/work">Browse work</a>
-        | <a href="/writing">Read writing</a>
-        | <a href="/products">See products</a>
-        | <a href="/about">About Nunu</a>
-        | <a href="/now">Now</a>
-        | <a href="/contact">Contact</a>
-      </p>
-    </section>
-    <hr />
     <div class="home-grid">
       <div class="home-lists">
         <.featured_work projects={@projects} />
@@ -213,7 +210,16 @@ defmodule PersonalBrandWeb.PublicLive do
   def work_index(assigns) do
     ~H"""
     <h1>Work</h1>
-    <p>Selected apps, experiments, and product work.</p>
+    <p>Project portfolio untuk menunjukkan ownership, technical depth, dan impact.</p>
+    <nav class="tag-list" aria-label="Work filters">
+      <a
+        :for={filter <- @filters}
+        href={filter.href}
+        class={if filter.key == @active_filter.key, do: "tag active", else: "tag"}
+      >
+        {filter.label}
+      </a>
+    </nav>
     <hr />
     <div class="detail-grid">
       <section>
@@ -223,10 +229,20 @@ defmodule PersonalBrandWeb.PublicLive do
         <%= for project <- @projects do %>
           <article class="item">
             <div class="item-title">
-              <a href={"/work/#{project.slug}"}>{project.title} - {project.summary}</a>
+              <a href={"/work/#{project.slug}"}>{project.title}</a>
             </div>
-            <p>{project.description}</p>
-            <p class="meta">{project.year} · {Enum.join(project.tech_stack, ", ")}</p>
+            <p>{project.summary}</p>
+            <p :if={project.impact_summary} class="lead">{project.impact_summary}</p>
+            <p class="meta">
+              {project.role}
+              <%= if project.duration || project.year do %>
+                · {project.duration || project.year}
+              <% end %>
+            </p>
+            <div class="tag-list">
+              <span :for={badge <- project_badges(project)} class="tag">{badge}</span>
+            </div>
+            <p class="meta">{Enum.join(project.tech_stack || [], ", ")}</p>
           </article>
         <% end %>
       </section>
@@ -249,17 +265,32 @@ defmodule PersonalBrandWeb.PublicLive do
         <p class="tagline">{@project.summary}</p>
         <p>
           <strong>Role:</strong> {@project.role}<br />
-          <strong>Stack:</strong> {Enum.join(@project.tech_stack, ", ")}<br />
-          <strong>Year:</strong> {@project.year}<br />
-          <strong>Status:</strong> {@project.status}
+          <strong>Ownership:</strong> {@project.ownership || "Case study contributor"}<br />
+          <strong>Platform:</strong> {Enum.join(project_badges(@project), ", ")}<br />
+          <strong>Stack:</strong> {Enum.join(@project.tech_stack || [], ", ")}<br />
+          <strong>Period:</strong> {@project.duration || @project.year}
+        </p>
+        <p :if={@project.case_study_visibility in ["limited", "private_summary"]} class="notice">
+          Some implementation details are summarized to respect proprietary project boundaries.
         </p>
         <.detail_section title="Overview" body={@project.description} />
         <.detail_section title="Problem" body={@project.problem} />
-        <.detail_section title="Solution" body={@project.solution} />
-        <section class="detail-section">
-          <h2>Outcome</h2>
+        <.detail_section title="My Role & Ownership" body={@project.ownership} />
+        <.detail_section title="Technical Approach" body={@project.solution} />
+        <.detail_section title="Architecture Notes" body={@project.architecture_notes} />
+        <.detail_section title="Trade-offs" body={@project.tradeoffs} />
+        <section :if={@project.technical_highlights != []} class="detail-section">
+          <h2>Implementation Highlights</h2>
           <ul>
+            <li :for={item <- @project.technical_highlights}>{item}</li>
+          </ul>
+        </section>
+        <section class="detail-section">
+          <h2>Results</h2>
+          <ul>
+            <li :if={@project.impact_summary}>{@project.impact_summary}</li>
             <li :for={item <- @project.result}>{item}</li>
+            <li :for={item <- @project.metrics}>{item}</li>
           </ul>
         </section>
         <section class="detail-section">
@@ -267,6 +298,7 @@ defmodule PersonalBrandWeb.PublicLive do
           <ul>
             <li :if={@project.demo_url}><a href={@project.demo_url}>Live Demo</a></li>
             <li :if={@project.github_url}><a href={@project.github_url}>GitHub</a></li>
+            <li :if={@project.app_store_url}><a href={@project.app_store_url}>App Store</a></li>
           </ul>
         </section>
       </article>
@@ -488,12 +520,19 @@ defmodule PersonalBrandWeb.PublicLive do
     ~H"""
     <section>
       <h2>Featured Work</h2>
-      <ul>
+      <ul class="compact-list">
         <%= if @projects == [] do %>
           <li>No featured work yet.</li>
         <% else %>
-          <li :for={project <- @projects}>
-            <a href={"/work/#{project.slug}"}>{project.title} - {project.summary}</a>
+          <li :for={project <- Enum.take(@projects, 3)}>
+            <a href={"/work/#{project.slug}"}>{project.title}</a>
+            <p>{project.summary}</p>
+            <p class="meta">
+              {project.role}
+              <%= if project.duration || project.year do %>
+                · {project.duration || project.year}
+              <% end %>
+            </p>
           </li>
         <% end %>
       </ul>
@@ -506,7 +545,7 @@ defmodule PersonalBrandWeb.PublicLive do
     ~H"""
     <section>
       <h2>Recent Writing</h2>
-      <ul>
+      <ul class="compact-list">
         <%= if @posts == [] do %>
           <li>No writing published yet.</li>
         <% else %>
@@ -524,7 +563,7 @@ defmodule PersonalBrandWeb.PublicLive do
     ~H"""
     <section>
       <h2>Products</h2>
-      <ul>
+      <ul class="compact-list">
         <%= if @products == [] do %>
           <li>No featured products yet.</li>
         <% else %>
@@ -567,7 +606,7 @@ defmodule PersonalBrandWeb.PublicLive do
 
   def detail_section(assigns) do
     ~H"""
-    <section class="detail-section">
+    <section :if={present?(@body)} class="detail-section">
       <h2>{@title}</h2>
       <p>{@body}</p>
     </section>
@@ -620,6 +659,65 @@ defmodule PersonalBrandWeb.PublicLive do
     projects
     |> Enum.find_value(fn project -> Map.get(media_by_id, project.cover_image_id) end)
   end
+
+  defp work_filters do
+    [
+      %{key: :all, label: "All", href: "/work"},
+      %{
+        key: {:discipline, "ios_development"},
+        label: "iOS",
+        href: "/work?discipline=ios_development"
+      },
+      %{
+        key: {:discipline, "mobile_engineering_lead"},
+        label: "Mobile Lead",
+        href: "/work?discipline=mobile_engineering_lead"
+      },
+      %{key: {:platform, "macos"}, label: "macOS", href: "/work?platform=macos"},
+      %{
+        key: {:discipline, "backend_engineering"},
+        label: "Backend",
+        href: "/work?discipline=backend_engineering"
+      },
+      %{
+        key: {:discipline, "frontend_engineering"},
+        label: "Frontend",
+        href: "/work?discipline=frontend_engineering"
+      },
+      %{key: {:platform, "flutter"}, label: "Flutter", href: "/work?platform=flutter"},
+      %{
+        key: {:discipline, "fullstack_engineering"},
+        label: "Full-stack",
+        href: "/work?discipline=fullstack_engineering"
+      }
+    ]
+  end
+
+  defp work_filter_from_params(%{"discipline" => discipline}) when is_binary(discipline) do
+    %{key: {:discipline, discipline}, field: :discipline, value: discipline}
+  end
+
+  defp work_filter_from_params(%{"platform" => platform}) when is_binary(platform) do
+    %{key: {:platform, platform}, field: :platform, value: platform}
+  end
+
+  defp work_filter_from_params(_params), do: %{key: :all, field: nil, value: nil}
+
+  defp active_filter_query(%{field: nil}), do: []
+  defp active_filter_query(%{field: field, value: value}), do: [{field, value}]
+
+  defp project_badges(project) do
+    (project.platforms || [])
+    |> Kernel.++(project.disciplines || [])
+    |> Enum.map(&project_label/1)
+  end
+
+  defp project_label(value) do
+    Project.label_for(value)
+  end
+
+  defp present?(value) when is_binary(value), do: String.trim(value) != ""
+  defp present?(value), do: not is_nil(value)
 
   defp format_date(nil), do: ""
 
