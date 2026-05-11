@@ -123,6 +123,13 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         except: [:index],
         panel: :classification
       },
+      team_size: %{
+        module: Backpex.Fields.Text,
+        label: "Team Size",
+        except: [:index],
+        panel: :classification
+      },
+
       project_type: %{
         module: Backpex.Fields.Select,
         label: "Project Type",

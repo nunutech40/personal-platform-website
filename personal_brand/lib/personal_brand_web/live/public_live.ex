@@ -282,10 +282,14 @@ defmodule PersonalBrandWeb.PublicLive do
         <p>
           <strong>Role:</strong> {@project.role}<br />
           <strong>Ownership:</strong> {@project.ownership || "Case study contributor"}<br />
+          <strong :if={@project.company}>Company:</strong> {@project.company}<br :if={@project.company} />
+          <strong :if={@project.client}>Client:</strong> {@project.client}<br :if={@project.client} />
+          <strong :if={@project.team_size}>Team Size:</strong> {@project.team_size}<br :if={@project.team_size} />
           <strong>Platform:</strong> {Enum.join(project_badges(@project), ", ")}<br />
           <strong>Stack:</strong> {Enum.join(@project.tech_stack || [], ", ")}<br />
           <strong>Period:</strong> {@project.duration || @project.year}
         </p>
+
         <p :if={@project.case_study_visibility in ["limited", "private_summary"]} class="notice">
           Some implementation details are summarized to respect proprietary project boundaries.
         </p>

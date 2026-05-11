@@ -57,7 +57,32 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     refute html =~ "Draft Project"
   end
 
+  test "GET /work filters by platform", %{conn: conn} do
+    insert_project(%{
+      title: "Postie",
+      slug: "postie",
+      status: "published",
+      platforms: ["macos"],
+      disciplines: ["macos_development"]
+    })
+
+    insert_project(%{
+      title: "Personal Platform Website",
+      slug: "personal-platform-website",
+      status: "published",
+      platforms: ["web"],
+      disciplines: ["fullstack_engineering"]
+    })
+
+    conn = get(conn, ~p"/work?platform=macos")
+
+    html = html_response(conn, 200)
+    assert html =~ "Postie"
+    refute html =~ "Personal Platform Website"
+  end
+
   test "GET /work filters by discipline", %{conn: conn} do
+
     insert_project(%{
       title: "Postie",
       slug: "postie",

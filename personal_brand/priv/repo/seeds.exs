@@ -10,6 +10,9 @@ alias PersonalBrand.Content.SiteSetting
 alias PersonalBrand.Content.Theme
 alias PersonalBrand.Content.Tag
 
+import Ecto.Query
+
+
 # ── Themes ─────────────────────────────────────────────────
 themes = [
   %{
@@ -434,58 +437,75 @@ tag_records =
 IO.puts("✅ #{length(tag_records)} tags created")
 
 # ── Tag Associations ────────────────────────────────────────
-# Fetch inserted records
-[habitkit, splitwise, promptboard] = Repo.all(from p in Project, order_by: [asc: p.title])
+# Fetch inserted records by slug (more stable than relying on order)
+project_map =
+  Repo.all(from p in Project)
+  |> Map.new(fn p -> {p.slug, p} end)
+
 [prod_ready, offline_first, design_systems] = Repo.all(from p in Post, order_by: [asc: p.title])
 [flux_icons, snipkit] = Repo.all(from p in Product, order_by: [asc: p.title])
 
 tag_map = Enum.into(tag_records, %{}, fn t -> {t.name, t} end)
 
 # Project tags
+rajaongkir = project_map["rajaongkir-ios-app"]
+ios_modular = project_map["ios-distributed-modular-architecture"]
+postie = project_map["postie"]
+prodia = project_map["prodia-booking-flow-optimization"]
+personal_platform = project_map["personal-platform-website"]
+
 Repo.insert_all("project_tags", [
   %{
     id: Ecto.UUID.generate(),
-    project_id: habitkit.id,
+    project_id: rajaongkir.id,
     tag_id: tag_map["Flutter"].id,
     inserted_at: DateTime.utc_now(),
     updated_at: DateTime.utc_now()
   },
   %{
     id: Ecto.UUID.generate(),
-    project_id: habitkit.id,
+    project_id: ios_modular.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: postie.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: prodia.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: personal_platform.id,
+    tag_id: tag_map["Elixir"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: personal_platform.id,
+    tag_id: tag_map["Phoenix"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: personal_platform.id,
     tag_id: tag_map["PostgreSQL"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: splitwise.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: splitwise.id,
-    tag_id: tag_map["Firebase"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: promptboard.id,
-    tag_id: tag_map["AI"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: promptboard.id,
-    tag_id: tag_map["Flutter"].id,
     inserted_at: DateTime.utc_now(),
     updated_at: DateTime.utc_now()
   }
 ])
+
 
 # Post tags
 Repo.insert_all("post_tags", [
