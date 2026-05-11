@@ -8,8 +8,8 @@ Project ini adalah **Phoenix LiveView** app (Elixir) dengan **PostgreSQL** datab
 - **Admin:** http://localhost:4000/admin
 - **Login:** admin / admin123
 
-> Static prototype lama (FE SPA) ada di `index.html` + `src/app.js` via `npm run dev` di port 5173.
-> Itu sudah tidak dipakai lagi. Semua sudah pindah ke Phoenix.
+> Frontend publik sekarang dirender oleh Phoenix LiveView di port `4000`.
+> Jangan jalankan FE static/Vite di port `5173`; prototype static lama sudah dihapus dari root repo.
 
 ---
 
@@ -24,7 +24,7 @@ mix --version       # >= 1.17
 brew list postgresql@16
 /opt/homebrew/bin/psql --version
 
-# Node.js (untuk asset build)
+# Node.js (untuk asset build Phoenix)
 node --version      # >= 18
 ```
 
@@ -169,19 +169,20 @@ personal_brand/
 
 ## Routes
 
-### Public Routes (Phase 2 — in progress)
+### Public Routes
 
 | Route | Description | Status |
 |-------|-------------|--------|
-| `/` | Homepage | ✅ (redirect ke admin, perlu diubah) |
-| `/work` | Work list | ❌ Belum |
-| `/work/:slug` | Work detail | ❌ Belum |
-| `/writing` | Writing list | ❌ Belum |
-| `/writing/:slug` | Writing detail | ❌ Belum |
-| `/products` | Products list | ❌ Belum |
-| `/products/:slug` | Product detail | ❌ Belum |
-| `/about` | About page | ❌ Belum |
-| `/now` | Now page | ❌ Belum |
+| `/` | Homepage | ✅ LiveView |
+| `/work` | Work list | ✅ LiveView |
+| `/work/:slug` | Work detail | ✅ LiveView |
+| `/writing` | Writing list | ✅ LiveView |
+| `/writing/:slug` | Writing detail | ✅ LiveView |
+| `/products` | Products list | ✅ LiveView |
+| `/products/:slug` | Product detail | ✅ LiveView |
+| `/about` | About page | ✅ LiveView |
+| `/now` | Now page | ✅ LiveView |
+| `/contact` | Contact page | ✅ LiveView |
 
 ### Admin Routes
 
@@ -209,9 +210,37 @@ personal_brand/
 
 ---
 
+## Frontend Notes
+
+Frontend yang dipakai untuk development lokal adalah Phoenix LiveView:
+
+```bash
+cd personal_brand
+mix phx.server
+```
+
+Buka:
+
+```text
+http://localhost:4000/
+```
+
+Asset publik ada di:
+
+```txt
+personal_brand/assets/css/app.css
+personal_brand/assets/js/app.js
+personal_brand/lib/personal_brand_web/live/public_live.ex
+personal_brand/lib/personal_brand_web/components/layouts/public.html.heex
+```
+
+`public.html.heex` adalah LiveView layout fragment, bukan dokumen HTML penuh. Dokumen HTML utama tetap di `root.html.heex`.
+
+Static prototype root lama (`index.html`, `styles.css`, `src/app.js`, `server.mjs`, dan root `package.json`) sudah tidak menjadi jalur development. Jangan pakai `npm run dev`/port `5173` untuk mengecek FE.
+
 ## Data Contract
 
-Data dari static prototype (`src/app.js`) sudah dipindah ke database:
+Data dari prototype lama sudah dipindah ke database dan Phoenix assigns:
 
 | Static Prototype | Database Table |
 |-----------------|----------------|
@@ -234,14 +263,12 @@ Data dari static prototype (`src/app.js`) sudah dipindah ke database:
 - ✅ Admin CRUD via Backpex
 - ✅ Admin auth (login/logout)
 - ✅ Admin layouts
+- ✅ Public homepage (LiveView)
+- ✅ Public routes (work, writing, products, about, now, contact)
+- ✅ old_web_classic theme styles in Phoenix assets
+- ✅ Theme resolver via `site_settings.active_theme`
 
-### In Progress
-- 🔄 Public homepage (LiveView)
-- 🔄 Public routes (work, writing, products, about, now)
-
-### Not Started
-- ❌ old_web_classic theme components
-- ❌ Theme resolver
+### Remaining
 - ❌ Media upload
 - ❌ SEO / OG tags
 - ❌ RSS / sitemap

@@ -60,7 +60,9 @@ defmodule PersonalBrand.Content.SiteSetting do
     |> validate_length(:profile_name, min: 1, max: 100)
     |> validate_length(:profile_title, max: 200)
     |> validate_length(:profile_location, max: 200)
-    |> validate_format(:profile_email, ~r/^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "must be a valid email address")
+    |> validate_format(:profile_email, ~r/^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: "must be a valid email address"
+    )
     |> validate_format(:primary_cta_url, ~r/^\//, message: "must start with /")
     |> validate_format(:secondary_cta_url, ~r/^\//, message: "must start with /")
   end

@@ -21,7 +21,9 @@ defmodule PersonalBrand.Content.Theme do
     |> validate_length(:key, min: 2, max: 100)
     |> validate_length(:name, min: 2, max: 100)
     |> validate_length(:description, max: 500)
-    |> validate_format(:key, ~r/^[a-z0-9_]+$/, message: "must be lowercase alphanumeric with underscores only")
+    |> validate_format(:key, ~r/^[a-z0-9_]+$/,
+      message: "must be lowercase alphanumeric with underscores only"
+    )
     |> unique_constraint(:key)
   end
 end

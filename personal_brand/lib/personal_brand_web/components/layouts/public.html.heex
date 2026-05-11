@@ -1,59 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default={@site_name} suffix=" · Personal Brand" phx-no-format>
-      {@page_title}
-    </.live_title>
-    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
-    </script>
-  </head>
-  <body class={@theme_class}>
-    <div class="shell">
-      <header class="site-header">
-        <div>
-          <p class="site-title"><a href="/">{@profile_name}</a></p>
-          <p class="tagline">{@profile_title}</p>
-          <div class="social-links">
-            <%= for {label, url} <- @social_links do %>
-              <%= if @social_links |> Map.keys() |> hd() != label do %>
-                <span>|</span>
-              <% end %>
-              <a href={url}>{label}</a>
-            <% end %>
-          </div>
-        </div>
-        <nav class="text-nav" aria-label="Primary">
-          <a href="/">Home</a><span>|</span>
-          <a href="/work">Work</a><span>|</span>
-          <a href="/writing">Writing</a><span>|</span>
-          <a href="/products">Products</a><span>|</span>
-          <a href="/about">About</a><span>|</span>
-          <a href="/now">Now</a><span>|</span>
-          <a href="/contact">Contact</a><span>|</span>
-          <a href="/admin">Admin</a>
-        </nav>
-      </header>
-      <hr />
-      <main>
-        {@inner_content}
-      </main>
-      <footer class="footer">
-        <hr />
-        <p>
-          <strong>Let's connect:</strong>
-          <%= for {label, url} <- @social_links do %>
-            <%= if @social_links |> Map.keys() |> hd() != label do %>
-              |
-            <% end %>
+<div class={["public-site", @theme_class]}>
+  <div class="shell">
+    <header class="site-header">
+      <div>
+        <p class="site-title"><a href="/">{@profile_name}</a></p>
+        <p class="tagline">{@profile_title}</p>
+        <div class="social-links">
+          <%= for {{label, url}, index} <- Enum.with_index(@ordered_social_links) do %>
+            <span :if={index > 0}>|</span>
             <a href={url}>{label}</a>
           <% end %>
-        </p>
-        <p class="meta">© 2026 {@profile_name}. Built with Phoenix LiveView.</p>
-      </footer>
-    </div>
-  </body>
-</html>
+        </div>
+      </div>
+      <nav class="text-nav" aria-label="Primary">
+        <a href="/">Home</a><span>|</span>
+        <a href="/work">Work</a><span>|</span>
+        <a href="/writing">Writing</a><span>|</span>
+        <a href="/products">Products</a><span>|</span>
+        <a href="/about">About</a><span>|</span>
+        <a href="/now">Now</a><span>|</span>
+        <a href="/contact">Contact</a><span>|</span>
+        <a href="/admin">Admin</a>
+      </nav>
+    </header>
+    <hr />
+    <main>
+      {@inner_content}
+    </main>
+    <footer class="footer">
+      <hr />
+      <div class="footer-connect">
+        <strong>Let's connect:</strong>
+        <div class="footer-links">
+          <%= for {{label, url}, index} <- Enum.with_index(@ordered_social_links) do %>
+            <span :if={index > 0} aria-hidden="true">|</span>
+            <a href={url}>{label}</a>
+          <% end %>
+        </div>
+      </div>
+      <p class="meta">© 2026 {@profile_name}. Built with Phoenix LiveView.</p>
+    </footer>
+  </div>
+</div>

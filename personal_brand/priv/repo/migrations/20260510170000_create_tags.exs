@@ -16,7 +16,10 @@ defmodule PersonalBrand.Repo.Migrations.CreateTags do
     # ── Pivot: project_tags ──────────────────────────────────
     create table(:project_tags, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :project_id, references(:projects, type: :binary_id, on_delete: :delete_all), null: false
+
+      add :project_id, references(:projects, type: :binary_id, on_delete: :delete_all),
+        null: false
+
       add :tag_id, references(:tags, type: :binary_id, on_delete: :delete_all), null: false
 
       timestamps()
@@ -40,7 +43,10 @@ defmodule PersonalBrand.Repo.Migrations.CreateTags do
     # ── Pivot: product_tags ──────────────────────────────────
     create table(:product_tags, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :product_id, references(:products, type: :binary_id, on_delete: :delete_all), null: false
+
+      add :product_id, references(:products, type: :binary_id, on_delete: :delete_all),
+        null: false
+
       add :tag_id, references(:tags, type: :binary_id, on_delete: :delete_all), null: false
 
       timestamps()

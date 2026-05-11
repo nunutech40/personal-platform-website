@@ -53,7 +53,7 @@ Repo.insert!(%SiteSetting{
   site_name: "Nunu Nugraha",
   headline: "A personal basecamp for work, writing, products, and things currently being built.",
   subheadline:
-    "One data source, many homepage themes. This dummy UI is ready to be wired to Phoenix, PostgreSQL, and future commerce flows.",
+    "One Phoenix LiveView app, one PostgreSQL-backed content source, and multiple theme renderers for the same work, writing, and products.",
   primary_cta_text: "View Work",
   primary_cta_url: "/work",
   secondary_cta_text: "Read Writing",
@@ -270,30 +270,126 @@ tag_map = Enum.into(tag_records, %{}, fn t -> {t.name, t} end)
 
 # Project tags
 Repo.insert_all("project_tags", [
-  %{id: Ecto.UUID.generate(), project_id: habitkit.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), project_id: habitkit.id, tag_id: tag_map["PostgreSQL"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), project_id: splitwise.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), project_id: splitwise.id, tag_id: tag_map["Firebase"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), project_id: promptboard.id, tag_id: tag_map["AI"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), project_id: promptboard.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()}
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: habitkit.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: habitkit.id,
+    tag_id: tag_map["PostgreSQL"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: splitwise.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: splitwise.id,
+    tag_id: tag_map["Firebase"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: promptboard.id,
+    tag_id: tag_map["AI"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    project_id: promptboard.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  }
 ])
 
 # Post tags
 Repo.insert_all("post_tags", [
-  %{id: Ecto.UUID.generate(), post_id: prod_ready.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), post_id: prod_ready.id, tag_id: tag_map["Shipping"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), post_id: offline_first.id, tag_id: tag_map["Product"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), post_id: offline_first.id, tag_id: tag_map["Mobile"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), post_id: design_systems.id, tag_id: tag_map["Design"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), post_id: design_systems.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()}
+  %{
+    id: Ecto.UUID.generate(),
+    post_id: prod_ready.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    post_id: prod_ready.id,
+    tag_id: tag_map["Shipping"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    post_id: offline_first.id,
+    tag_id: tag_map["Product"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    post_id: offline_first.id,
+    tag_id: tag_map["Mobile"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    post_id: design_systems.id,
+    tag_id: tag_map["Design"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    post_id: design_systems.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  }
 ])
 
 # Product tags
 Repo.insert_all("product_tags", [
-  %{id: Ecto.UUID.generate(), product_id: flux_icons.id, tag_id: tag_map["Design"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), product_id: flux_icons.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), product_id: snipkit.id, tag_id: tag_map["Flutter"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()},
-  %{id: Ecto.UUID.generate(), product_id: snipkit.id, tag_id: tag_map["Product"].id, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()}
+  %{
+    id: Ecto.UUID.generate(),
+    product_id: flux_icons.id,
+    tag_id: tag_map["Design"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    product_id: flux_icons.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    product_id: snipkit.id,
+    tag_id: tag_map["Flutter"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  },
+  %{
+    id: Ecto.UUID.generate(),
+    product_id: snipkit.id,
+    tag_id: tag_map["Product"].id,
+    inserted_at: DateTime.utc_now(),
+    updated_at: DateTime.utc_now()
+  }
 ])
 
 IO.puts("✅ Tag associations created")

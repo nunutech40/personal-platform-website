@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "../vendor/daisyui.js";
 
 /* ═══════════════════════════════════════════════════════════
    old_web_classic Theme — Ported from static prototype
@@ -29,6 +29,13 @@ body {
   color: var(--ink);
   font-size: 17px;
   line-height: 1.5;
+}
+
+.public-site {
+  min-height: 100vh;
+  background: var(--page);
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 a {
@@ -169,6 +176,12 @@ li + li {
   font-size: 19px;
 }
 
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .home-grid,
 .two-col,
 .detail-grid,
@@ -270,8 +283,45 @@ li + li {
   margin: 14px 0;
 }
 
+.empty-state {
+  border: 1px dashed #777;
+  background: #fff;
+  color: var(--muted);
+  padding: 10px 12px;
+}
+
+.article-body p {
+  margin-bottom: 14px;
+}
+
 .footer {
   margin-top: 32px;
+}
+
+.footer-connect,
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.footer-connect {
+  margin-bottom: 10px;
+}
+
+.footer-connect strong,
+.footer-links a,
+.footer-links span {
+  display: inline-block;
+}
+
+.footer-links span {
+  color: #333;
+}
+
+.footer .meta {
+  margin-bottom: 0;
 }
 
 .admin-bar {

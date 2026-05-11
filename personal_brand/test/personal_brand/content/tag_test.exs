@@ -54,6 +54,7 @@ defmodule PersonalBrand.Content.TagTest do
       attrs = %{@valid_attrs | slug: "Elixir"}
       changeset = Tag.changeset(%Tag{}, attrs)
       refute changeset.valid?
+
       assert errors_on(changeset)[:slug] ==
                ["must be lowercase alphanumeric with hyphens only"]
     end
@@ -62,6 +63,7 @@ defmodule PersonalBrand.Content.TagTest do
       attrs = %{@valid_attrs | slug: "elixir lang"}
       changeset = Tag.changeset(%Tag{}, attrs)
       refute changeset.valid?
+
       assert errors_on(changeset)[:slug] ==
                ["must be lowercase alphanumeric with hyphens only"]
     end
@@ -76,6 +78,7 @@ defmodule PersonalBrand.Content.TagTest do
       attrs = %{@valid_attrs | name: String.duplicate("a", 101)}
       changeset = Tag.changeset(%Tag{}, attrs)
       refute changeset.valid?
+
       assert errors_on(changeset)[:name] ==
                ["should be at most 100 character(s)"]
     end
@@ -84,6 +87,7 @@ defmodule PersonalBrand.Content.TagTest do
       attrs = %{@valid_attrs | slug: String.duplicate("a", 101)}
       changeset = Tag.changeset(%Tag{}, attrs)
       refute changeset.valid?
+
       assert errors_on(changeset)[:slug] ==
                ["should be at most 100 character(s)"]
     end

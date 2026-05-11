@@ -18,6 +18,8 @@ defmodule PersonalBrandWeb.PublicLive do
         profile_email: settings.profile_email,
         profile_location: settings.profile_location,
         social_links: settings.social_links || %{},
+        ordered_social_links:
+          ordered_social_links(settings.social_links || %{}, settings.profile_email),
         active_theme: settings.active_theme,
         theme_class: theme_class,
         page_title: settings.site_name,
@@ -35,17 +37,26 @@ defmodule PersonalBrandWeb.PublicLive do
 
     case path do
       :work_detail ->
-        project = Content.get_project_by_slug!(slug)
+        case Content.get_project_by_slug(slug) do
+          nil ->
+            {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}
 
-        {:noreply,
-         assign(socket, page: :work_detail, project: project, page_title: project.title)}
+          project ->
+            {:noreply,
+             assign(socket, page: :work_detail, project: project, page_title: project.title)}
+        end
 
       :writing_detail ->
-        post = Content.get_post_by_slug!(slug)
-        {:noreply, assign(socket, page: :writing_detail, post: post, page_title: post.title)}
+        case Content.get_post_by_slug(slug) do
+          nil ->
+            {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}
+
+          post ->
+            {:noreply, assign(socket, page: :writing_detail, post: post, page_title: post.title)}
+        end
 
       :product_detail ->
-        case Content.get_active_product_by_slug(slug) do
+        case Content.get_product_by_slug(slug) do
           nil ->
             {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}
 
@@ -131,7 +142,7 @@ defmodule PersonalBrandWeb.PublicLive do
       <% :now_page -> %>
         <.now_page />
       <% :contact_page -> %>
-        <.contact_page profile_email={@profile_email} social_links={@social_links} />
+        <.contact_page profile_email={@profile_email} social_links={@ordered_social_links} />
       <% _ -> %>
         <.not_found />
     <% end %>
@@ -145,7 +156,7 @@ defmodule PersonalBrandWeb.PublicLive do
     <section>
       <p class="lead">{@settings.headline}</p>
       <p>{@settings.subheadline}</p>
-      <p>
+      <p class="cta-row">
         <a href={@settings.primary_cta_url}>{@settings.primary_cta_text}</a>
         <a href={@settings.secondary_cta_url}>{@settings.secondary_cta_text}</a>
       </p>
@@ -184,6 +195,9 @@ defmodule PersonalBrandWeb.PublicLive do
     <hr />
     <div class="detail-grid">
       <section>
+        <%= if @projects == [] do %>
+          <.empty_state text="No published projects yet." />
+        <% end %>
         <%= for project <- @projects do %>
           <article class="item">
             <div class="item-title">
@@ -243,6 +257,9 @@ defmodule PersonalBrandWeb.PublicLive do
     <h1>Writing</h1>
     <p>Builder notes, Flutter lessons, product thinking, and short essays.</p>
     <hr />
+    <%= if @posts == [] do %>
+      <.empty_state text="No published writing yet." />
+    <% end %>
     <%= for post <- @posts do %>
       <article class="item">
         <div class="item-title"><a href={"/writing/#{post.slug}"}>{post.title}</a></div>
@@ -266,7 +283,9 @@ defmodule PersonalBrandWeb.PublicLive do
       <p class="meta">{format_date(@post.published_at)} · {@post.reading_time} min read</p>
       <p class="lead">{@post.excerpt}</p>
       <hr />
-      <p>{@post.content_html}</p>
+      <div class="article-body">
+        {Phoenix.HTML.raw(@post.content_html || @post.content_markdown || "")}
+      </div>
       <hr />
       <p><a href="/writing">Back to writing</a> | <a href="/work">See related work</a></p>
     </article>
@@ -283,6 +302,9 @@ defmodule PersonalBrandWeb.PublicLive do
       Phase 1 commerce mode: product detail pages redirect to a manual Midtrans Payment Link through <code>checkout_url</code>.
     </div>
     <hr />
+    <%= if @products == [] do %>
+      <.empty_state text="No products are listed yet." />
+    <% end %>
     <%= for product <- @products do %>
       <article class="item">
         <div class="item-title"><a href={"/products/#{product.slug}"}>{product.title}</a></div>
@@ -308,10 +330,12 @@ defmodule PersonalBrandWeb.PublicLive do
           <strong>Delivery:</strong> {@product.delivery_type}<br />
           <strong>Status:</strong> {@product.stock_status}
         </p>
-        <p><a href={@product.checkout_url} class="button-link">Buy Now</a></p>
-        <div class="notice">
-          This is still dummy UI. Later, this button can call Phoenix to create an order and Midtrans transaction.
-        </div>
+        <p :if={@product.checkout_url}>
+          <a href={@product.checkout_url} class="button-link">Buy Now</a>
+        </p>
+        <p :if={@product.status != "active"} class="notice">
+          This product is currently marked as {@product.status}.
+        </p>
         <.detail_section title="Why I Made This" body={@product.description} />
         <section class="detail-section">
           <h2>What Included</h2>
@@ -440,9 +464,13 @@ defmodule PersonalBrandWeb.PublicLive do
     <section>
       <h2>Featured Work</h2>
       <ul>
-        <li :for={project <- @projects}>
-          <a href={"/work/#{project.slug}"}>{project.title} - {project.summary}</a>
-        </li>
+        <%= if @projects == [] do %>
+          <li>No featured work yet.</li>
+        <% else %>
+          <li :for={project <- @projects}>
+            <a href={"/work/#{project.slug}"}>{project.title} - {project.summary}</a>
+          </li>
+        <% end %>
       </ul>
       <a href="/work" class="section-link">View all work</a>
     </section>
@@ -454,9 +482,13 @@ defmodule PersonalBrandWeb.PublicLive do
     <section>
       <h2>Recent Writing</h2>
       <ul>
-        <li :for={post <- @posts}>
-          <a href={"/writing/#{post.slug}"}>{post.title}</a>
-        </li>
+        <%= if @posts == [] do %>
+          <li>No writing published yet.</li>
+        <% else %>
+          <li :for={post <- @posts}>
+            <a href={"/writing/#{post.slug}"}>{post.title}</a>
+          </li>
+        <% end %>
       </ul>
       <a href="/writing" class="section-link">View all writing</a>
     </section>
@@ -468,9 +500,13 @@ defmodule PersonalBrandWeb.PublicLive do
     <section>
       <h2>Products</h2>
       <ul>
-        <li :for={product <- @products}>
-          <a href={"/products/#{product.slug}"}>{product.title} - {product.summary}</a>
-        </li>
+        <%= if @products == [] do %>
+          <li>No featured products yet.</li>
+        <% else %>
+          <li :for={product <- @products}>
+            <a href={"/products/#{product.slug}"}>{product.title} - {product.summary}</a>
+          </li>
+        <% end %>
       </ul>
       <a href="/products" class="section-link">View all products</a>
     </section>
@@ -508,12 +544,40 @@ defmodule PersonalBrandWeb.PublicLive do
     """
   end
 
+  def empty_state(assigns) do
+    ~H"""
+    <p class="empty-state">{@text}</p>
+    """
+  end
+
   # ── Helpers ──────────────────────────────────────────────
 
   defp theme_class_name("simple"), do: "simple-theme"
   defp theme_class_name("us_builder"), do: "us-builder-theme"
   defp theme_class_name("premium_dark"), do: "premium-dark-theme"
   defp theme_class_name(_), do: "old-web-theme"
+
+  defp ordered_social_links(social_links, profile_email) do
+    preferred_order = ["Email", "GitHub", "LinkedIn", "X"]
+
+    preferred_links =
+      preferred_order
+      |> Enum.map(fn label -> {label, Map.get(social_links, label)} end)
+      |> Enum.reject(fn {_label, url} -> is_nil(url) or url == "" end)
+
+    custom_links =
+      social_links
+      |> Map.drop(preferred_order)
+      |> Enum.sort_by(fn {label, _url} -> label end)
+
+    links = preferred_links ++ custom_links
+
+    if links == [] and is_binary(profile_email) and profile_email != "" do
+      [{"Email", "mailto:#{profile_email}"}]
+    else
+      links
+    end
+  end
 
   defp format_date(nil), do: ""
 
