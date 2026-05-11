@@ -18,6 +18,9 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert html =~ "Recruiter Pitch"
     assert html =~ "Fill the title first"
     assert html =~ "Cover Image"
+    assert html =~ "Choose existing platforms"
+    assert html =~ "Full-stack Engineer"
+    assert html =~ "Suggestions come from existing project data"
   end
 
   test "GET /admin/projects/:id/edit warns before changing published slug", %{conn: conn} do
@@ -151,8 +154,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
         "status" => "published",
         "featured" => "false",
         "project_type" => "personal_project",
-        "platforms" => "web",
-        "disciplines" => "fullstack_engineering",
+        "platforms" => ["web"],
+        "disciplines" => ["fullstack_engineering"],
         "case_study_visibility" => "public",
         "sort_order" => "0"
       },

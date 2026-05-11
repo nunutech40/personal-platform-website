@@ -151,6 +151,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Text,
         label: "Role",
         placeholder: "Full-stack Engineer / Mobile Engineering Lead",
+        render_form: &render_suggested_text_input/1,
         searchable: true,
         panel: :classification
       },
@@ -159,6 +160,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         label: "Ownership",
         placeholder:
           "Solo builder end-to-end: schema, admin CMS, public UI, tests, deployment workflow",
+        render_form: &render_suggested_text_input/1,
         except: [:index],
         panel: :classification
       },
@@ -166,6 +168,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Text,
         label: "Team Size",
         placeholder: "Solo / 2 iOS engineers / Cross-functional team of 6",
+        render_form: &render_suggested_text_input/1,
         except: [:index],
         panel: :classification
       },
@@ -177,24 +180,22 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         panel: :classification
       },
       platforms: %{
-        module: Backpex.Fields.Textarea,
-        label: "Platforms (one per line)",
-        rows: 4,
-        placeholder: "web\nbackend",
-        help_text: "Allowed: #{Enum.join(Project.platforms(), ", ")}",
+        module: Backpex.Fields.MultiSelect,
+        label: "Platforms",
+        options: fn _assigns -> taxonomy_options(:platforms, Project.platforms()) end,
+        prompt: "Choose existing platforms",
+        help_text: "Choose from existing/allowed platform keys to avoid duplicate spelling.",
         render: &render_badges/1,
-        render_form: &render_textarea/1,
         index_column_class: "min-w-40",
         panel: :classification
       },
       disciplines: %{
-        module: Backpex.Fields.Textarea,
-        label: "Disciplines (one per line)",
-        rows: 5,
-        placeholder: "fullstack_engineering\nbackend_engineering\nfrontend_engineering",
-        help_text: "Allowed: #{Enum.join(Project.disciplines(), ", ")}",
+        module: Backpex.Fields.MultiSelect,
+        label: "Disciplines",
+        options: fn _assigns -> taxonomy_options(:disciplines, Project.disciplines()) end,
+        prompt: "Choose existing disciplines",
+        help_text: "Choose from existing/allowed discipline keys to avoid duplicate spelling.",
         render: &render_badges/1,
-        render_form: &render_textarea/1,
         index_column_class: "min-w-48",
         panel: :classification
       },
@@ -223,6 +224,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Text,
         label: "Company",
         placeholder: "Personal Project / Komerce / Prodia",
+        render_form: &render_suggested_text_input/1,
         except: [:index],
         panel: :classification
       },
@@ -230,6 +232,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Text,
         label: "Client",
         placeholder: "Internal portfolio / Confidential client / Public users",
+        render_form: &render_suggested_text_input/1,
         except: [:index],
         panel: :classification
       },
@@ -245,6 +248,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         label: "Featured on homepage/work",
         help_text: "Turn on for projects that should be highlighted before regular projects.",
         render: &render_featured_badge/1,
+        render_form: &render_featured_toggle/1,
         panel: :identity
       },
       sort_order: %{
@@ -368,6 +372,25 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
 
   defp select_options(values), do: Enum.map(values, &{Project.label_for(&1), &1})
 
+  defp taxonomy_options(field, allowed_values) do
+    existing_values =
+      field
+      |> Content.list_project_array_values()
+      |> Enum.filter(&(&1 in allowed_values))
+
+    (existing_values ++ allowed_values)
+    |> Enum.uniq()
+    |> Enum.map(&{Project.label_for(&1), &1})
+  end
+
+  defp suggested_project_values(field, fallback_values) do
+    field
+    |> Content.list_project_field_values()
+    |> Kernel.++(fallback_values)
+    |> Enum.reject(&(is_nil(&1) or String.trim(&1) == ""))
+    |> Enum.uniq()
+  end
+
   defp render_label(assigns) do
     assigns = assign(assigns, :display_value, display_label(assigns[:value]))
 
@@ -445,6 +468,129 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
     </span>
     """
   end
+
+  defp render_featured_toggle(assigns) do
+    checked? = Phoenix.HTML.Form.normalize_value("checkbox", assigns.form[assigns.name].value)
+
+    assigns = assign(assigns, :checked?, checked?)
+
+    ~H"""
+    <div class="px-6 py-4 sm:py-3">
+      <label for={@form[@name].id} class="text-content mb-2 block break-words text-sm font-medium">
+        {@field_options[:label]}
+      </label>
+
+      <div class="inline-flex items-center rounded-md border border-slate-300 bg-slate-100 p-1">
+        <input type="hidden" name={@form[@name].name} value="false" tabindex="-1" aria-hidden="true" />
+        <label class={[
+          "cursor-pointer rounded px-3 py-1.5 text-sm font-semibold transition",
+          !@checked? && "bg-white text-slate-900 shadow-sm",
+          @checked? && "text-slate-500 hover:text-slate-800"
+        ]}>
+          <input
+            id={@form[@name].id}
+            type="radio"
+            name={@form[@name].name}
+            value="false"
+            checked={!@checked?}
+            class="sr-only"
+          /> Regular
+        </label>
+        <label class={[
+          "cursor-pointer rounded px-3 py-1.5 text-sm font-semibold transition",
+          @checked? && "bg-blue-600 text-white shadow-sm",
+          !@checked? && "text-slate-500 hover:text-slate-800"
+        ]}>
+          <input
+            type="radio"
+            name={@form[@name].name}
+            value="true"
+            checked={@checked?}
+            class="sr-only"
+          /> Featured
+        </label>
+      </div>
+
+      <p :if={@field_options[:help_text]} class="mt-2 text-sm opacity-70">
+        {@field_options[:help_text]}
+      </p>
+    </div>
+    """
+  end
+
+  defp render_suggested_text_input(assigns) do
+    assigns =
+      assigns
+      |> assign(:suggestions, suggested_values_for(assigns.name))
+      |> assign(:list_id, "#{assigns.form[assigns.name].id}_suggestions")
+
+    ~H"""
+    <div class="px-6 py-4 sm:py-3">
+      <label for={@form[@name].id} class="text-content mb-2 block break-words text-sm font-medium">
+        {@field_options[:label]}
+      </label>
+      <input
+        id={@form[@name].id}
+        name={@form[@name].name}
+        value={Phoenix.HTML.Form.normalize_value("text", @form[@name].value)}
+        placeholder={@field_options[:placeholder]}
+        list={@list_id}
+        class="input w-full"
+      />
+      <datalist id={@list_id}>
+        <option :for={value <- @suggestions} value={value}></option>
+      </datalist>
+      <p :if={@suggestions != []} class="mt-2 text-sm opacity-70">
+        Suggestions come from existing project data plus common portfolio values.
+      </p>
+      <p :if={@field_options[:help_text]} class="mt-2 text-sm opacity-70">
+        {@field_options[:help_text]}
+      </p>
+    </div>
+    """
+  end
+
+  defp suggested_values_for(:role) do
+    suggested_project_values(:role, [
+      "Full-stack Engineer",
+      "Mobile Engineering Lead",
+      "iOS Developer"
+    ])
+  end
+
+  defp suggested_values_for(:ownership) do
+    suggested_project_values(:ownership, [
+      "Solo builder end-to-end",
+      "Feature owner",
+      "Technical lead"
+    ])
+  end
+
+  defp suggested_values_for(:team_size) do
+    suggested_project_values(:team_size, [
+      "Solo",
+      "2 engineers",
+      "Cross-functional team of 6"
+    ])
+  end
+
+  defp suggested_values_for(:company) do
+    suggested_project_values(:company, [
+      "Personal Project",
+      "Komerce",
+      "Prodia"
+    ])
+  end
+
+  defp suggested_values_for(:client) do
+    suggested_project_values(:client, [
+      "Internal portfolio",
+      "Confidential client",
+      "Public users"
+    ])
+  end
+
+  defp suggested_values_for(_field), do: []
 
   defp render_list(assigns) do
     assigns = assign(assigns, :display_value, display_value(assigns[:value]))

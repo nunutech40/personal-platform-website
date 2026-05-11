@@ -85,6 +85,26 @@ defmodule PersonalBrand.Content do
     Repo.all(from p in Project, order_by: [asc: p.sort_order, desc: p.year, desc: p.inserted_at])
   end
 
+  def list_project_field_values(field)
+      when field in [:role, :ownership, :team_size, :company, :client] do
+    Repo.all(
+      from p in Project,
+        where: not is_nil(field(p, ^field)) and field(p, ^field) != "",
+        distinct: field(p, ^field),
+        order_by: field(p, ^field),
+        select: field(p, ^field)
+    )
+  end
+
+  def list_project_array_values(field) when field in [:platforms, :disciplines] do
+    Project
+    |> Repo.all()
+    |> Enum.flat_map(&(Map.get(&1, field) || []))
+    |> Enum.reject(&(is_nil(&1) or String.trim(&1) == ""))
+    |> Enum.uniq()
+    |> Enum.sort()
+  end
+
   def list_published_projects(opts \\ []) do
     discipline = Keyword.get(opts, :discipline)
     platform = Keyword.get(opts, :platform)
