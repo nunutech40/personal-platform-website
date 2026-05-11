@@ -52,9 +52,10 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
 
     assert html =~ "RajaOngkir iOS App"
     assert html =~ "Edit"
-    assert html =~ "View public"
+    assert html =~ "Preview"
     assert html =~ ~s(href="/work/rajaongkir-ios-app")
     assert html =~ "Updated"
+    refute html =~ "Select all items"
   end
 
   test "admin project form creates a project without manual slug", %{conn: conn} do
@@ -125,7 +126,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
       |> live(~p"/admin/projects")
 
     assert html =~ "Project To Delete"
-    assert html =~ "item-action-delete-#{project.id}"
+    assert html =~ ~s(phx-value-action-key="delete")
+    assert html =~ ~s(phx-value-item-id="#{project.id}")
     assert html =~ "Delete"
   end
 

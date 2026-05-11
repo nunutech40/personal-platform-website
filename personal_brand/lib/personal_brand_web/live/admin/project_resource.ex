@@ -32,27 +32,23 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   end
 
   @impl true
-  def filters do
-    [
-      status: %{
-        module: PersonalBrandWeb.Admin.Filters.ProjectStatus
-      },
-      featured: %{
-        module: PersonalBrandWeb.Admin.Filters.ProjectFeatured
-      }
-    ]
-  end
-
-  @impl true
   def item_actions(default_actions) do
     default_actions
+    |> Keyword.put(:show, %{
+      module: Backpex.ItemActions.Show,
+      only: [:show]
+    })
     |> Keyword.put(:edit, %{
       module: PersonalBrandWeb.Admin.ItemActions.EditProject,
-      only: [:row, :show]
+      only: [:show]
     })
     |> Keyword.put(:view_public, %{
       module: PersonalBrandWeb.Admin.ItemActions.ViewPublicProject,
-      only: [:row, :show]
+      only: [:show]
+    })
+    |> Keyword.put(:delete, %{
+      module: Backpex.ItemActions.Delete,
+      only: [:show]
     })
   end
 
@@ -74,12 +70,14 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       title: %{
         module: Backpex.Fields.Text,
         label: "Title",
+        placeholder: "Personal Platform Website",
         searchable: true,
         panel: :identity
       },
       slug: %{
         module: Backpex.Fields.Text,
         label: "Slug",
+        placeholder: "personal-platform-website",
         help_text:
           "Leave blank on create to auto-generate. Be careful changing a published slug because public links depend on it.",
         panel: :identity
@@ -88,6 +86,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Summary",
         rows: 3,
+        placeholder:
+          "Platform personal berbasis Phoenix LiveView untuk portfolio, writing, product catalog, dan admin CMS.",
         index_column_class: "min-w-80",
         panel: :recruiter_pitch
       },
@@ -95,6 +95,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Description",
         rows: 8,
+        placeholder:
+          "Jelaskan konteks project, siapa user-nya, scope pekerjaan, dan kenapa project ini penting untuk portfolio recruiter.",
         except: [:index],
         panel: :case_study
       },
@@ -102,6 +104,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Problem",
         rows: 5,
+        placeholder:
+          "Portfolio sebelumnya sulit di-update, data tersebar, dan recruiter tidak cepat melihat role, impact, serta technical depth.",
         except: [:index],
         panel: :case_study
       },
@@ -109,6 +113,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Solution",
         rows: 5,
+        placeholder:
+          "Membangun Phoenix LiveView CMS dengan PostgreSQL, Backpex admin, auto slug, taxonomy project, dan halaman case study publik.",
         except: [:index],
         panel: :case_study
       },
@@ -116,6 +122,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Architecture Notes",
         rows: 6,
+        placeholder:
+          "Content context mengatur query published/draft. Public route membaca project by slug. Admin memakai Backpex resource dan Ecto changeset.",
         except: [:index],
         panel: :case_study
       },
@@ -123,6 +131,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Trade-offs",
         rows: 5,
+        placeholder:
+          "Taxonomy memakai enum-array dulu agar cepat ship; taxonomy table dan gallery media bisa ditambahkan saat kebutuhan admin makin kompleks.",
         except: [:index],
         panel: :case_study
       },
@@ -130,6 +140,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Results (one per line)",
         rows: 6,
+        placeholder:
+          "Recruiter bisa scan project lebih cepat\nAdmin bisa create/edit project tanpa raw database access\nPublic case study bisa dibuka lewat /work/:slug",
         render: &render_list/1,
         render_form: &render_textarea/1,
         except: [:index],
@@ -138,18 +150,22 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       role: %{
         module: Backpex.Fields.Text,
         label: "Role",
+        placeholder: "Full-stack Engineer / Mobile Engineering Lead",
         searchable: true,
         panel: :classification
       },
       ownership: %{
         module: Backpex.Fields.Text,
         label: "Ownership",
+        placeholder:
+          "Solo builder end-to-end: schema, admin CMS, public UI, tests, deployment workflow",
         except: [:index],
         panel: :classification
       },
       team_size: %{
         module: Backpex.Fields.Text,
         label: "Team Size",
+        placeholder: "Solo / 2 iOS engineers / Cross-functional team of 6",
         except: [:index],
         panel: :classification
       },
@@ -164,6 +180,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Platforms (one per line)",
         rows: 4,
+        placeholder: "web\nbackend",
         help_text: "Allowed: #{Enum.join(Project.platforms(), ", ")}",
         render: &render_badges/1,
         render_form: &render_textarea/1,
@@ -174,6 +191,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Disciplines (one per line)",
         rows: 5,
+        placeholder: "fullstack_engineering\nbackend_engineering\nfrontend_engineering",
         help_text: "Allowed: #{Enum.join(Project.disciplines(), ", ")}",
         render: &render_badges/1,
         render_form: &render_textarea/1,
@@ -184,6 +202,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Tech Stack (one per line)",
         rows: 4,
+        placeholder: "Elixir\nPhoenix LiveView\nPostgreSQL\nBackpex",
         render: &render_list/1,
         render_form: &render_textarea/1,
         panel: :evidence
@@ -191,22 +210,26 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       year: %{
         module: Backpex.Fields.Text,
         label: "Year",
+        placeholder: "2026",
         panel: :identity
       },
       duration: %{
         module: Backpex.Fields.Text,
         label: "Duration",
+        placeholder: "Jan 2026 - May 2026 / 3 months",
         panel: :identity
       },
       company: %{
         module: Backpex.Fields.Text,
         label: "Company",
+        placeholder: "Personal Project / Komerce / Prodia",
         except: [:index],
         panel: :classification
       },
       client: %{
         module: Backpex.Fields.Text,
         label: "Client",
+        placeholder: "Internal portfolio / Confidential client / Public users",
         except: [:index],
         panel: :classification
       },
@@ -219,21 +242,25 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       },
       featured: %{
         module: Backpex.Fields.Boolean,
-        label: "Featured",
+        label: "Featured on homepage/work",
+        help_text: "Turn on for projects that should be highlighted before regular projects.",
         render: &render_featured_badge/1,
         panel: :identity
       },
       sort_order: %{
         module: Backpex.Fields.Number,
-        label: "Sort Order",
+        label: "Sort Order (lower appears first)",
+        placeholder: "0",
         index_column_class: "w-24",
-        help_text: "Lower numbers appear first. 0 = highest priority.",
+        help_text: "Use 0 for the most important project, then 10, 20, 30 for the next projects.",
         panel: :identity
       },
       impact_summary: %{
         module: Backpex.Fields.Textarea,
         label: "Impact Summary",
         rows: 3,
+        placeholder:
+          "Mengubah portfolio dari halaman statis menjadi CMS yang bisa cepat di-update untuk kebutuhan melamar kerja.",
         except: [:index],
         panel: :recruiter_pitch
       },
@@ -241,6 +268,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Technical Highlights (one per line)",
         rows: 6,
+        placeholder:
+          "Auto-generated unique slug\nAdmin CRUD dengan Backpex\nPublic filtering by platform/discipline\nTests untuk create/edit/detail visibility",
         render: &render_list/1,
         render_form: &render_textarea/1,
         except: [:index],
@@ -250,6 +279,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Textarea,
         label: "Metrics (one per line)",
         rows: 5,
+        placeholder:
+          "169 automated tests passing\n5 recruiter-ready projects published\nAdmin create/edit workflow covered by tests",
         render: &render_list/1,
         render_form: &render_textarea/1,
         except: [:index],
@@ -265,16 +296,19 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       demo_url: %{
         module: Backpex.Fields.Text,
         label: "Demo URL",
+        placeholder: "https://nununugraha.dev/work/personal-platform-website",
         panel: :media_links
       },
       github_url: %{
         module: Backpex.Fields.Text,
         label: "GitHub URL",
+        placeholder: "https://github.com/nunutech40/personal-platform-website",
         panel: :media_links
       },
       app_store_url: %{
         module: Backpex.Fields.Text,
         label: "App Store URL",
+        placeholder: "https://apps.apple.com/app/example/id123456789",
         panel: :media_links
       },
       cover_image: %{
@@ -433,6 +467,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         id={@form[@name].id}
         name={@form[@name].name}
         rows={@field_options[:rows] || 4}
+        placeholder={@field_options[:placeholder]}
         class="textarea w-full"
       >{@textarea_value}</textarea>
       <p :if={@field_options[:help_text]} class="mt-2 text-sm opacity-70">
