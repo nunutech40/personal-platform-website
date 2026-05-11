@@ -13,14 +13,14 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
       |> log_in_admin()
       |> live(~p"/admin/projects/new")
 
-    assert html =~ "Identity"
-    assert html =~ "Classification"
-    assert html =~ "Recruiter Pitch"
-    assert html =~ "Fill the title first"
-    assert html =~ "Cover Image"
-    assert html =~ "Choose existing platforms"
+    assert html =~ "Info Dasar"
+    assert html =~ "Klasifikasi &amp; Peran"
+    assert html =~ "Pitch untuk Recruiter"
+    assert html =~ "Isi Judul Project dulu"
+    assert html =~ "Gambar Cover"
+    assert html =~ "Pilih platform yang dipakai"
     assert html =~ "Full-stack Engineer"
-    assert html =~ "Suggestions come from existing project data"
+    assert html =~ "Ketik sendiri atau pilih dari saran"
   end
 
   test "GET /admin/projects/:id/edit warns before changing published slug", %{conn: conn} do
@@ -36,9 +36,9 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
       |> log_in_admin()
       |> live(~p"/admin/projects/#{project.id}/edit")
 
-    assert html =~ "Published project URL"
+    assert html =~ "Project ini sudah terbit"
     assert html =~ "/work/personal-platform-website"
-    assert html =~ "Changing the slug will change this public case study URL"
+    assert html =~ "Mengubah URL Project"
   end
 
   test "GET /admin/projects includes public preview action and updated column", %{conn: conn} do
@@ -54,10 +54,10 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
       |> live(~p"/admin/projects")
 
     assert html =~ "RajaOngkir iOS App"
-    assert html =~ "Edit"
-    assert html =~ "Preview"
+    assert html =~ "Ubah"
+    assert html =~ "Lihat Publik"
     assert html =~ ~s(href="/work/rajaongkir-ios-app")
-    assert html =~ "Updated"
+    assert html =~ "Terakhir Diubah"
     refute html =~ "Select all items"
   end
 
@@ -131,7 +131,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert html =~ "Project To Delete"
     assert html =~ ~s(phx-value-action-key="delete")
     assert html =~ ~s(phx-value-item-id="#{project.id}")
-    assert html =~ "Delete"
+    assert html =~ "Hapus"
   end
 
   defp log_in_admin(conn) do

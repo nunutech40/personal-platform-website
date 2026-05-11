@@ -17,17 +17,17 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   def singular_name, do: "Project"
 
   @impl true
-  def plural_name, do: "Projects"
+  def plural_name, do: "Project Portfolio"
 
   @impl true
   def panels do
     [
-      identity: "Identity",
-      classification: "Classification",
-      recruiter_pitch: "Recruiter Pitch",
-      case_study: "Case Study",
-      evidence: "Evidence",
-      media_links: "Media & Links"
+      identity: "Info Dasar",
+      classification: "Klasifikasi & Peran",
+      recruiter_pitch: "Pitch untuk Recruiter",
+      case_study: "Case Study Detail",
+      evidence: "Bukti & Hasil",
+      media_links: "Media & Link"
     ]
   end
 
@@ -62,86 +62,98 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
     [
       admin_actions: %{
         module: Backpex.Fields.Text,
-        label: "Actions",
+        label: "Aksi",
         only: [:index],
         render: &render_admin_actions/1,
         index_column_class: "min-w-64"
       },
       title: %{
         module: Backpex.Fields.Text,
-        label: "Title",
-        placeholder: "Personal Platform Website",
+        label: "Judul Project",
+        placeholder: "Contoh: Personal Platform Website",
+        help_text: "Nama project yang akan tampil di halaman Work dan card portfolio.",
         searchable: true,
         panel: :identity
       },
       slug: %{
         module: Backpex.Fields.Text,
-        label: "Slug",
+        label: "URL Project (slug)",
         placeholder: "personal-platform-website",
         help_text:
-          "Leave blank on create to auto-generate. Be careful changing a published slug because public links depend on it.",
+          "Alamat URL publik project, muncul di /work/<slug>. Kosongkan saja saat membuat project baru, sistem akan buat otomatis dari judul. Hati-hati mengubah slug project yang sudah terbit karena link lama bisa patah.",
         panel: :identity
       },
       summary: %{
         module: Backpex.Fields.Textarea,
-        label: "Summary",
+        label: "Ringkasan Singkat",
         rows: 3,
         placeholder:
-          "Platform personal berbasis Phoenix LiveView untuk portfolio, writing, product catalog, dan admin CMS.",
+          "Satu-dua kalimat yang menjelaskan project ini. Contoh: Platform personal berbasis Phoenix LiveView untuk portfolio, writing, dan CMS admin.",
+        help_text:
+          "Dipakai sebagai one-liner di card /work. Fokus ke impact atau konteks singkat, bukan deskripsi teknis panjang.",
         index_column_class: "min-w-80",
         panel: :recruiter_pitch
       },
       description: %{
         module: Backpex.Fields.Textarea,
-        label: "Description",
+        label: "Deskripsi Lengkap",
         rows: 8,
         placeholder:
           "Jelaskan konteks project, siapa user-nya, scope pekerjaan, dan kenapa project ini penting untuk portfolio recruiter.",
+        help_text: "Bagian overview di halaman detail project publik.",
         except: [:index],
         panel: :case_study
       },
       problem: %{
         module: Backpex.Fields.Textarea,
-        label: "Problem",
+        label: "Problem yang Diselesaikan",
         rows: 5,
         placeholder:
-          "Portfolio sebelumnya sulit di-update, data tersebar, dan recruiter tidak cepat melihat role, impact, serta technical depth.",
+          "Contoh: Portfolio sebelumnya sulit di-update, data tersebar, dan recruiter tidak cepat melihat role, impact, serta technical depth.",
+        help_text: "Masalah user atau bisnis yang project ini selesaikan.",
         except: [:index],
         panel: :case_study
       },
       solution: %{
         module: Backpex.Fields.Textarea,
-        label: "Solution",
+        label: "Solusi / Pendekatan Teknis",
         rows: 5,
         placeholder:
-          "Membangun Phoenix LiveView CMS dengan PostgreSQL, Backpex admin, auto slug, taxonomy project, dan halaman case study publik.",
+          "Contoh: Membangun Phoenix LiveView CMS dengan PostgreSQL, Backpex admin, auto slug, taxonomy project, dan halaman case study publik.",
+        help_text:
+          "Cara kamu menyelesaikan problem di atas. Tunjukkan ownership dan decision teknis.",
         except: [:index],
         panel: :case_study
       },
       architecture_notes: %{
         module: Backpex.Fields.Textarea,
-        label: "Architecture Notes",
+        label: "Catatan Arsitektur",
         rows: 6,
         placeholder:
-          "Content context mengatur query published/draft. Public route membaca project by slug. Admin memakai Backpex resource dan Ecto changeset.",
+          "Contoh: Content context mengatur query published/draft. Public route membaca project by slug. Admin memakai Backpex resource dan Ecto changeset.",
+        help_text:
+          "Catatan arsitektur, boundary antar modul, atau pattern penting. Buat menunjukkan seniority teknis.",
         except: [:index],
         panel: :case_study
       },
       tradeoffs: %{
         module: Backpex.Fields.Textarea,
-        label: "Trade-offs",
+        label: "Trade-off / Keputusan yang Diambil",
         rows: 5,
         placeholder:
-          "Taxonomy memakai enum-array dulu agar cepat ship; taxonomy table dan gallery media bisa ditambahkan saat kebutuhan admin makin kompleks.",
+          "Contoh: Taxonomy pakai enum-array dulu agar cepat ship; taxonomy table dan gallery media ditunda sampai admin workflow makin kompleks.",
+        help_text: "Keputusan teknis dengan alasannya, termasuk yang sengaja tidak dikerjakan.",
         except: [:index],
         panel: :case_study
       },
       result: %{
         module: Backpex.Fields.Textarea,
-        label: "Results (one per line)",
+        label: "Hasil Project",
         rows: 6,
         placeholder:
-          "Recruiter bisa scan project lebih cepat\nAdmin bisa create/edit project tanpa raw database access\nPublic case study bisa dibuka lewat /work/:slug",
+          "Recruiter bisa scan project lebih cepat\nAdmin bisa create/edit project tanpa akses database\nPublic case study bisa dibuka lewat /work/<slug>",
+        help_text:
+          "Satu hasil per baris. Tekan Enter untuk baris baru. Fokus ke outcome yang bisa diverifikasi.",
         render: &render_list/1,
         render_form: &render_textarea/1,
         except: [:index],
@@ -149,131 +161,156 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       },
       role: %{
         module: Backpex.Fields.Text,
-        label: "Role",
-        placeholder: "Full-stack Engineer / Mobile Engineering Lead",
+        label: "Peran Kamu di Project",
+        placeholder: "Contoh: Full-stack Engineer / Mobile Engineering Lead",
+        help_text:
+          "Jabatan atau peran kamu di project ini. Tampil di card /work dan detail project.",
         render_form: &render_suggested_text_input/1,
         searchable: true,
         panel: :classification
       },
       ownership: %{
         module: Backpex.Fields.Text,
-        label: "Ownership",
+        label: "Ruang Lingkup Tanggung Jawab",
         placeholder:
-          "Solo builder end-to-end: schema, admin CMS, public UI, tests, deployment workflow",
+          "Contoh: Solo builder end-to-end: schema, admin CMS, public UI, tests, deployment workflow",
+        help_text:
+          "Scope pekerjaan kamu di project ini. Contoh: Solo builder, Feature owner, atau Technical lead.",
         render_form: &render_suggested_text_input/1,
         except: [:index],
         panel: :classification
       },
       team_size: %{
         module: Backpex.Fields.Text,
-        label: "Team Size",
-        placeholder: "Solo / 2 iOS engineers / Cross-functional team of 6",
+        label: "Ukuran Tim",
+        placeholder: "Contoh: Solo / 2 iOS engineers / Cross-functional team of 6",
+        help_text: "Jumlah dan komposisi tim saat mengerjakan project ini.",
         render_form: &render_suggested_text_input/1,
         except: [:index],
         panel: :classification
       },
       project_type: %{
         module: Backpex.Fields.Select,
-        label: "Project Type",
+        label: "Tipe Project",
+        help_text:
+          "Kategori project. Pilih Professional Work untuk project kantor, Personal Project untuk karya pribadi, Client Work untuk project klien.",
         options: select_options(Project.project_types()),
         render: &render_label/1,
         panel: :classification
       },
       platforms: %{
         module: Backpex.Fields.MultiSelect,
-        label: "Platforms",
+        label: "Platform",
         options: fn _assigns -> taxonomy_options(:platforms, Project.platforms()) end,
-        prompt: "Choose existing platforms",
-        help_text: "Choose from existing/allowed platform keys to avoid duplicate spelling.",
+        prompt: "Pilih platform yang dipakai",
+        help_text:
+          "Platform yang kamu kerjakan di project ini (iOS, Android, Web, Backend, dll). Recruiter pakai ini untuk filter project di halaman Work. Bisa pilih lebih dari satu.",
         render: &render_badges/1,
         index_column_class: "min-w-40",
         panel: :classification
       },
       disciplines: %{
         module: Backpex.Fields.MultiSelect,
-        label: "Disciplines",
+        label: "Keahlian / Discipline",
         options: fn _assigns -> taxonomy_options(:disciplines, Project.disciplines()) end,
-        prompt: "Choose existing disciplines",
-        help_text: "Choose from existing/allowed discipline keys to avoid duplicate spelling.",
+        prompt: "Pilih keahlian yang ditunjukkan",
+        help_text:
+          "Keahlian atau peran engineering yang kamu tunjukkan di project ini (iOS Development, Backend Engineering, dll). Muncul sebagai filter di halaman Work. Bisa pilih lebih dari satu.",
         render: &render_badges/1,
         index_column_class: "min-w-48",
         panel: :classification
       },
       tech_stack: %{
         module: Backpex.Fields.Textarea,
-        label: "Tech Stack (one per line)",
+        label: "Tech Stack",
         rows: 4,
         placeholder: "Elixir\nPhoenix LiveView\nPostgreSQL\nBackpex",
+        help_text:
+          "Teknologi yang dipakai. Satu teknologi per baris, tekan Enter untuk baris baru.",
         render: &render_list/1,
         render_form: &render_textarea/1,
         panel: :evidence
       },
       year: %{
         module: Backpex.Fields.Text,
-        label: "Year",
+        label: "Tahun",
         placeholder: "2026",
+        help_text: "Tahun project dikerjakan. Boleh rentang tahun, contoh: 2021-2024.",
         panel: :identity
       },
       duration: %{
         module: Backpex.Fields.Text,
-        label: "Duration",
-        placeholder: "Jan 2026 - May 2026 / 3 months",
+        label: "Periode Pengerjaan",
+        placeholder: "Contoh: Jan 2026 - May 2026 / 3 months",
+        help_text: "Durasi atau periode pengerjaan yang lebih spesifik dari tahun. Opsional.",
         panel: :identity
       },
       company: %{
         module: Backpex.Fields.Text,
-        label: "Company",
-        placeholder: "Personal Project / Komerce / Prodia",
+        label: "Perusahaan",
+        placeholder: "Contoh: Personal Project / Komerce / Prodia",
+        help_text:
+          "Perusahaan tempat project ini dikerjakan. Isi Personal Project jika karya pribadi.",
         render_form: &render_suggested_text_input/1,
         except: [:index],
         panel: :classification
       },
       client: %{
         module: Backpex.Fields.Text,
-        label: "Client",
-        placeholder: "Internal portfolio / Confidential client / Public users",
+        label: "Klien / Pengguna",
+        placeholder: "Contoh: Internal portfolio / Confidential client / Public users",
+        help_text:
+          "Siapa pengguna project ini. Untuk project proprietary, boleh pakai label umum seperti Confidential client.",
         render_form: &render_suggested_text_input/1,
         except: [:index],
         panel: :classification
       },
       status: %{
         module: Backpex.Fields.Select,
-        label: "Status",
+        label: "Status Publikasi",
+        help_text:
+          "Draft = belum tampil di web. Published = tampil di /work. Archived = disembunyikan tapi data tetap tersimpan.",
         options: select_options(Project.statuses()),
         render: &render_status_badge/1,
         panel: :identity
       },
       featured: %{
         module: Backpex.Fields.Boolean,
-        label: "Featured on homepage/work",
-        help_text: "Turn on for projects that should be highlighted before regular projects.",
+        label: "Tampilkan di Urutan Teratas",
+        help_text:
+          "Aktifkan untuk project yang paling penting untuk recruiter. Project yang di-featured muncul paling atas di halaman Work dan homepage.",
         render: &render_featured_badge/1,
         render_form: &render_featured_toggle/1,
         panel: :identity
       },
       sort_order: %{
         module: Backpex.Fields.Number,
-        label: "Sort Order (lower appears first)",
+        label: "Urutan Tampil",
         placeholder: "0",
         index_column_class: "w-24",
-        help_text: "Use 0 for the most important project, then 10, 20, 30 for the next projects.",
+        help_text:
+          "Angka untuk mengatur urutan project di halaman Work. Angka lebih kecil tampil lebih dulu. Contoh: project paling penting isi 0, berikutnya 10, lalu 20. Kosongkan atau isi 0 kalau tidak yakin.",
         panel: :identity
       },
       impact_summary: %{
         module: Backpex.Fields.Textarea,
-        label: "Impact Summary",
+        label: "Ringkasan Impact",
         rows: 3,
         placeholder:
-          "Mengubah portfolio dari halaman statis menjadi CMS yang bisa cepat di-update untuk kebutuhan melamar kerja.",
+          "Contoh: Mengubah portfolio dari halaman statis menjadi CMS yang bisa di-update cepat untuk kebutuhan melamar kerja.",
+        help_text:
+          "Dampak/impact project dalam 1-2 kalimat. Ini tampil di card /work untuk menarik perhatian recruiter.",
         except: [:index],
         panel: :recruiter_pitch
       },
       technical_highlights: %{
         module: Backpex.Fields.Textarea,
-        label: "Technical Highlights (one per line)",
+        label: "Highlight Teknis",
         rows: 6,
         placeholder:
           "Auto-generated unique slug\nAdmin CRUD dengan Backpex\nPublic filtering by platform/discipline\nTests untuk create/edit/detail visibility",
+        help_text:
+          "Bullet point hal teknis yang menunjukkan seniority. Satu item per baris, tekan Enter untuk baris baru.",
         render: &render_list/1,
         render_form: &render_textarea/1,
         except: [:index],
@@ -281,10 +318,12 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       },
       metrics: %{
         module: Backpex.Fields.Textarea,
-        label: "Metrics (one per line)",
+        label: "Metrik / Angka Hasil",
         rows: 5,
         placeholder:
           "169 automated tests passing\n5 recruiter-ready projects published\nAdmin create/edit workflow covered by tests",
+        help_text:
+          "Angka atau metrik yang bisa dipercaya. Kalau project proprietary, boleh pakai metric kualitatif. Satu item per baris.",
         render: &render_list/1,
         render_form: &render_textarea/1,
         except: [:index],
@@ -292,43 +331,50 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       },
       case_study_visibility: %{
         module: Backpex.Fields.Select,
-        label: "Case Study Visibility",
+        label: "Tingkat Detail Case Study",
+        help_text:
+          "Public = boleh ceritakan detail teknis. Limited = sebagian detail disimpan. Private Summary = hanya ringkasan untuk project yang sangat rahasia.",
         options: select_options(Project.case_study_visibilities()),
         render: &render_label/1,
         panel: :case_study
       },
       demo_url: %{
         module: Backpex.Fields.Text,
-        label: "Demo URL",
+        label: "Link Demo / Live Site",
         placeholder: "https://nununugraha.dev/work/personal-platform-website",
+        help_text:
+          "URL demo atau live site. Harus dimulai dengan http:// atau https://. Opsional.",
         panel: :media_links
       },
       github_url: %{
         module: Backpex.Fields.Text,
-        label: "GitHub URL",
+        label: "Link GitHub",
         placeholder: "https://github.com/nunutech40/personal-platform-website",
+        help_text: "URL repository GitHub. Untuk project open-source atau demo publik. Opsional.",
         panel: :media_links
       },
       app_store_url: %{
         module: Backpex.Fields.Text,
-        label: "App Store URL",
+        label: "Link App Store",
         placeholder: "https://apps.apple.com/app/example/id123456789",
+        help_text: "URL App Store untuk project iOS/mobile yang sudah rilis. Opsional.",
         panel: :media_links
       },
       cover_image: %{
         module: Backpex.Fields.BelongsTo,
-        label: "Cover Image",
+        label: "Gambar Cover",
         display_field: :filename,
         display_field_form: :filename,
         live_resource: PersonalBrandWeb.Admin.MediaResource,
-        prompt: "Choose cover image",
-        help_text: "Upload media first in Admin > Media, then select it here.",
+        prompt: "Pilih gambar cover",
+        help_text:
+          "Gambar utama project untuk card /work dan hero detail page. Upload dulu di Admin > Media, lalu pilih di sini.",
         except: [:index],
         panel: :media_links
       },
       updated_at: %{
         module: Backpex.Fields.DateTime,
-        label: "Updated",
+        label: "Terakhir Diubah",
         except: [:new, :edit],
         orderable: true
       }
@@ -346,9 +392,11 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
     ~H"""
     <div class="alert alert-warning mb-4">
       <div>
-        <p class="font-semibold">Published project URL: <a href={@public_path}>{@public_path}</a></p>
+        <p class="font-semibold">
+          Project ini sudah terbit di: <a href={@public_path}>{@public_path}</a>
+        </p>
         <p class="text-sm">
-          Changing the slug will change this public case study URL, so only edit it intentionally.
+          Mengubah URL Project (slug) akan mengubah link publik di atas, jadi link lama bisa patah. Ubah hanya kalau memang perlu.
         </p>
       </div>
     </div>
@@ -359,7 +407,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
     ~H"""
     <div class="alert alert-info mb-4">
       <p>
-        Fill the title first. Slug can stay blank because the system will generate a unique public URL automatically.
+        Isi Judul Project dulu. URL Project (slug) boleh dikosongkan, sistem akan buat otomatis dari judul.
       </p>
     </div>
     """
@@ -421,13 +469,13 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         navigate={"/admin/projects/#{@primary_key}/edit"}
         class="rounded border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-700 transition hover:border-blue-300 hover:bg-blue-50"
       >
-        Edit
+        Ubah
       </.link>
       <.link
         navigate={@public_path}
         class="rounded border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
       >
-        Preview
+        Lihat Publik
       </.link>
       <button
         type="button"
@@ -436,7 +484,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         phx-value-item-id={@primary_key}
         class="rounded border border-red-200 px-2 py-1 text-xs font-semibold text-red-700 transition hover:border-red-300 hover:bg-red-50"
       >
-        Delete
+        Hapus
       </button>
     </div>
     """
@@ -463,7 +511,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   defp render_featured_badge(assigns) do
     ~H"""
     <span>
-      <span :if={@value} class="badge badge-primary badge-sm">Featured</span>
+      <span :if={@value} class="badge badge-primary badge-sm">Unggulan</span>
       <span :if={!@value} class="text-slate-400">-</span>
     </span>
     """
@@ -494,7 +542,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
             value="false"
             checked={!@checked?}
             class="sr-only"
-          /> Regular
+          /> Biasa
         </label>
         <label class={[
           "cursor-pointer rounded px-3 py-1.5 text-sm font-semibold transition",
@@ -507,7 +555,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
             value="true"
             checked={@checked?}
             class="sr-only"
-          /> Featured
+          /> Unggulan
         </label>
       </div>
 
@@ -541,7 +589,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         <option :for={value <- @suggestions} value={value}></option>
       </datalist>
       <p :if={@suggestions != []} class="mt-2 text-sm opacity-70">
-        Suggestions come from existing project data plus common portfolio values.
+        Ketik sendiri atau pilih dari saran di atas (berdasarkan project yang sudah ada).
       </p>
       <p :if={@field_options[:help_text]} class="mt-2 text-sm opacity-70">
         {@field_options[:help_text]}
