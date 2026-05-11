@@ -207,6 +207,15 @@ defmodule PersonalBrand.Content.ProjectTest do
       assert changeset.valid?
     end
 
+    test "allows blank optional URLs from admin forms" do
+      attrs = %{@valid_attrs | demo_url: "", github_url: "", app_store_url: ""}
+      changeset = Project.changeset(%Project{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :demo_url) == nil
+      assert get_field(changeset, :github_url) == nil
+      assert get_field(changeset, :app_store_url) == nil
+    end
+
     test "rejects title shorter than min length" do
       attrs = %{@valid_attrs | title: "A"}
       changeset = Project.changeset(%Project{}, attrs)

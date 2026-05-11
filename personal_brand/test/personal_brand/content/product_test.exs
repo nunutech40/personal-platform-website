@@ -32,6 +32,20 @@ defmodule PersonalBrand.Content.ProductTest do
       assert errors_on(changeset)[:title] == ["can't be blank"]
     end
 
+    test "generates slug from title when slug is missing" do
+      attrs = Map.delete(@valid_attrs, :slug)
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :slug) == "test-product"
+    end
+
+    test "generates slug from title when slug is blank" do
+      attrs = %{@valid_attrs | slug: ""}
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :slug) == "test-product"
+    end
+
     test "enforces unique slug constraint" do
       %Product{}
       |> Product.changeset(@valid_attrs)
@@ -95,6 +109,20 @@ defmodule PersonalBrand.Content.ProductTest do
       changeset = Product.changeset(%Product{}, attrs)
       assert changeset.valid?
       assert get_field(changeset, :included) == ["Feature A", "Feature B", "Feature C"]
+    end
+
+    test "accepts included items as newline separated admin input" do
+      attrs = %{@valid_attrs | included: "Feature A\nFeature B\nFeature C"}
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :included) == ["Feature A", "Feature B", "Feature C"]
+    end
+
+    test "allows blank optional checkout_url from admin forms" do
+      attrs = %{@valid_attrs | checkout_url: ""}
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :checkout_url) == nil
     end
 
     test "rejects missing price" do

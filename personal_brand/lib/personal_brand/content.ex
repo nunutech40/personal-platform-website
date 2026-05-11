@@ -105,6 +105,28 @@ defmodule PersonalBrand.Content do
     |> Enum.sort()
   end
 
+  def list_post_field_values(field) when field in [:seo_title] do
+    list_text_field_values(Post, field)
+  end
+
+  def list_post_array_values(:tags) do
+    Post
+    |> Repo.all()
+    |> Enum.flat_map(&(&1.tags || []))
+    |> clean_distinct_values()
+  end
+
+  def list_product_field_values(field) when field in [:currency] do
+    list_text_field_values(Product, field)
+  end
+
+  def list_product_array_values(:included) do
+    Product
+    |> Repo.all()
+    |> Enum.flat_map(&(&1.included || []))
+    |> clean_distinct_values()
+  end
+
   def list_published_projects(opts \\ []) do
     discipline = Keyword.get(opts, :discipline)
     platform = Keyword.get(opts, :platform)
@@ -157,17 +179,7 @@ defmodule PersonalBrand.Content do
   end
 
   def put_unique_project_slug(attrs) when is_map(attrs) do
-    if attr(attrs, :slug) in [nil, ""] do
-      slug = unique_project_slug(attrs)
-
-      cond do
-        slug == "" -> attrs
-        Map.has_key?(attrs, "slug") -> Map.put(attrs, "slug", slug)
-        true -> Map.put(attrs, :slug, slug)
-      end
-    else
-      attrs
-    end
+    put_unique_slug(attrs, &unique_project_slug/1)
   end
 
   # ── Posts ────────────────────────────────────────────────
@@ -194,6 +206,12 @@ defmodule PersonalBrand.Content do
 
   def get_post_by_slug(slug) do
     Repo.get_by(Post, slug: slug)
+  end
+
+  def unique_post_slug(attrs) when is_map(attrs), do: resolve_unique_slug(attrs, Post)
+
+  def put_unique_post_slug(attrs) when is_map(attrs) do
+    put_unique_slug(attrs, &unique_post_slug/1)
   end
 
   # ── Products ─────────────────────────────────────────────
@@ -232,6 +250,12 @@ defmodule PersonalBrand.Content do
 
   def get_active_product_by_slug(slug) do
     Repo.get_by(Product, slug: slug, status: "active")
+  end
+
+  def unique_product_slug(attrs) when is_map(attrs), do: resolve_unique_slug(attrs, Product)
+
+  def put_unique_product_slug(attrs) when is_map(attrs) do
+    put_unique_slug(attrs, &unique_product_slug/1)
   end
 
   # ── Themes ───────────────────────────────────────────────
@@ -310,33 +334,68 @@ defmodule PersonalBrand.Content do
   end
 
   defp resolve_unique_project_slug(attrs) do
+    resolve_unique_slug(attrs, Project)
+  end
+
+  defp resolve_unique_slug(attrs, schema) do
     base_slug =
       attrs
       |> attr(:slug)
       |> fallback(attr(attrs, :title))
       |> Project.slugify()
 
-    do_resolve_unique_project_slug(base_slug, 1)
+    do_resolve_unique_slug(base_slug, schema, 1)
   end
 
-  defp do_resolve_unique_project_slug("", _counter), do: ""
+  defp do_resolve_unique_slug("", _schema, _counter), do: ""
 
-  defp do_resolve_unique_project_slug(base_slug, 1) do
-    if Repo.exists?(from p in Project, where: p.slug == ^base_slug) do
-      do_resolve_unique_project_slug(base_slug, 2)
+  defp do_resolve_unique_slug(base_slug, schema, 1) do
+    if Repo.exists?(from item in schema, where: item.slug == ^base_slug) do
+      do_resolve_unique_slug(base_slug, schema, 2)
     else
       base_slug
     end
   end
 
-  defp do_resolve_unique_project_slug(base_slug, counter) do
+  defp do_resolve_unique_slug(base_slug, schema, counter) do
     candidate = "#{base_slug}-#{counter}"
 
-    if Repo.exists?(from p in Project, where: p.slug == ^candidate) do
-      do_resolve_unique_project_slug(base_slug, counter + 1)
+    if Repo.exists?(from item in schema, where: item.slug == ^candidate) do
+      do_resolve_unique_slug(base_slug, schema, counter + 1)
     else
       candidate
     end
+  end
+
+  defp put_unique_slug(attrs, slug_fun) do
+    if attr(attrs, :slug) in [nil, ""] do
+      slug = slug_fun.(attrs)
+
+      cond do
+        slug == "" -> attrs
+        Map.has_key?(attrs, "slug") -> Map.put(attrs, "slug", slug)
+        true -> Map.put(attrs, :slug, slug)
+      end
+    else
+      attrs
+    end
+  end
+
+  defp list_text_field_values(schema, field) do
+    Repo.all(
+      from item in schema,
+        where: not is_nil(field(item, ^field)) and field(item, ^field) != "",
+        distinct: field(item, ^field),
+        order_by: field(item, ^field),
+        select: field(item, ^field)
+    )
+  end
+
+  defp clean_distinct_values(values) do
+    values
+    |> Enum.reject(&(is_nil(&1) or String.trim(&1) == ""))
+    |> Enum.uniq()
+    |> Enum.sort()
   end
 
   defp attr(attrs, key), do: Map.get(attrs, key) || Map.get(attrs, Atom.to_string(key))

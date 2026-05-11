@@ -32,11 +32,18 @@ defmodule PersonalBrand.Content.PostTest do
       assert errors_on(changeset)[:title] == ["can't be blank"]
     end
 
-    test "rejects missing slug" do
+    test "generates slug from title when slug is missing" do
       attrs = Map.delete(@valid_attrs, :slug)
       changeset = Post.changeset(%Post{}, attrs)
-      refute changeset.valid?
-      assert errors_on(changeset)[:slug] == ["can't be blank"]
+      assert changeset.valid?
+      assert get_field(changeset, :slug) == "test-post"
+    end
+
+    test "generates slug from title when slug is blank" do
+      attrs = %{@valid_attrs | slug: ""}
+      changeset = Post.changeset(%Post{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :slug) == "test-post"
     end
 
     test "enforces unique slug constraint" do
@@ -72,6 +79,13 @@ defmodule PersonalBrand.Content.PostTest do
       changeset = Post.changeset(%Post{}, attrs)
       assert changeset.valid?
       assert get_field(changeset, :tags) == ["Elixir", "Phoenix", "Testing"]
+    end
+
+    test "accepts tags as comma or newline separated admin input" do
+      attrs = %{@valid_attrs | tags: "Elixir, Phoenix\nLiveView"}
+      changeset = Post.changeset(%Post{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :tags) == ["Elixir", "Phoenix", "LiveView"]
     end
 
     test "accepts seo fields" do

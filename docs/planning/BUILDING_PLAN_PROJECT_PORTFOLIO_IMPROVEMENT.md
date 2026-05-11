@@ -238,7 +238,7 @@ Admin `/admin/projects/:id/edit` wajib nyaman untuk revisi data portfolio:
 
 - Slug tampil tapi tidak menjadi field utama.
 - Ada warning jika mengubah slug project published.
-- Field array tetap bisa diedit satu item per baris atau dengan tag picker.
+- Field array tetap bisa diedit satu item per baris, kecuali platform/discipline yang memakai checkbox taxonomy agar tidak terjadi typo atau redundant key.
 - Preview link ke `/work/:slug`.
 - Cover media dipilih dari media library, bukan copy UUID manual.
 
@@ -375,7 +375,8 @@ Output:
 
 - admin create/edit form sections
 - edit project workflow
-- tag-like or textarea fallback for arrays
+- checkbox taxonomy untuk platform/discipline
+- textarea fallback untuk array evidence seperti result, metrics, dan technical_highlights
 - safer cover media selection path
 
 Acceptance:
@@ -384,6 +385,7 @@ Acceptance:
 - admin can edit project case study fields
 - admin can preview public URL
 - admin does not need to copy raw media UUID for common cover image workflow
+- admin can edit/delete from index row actions without opening a confusing bulk-selection workflow
 
 ### Slice 4 - Public Work List
 

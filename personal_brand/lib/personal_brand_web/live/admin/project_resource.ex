@@ -206,6 +206,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         help_text:
           "Platform yang kamu kerjakan di project ini (iOS, Android, Web, Backend, dll). Recruiter pakai ini untuk filter project di halaman Work. Bisa pilih lebih dari satu.",
         render: &render_badges/1,
+        render_form: &render_taxonomy_checkbox_group/1,
         index_column_class: "min-w-40",
         panel: :classification
       },
@@ -217,6 +218,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         help_text:
           "Keahlian atau peran engineering yang kamu tunjukkan di project ini (iOS Development, Backend Engineering, dll). Muncul sebagai filter di halaman Work. Bisa pilih lebih dari satu.",
         render: &render_badges/1,
+        render_form: &render_taxonomy_checkbox_group/1,
         index_column_class: "min-w-48",
         panel: :classification
       },
@@ -582,10 +584,10 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         name={@form[@name].name}
         value={Phoenix.HTML.Form.normalize_value("text", @form[@name].value)}
         placeholder={@field_options[:placeholder]}
-        list={@list_id}
+        list={if @suggestions == [], do: nil, else: @list_id}
         class="input w-full"
       />
-      <datalist id={@list_id}>
+      <datalist :if={@suggestions != []} id={@list_id}>
         <option :for={value <- @suggestions} value={value}></option>
       </datalist>
       <p :if={@suggestions != []} class="mt-2 text-sm opacity-70">
@@ -600,17 +602,24 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
 
   defp suggested_values_for(:role) do
     suggested_project_values(:role, [
+      "Software Engineer",
+      "Frontend Engineer",
+      "Backend Engineer",
       "Full-stack Engineer",
-      "Mobile Engineering Lead",
-      "iOS Developer"
+      "Mobile Engineer",
+      "iOS Developer",
+      "Flutter Developer"
     ])
   end
 
   defp suggested_values_for(:ownership) do
     suggested_project_values(:ownership, [
-      "Solo builder end-to-end",
+      "Individual contributor",
       "Feature owner",
-      "Technical lead"
+      "Solo builder",
+      "Technical lead",
+      "End-to-end implementation",
+      "Architecture and implementation"
     ])
   end
 
@@ -618,27 +627,92 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
     suggested_project_values(:team_size, [
       "Solo",
       "2 engineers",
-      "Cross-functional team of 6"
+      "Small engineering team",
+      "Cross-functional team"
     ])
   end
 
   defp suggested_values_for(:company) do
     suggested_project_values(:company, [
       "Personal Project",
-      "Komerce",
-      "Prodia"
+      "Freelance",
+      "Client Project",
+      "Internal Product"
     ])
   end
 
   defp suggested_values_for(:client) do
     suggested_project_values(:client, [
-      "Internal portfolio",
-      "Confidential client",
-      "Public users"
+      "Internal users",
+      "Public users",
+      "Client team",
+      "Recruiters"
     ])
   end
 
   defp suggested_values_for(_field), do: []
+
+  defp render_taxonomy_checkbox_group(assigns) do
+    selected_values =
+      assigns.form
+      |> Phoenix.HTML.Form.input_value(assigns.name)
+      |> list_value()
+
+    assigns =
+      assigns
+      |> assign(:options, taxonomy_form_options(assigns))
+      |> assign(:selected_values, selected_values)
+
+    ~H"""
+    <div class="px-6 py-4 sm:py-3">
+      <fieldset>
+        <legend class="text-content mb-2 block break-words text-sm font-medium">
+          {@field_options[:label]}
+        </legend>
+        <p :if={@field_options[:prompt]} class="mb-3 text-sm text-slate-500">
+          {@field_options[:prompt]}
+        </p>
+
+        <input type="hidden" name={@form[@name].name} value="" tabindex="-1" aria-hidden="true" />
+
+        <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+          <label
+            :for={{label, value} <- @options}
+            class={[
+              "flex cursor-pointer items-center gap-3 rounded-md border px-3 py-2 text-sm font-medium transition",
+              value in @selected_values &&
+                "border-blue-500 bg-blue-50 text-blue-950 ring-1 ring-blue-500",
+              value not in @selected_values &&
+                "border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50"
+            ]}
+          >
+            <input
+              type="checkbox"
+              name={@form[@name].name <> "[]"}
+              value={value}
+              checked={value in @selected_values}
+              class="size-4 flex-none accent-blue-600"
+              style="width: 1rem; height: 1rem;"
+            />
+            <span>{label}</span>
+          </label>
+        </div>
+
+        <p :if={@field_options[:help_text]} class="mt-2 text-sm opacity-70">
+          {@field_options[:help_text]}
+        </p>
+      </fieldset>
+    </div>
+    """
+  end
+
+  defp taxonomy_form_options(assigns) do
+    case assigns.field_options[:options] do
+      options when is_function(options, 1) -> options.(assigns)
+      options when is_list(options) -> options
+      _options -> []
+    end
+  end
 
   defp render_list(assigns) do
     assigns = assign(assigns, :display_value, display_value(assigns[:value]))

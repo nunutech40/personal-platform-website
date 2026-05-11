@@ -33,21 +33,16 @@ find docs -maxdepth 3 -type f | sort
 find personal_brand_platform_agent_kit -maxdepth 4 -type f | sort
 ```
 
-### 3. Run lightweight checks
+### 3. Run checks
 
-Untuk prototype static saat ini:
-
-```bash
-node --check src/app.js
-node --check server.mjs
-```
-
-Kalau nanti sudah Phoenix:
+Project ini sekarang berjalan sebagai Phoenix LiveView app. Jalankan:
 
 ```bash
 mix format --check-formatted
 mix test
 ```
+
+Jangan jalankan check untuk static prototype lama seperti `node --check src/app.js` atau `node --check server.mjs`; file itu sudah tidak menjadi jalur development.
 
 Untuk menentukan test minimal per slice, lihat:
 
@@ -128,6 +123,12 @@ Expected:
 ```txt
 git status --short
 # no output
+```
+
+Catatan penting: workflow push tidak perlu dan tidak boleh mematikan local server. Jangan jalankan `./scripts/stop-local.sh` setelah push kecuali user secara eksplisit minta stop server. Jika perlu memastikan app tetap hidup, gunakan:
+
+```bash
+./scripts/status-local.sh
 ```
 
 ## Handoff Note

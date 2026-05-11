@@ -19,8 +19,42 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert html =~ "Isi Judul Project dulu"
     assert html =~ "Gambar Cover"
     assert html =~ "Pilih platform yang dipakai"
-    assert html =~ "Full-stack Engineer"
+    assert html =~ ~s(name="change[platforms][]")
+    assert html =~ ~s(value="web")
+    assert html =~ "Backend"
+    refute html =~ "Select all"
+    assert html =~ ~s(value="Software Engineer")
+    assert html =~ ~s(value="Backend Engineer")
+    assert html =~ ~s(value="Full-stack Engineer")
     assert html =~ "Ketik sendiri atau pilih dari saran"
+  end
+
+  test "GET /admin/projects/new combines existing text suggestions with common defaults", %{
+    conn: conn
+  } do
+    insert_project(%{
+      title: "Existing Role Project",
+      slug: "existing-role-project",
+      role: "Existing Mobile Lead",
+      ownership: "Feature owner for checkout",
+      team_size: "3 engineers",
+      company: "Existing Company",
+      client: "Existing Client"
+    })
+
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/projects/new")
+
+    assert html =~ "Existing Mobile Lead"
+    assert html =~ "Feature owner for checkout"
+    assert html =~ "3 engineers"
+    assert html =~ "Existing Company"
+    assert html =~ "Existing Client"
+    assert html =~ ~s(value="Full-stack Engineer")
+    assert html =~ ~s(value="Software Engineer")
+    refute html =~ ~s(value="Lead iOS Dev")
   end
 
   test "GET /admin/projects/:id/edit warns before changing published slug", %{conn: conn} do

@@ -30,6 +30,11 @@ defmodule PersonalBrand.Content.Post do
   end
 
   def changeset(post, attrs) do
+    attrs =
+      attrs
+      |> normalize_list_inputs()
+      |> put_generated_slug()
+
     post
     |> cast(attrs, [
       :title,
@@ -63,4 +68,76 @@ defmodule PersonalBrand.Content.Post do
     |> validate_number(:reading_time, greater_than_or_equal_to: 1, less_than_or_equal_to: 120)
     |> unique_constraint(:slug)
   end
+
+  def slugify(value) when is_binary(value) do
+    value
+    |> String.downcase()
+    |> String.replace(~r/[^a-z0-9]+/, "-")
+    |> String.trim("-")
+  end
+
+  def slugify(_value), do: ""
+
+  defp normalize_list_inputs(attrs) when is_map(attrs), do: normalize_list_input(attrs, :tags)
+  defp normalize_list_inputs(attrs), do: attrs
+
+  defp normalize_list_input(attrs, field) do
+    string_key = Atom.to_string(field)
+
+    cond do
+      is_binary(Map.get(attrs, field)) ->
+        Map.update!(attrs, field, &split_list_value/1)
+
+      is_binary(Map.get(attrs, string_key)) ->
+        Map.update!(attrs, string_key, &split_list_value/1)
+
+      is_list(Map.get(attrs, field)) ->
+        Map.update!(attrs, field, &normalize_list_value/1)
+
+      is_list(Map.get(attrs, string_key)) ->
+        Map.update!(attrs, string_key, &normalize_list_value/1)
+
+      true ->
+        attrs
+    end
+  end
+
+  defp split_list_value(value) do
+    value
+    |> String.split(~r/[\r\n,]+/, trim: true)
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
+  end
+
+  defp normalize_list_value(value) do
+    value
+    |> Enum.map(&to_string/1)
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
+  end
+
+  defp put_generated_slug(attrs) when is_map(attrs) do
+    slug = get_attr(attrs, :slug)
+    title = get_attr(attrs, :title)
+
+    if blank?(slug) and is_binary(title) do
+      put_attr(attrs, :slug, slugify(title))
+    else
+      attrs
+    end
+  end
+
+  defp put_generated_slug(attrs), do: attrs
+
+  defp get_attr(attrs, field), do: Map.get(attrs, field) || Map.get(attrs, Atom.to_string(field))
+
+  defp put_attr(attrs, field, value) do
+    cond do
+      Map.has_key?(attrs, field) -> Map.put(attrs, field, value)
+      Map.has_key?(attrs, Atom.to_string(field)) -> Map.put(attrs, Atom.to_string(field), value)
+      true -> Map.put(attrs, field, value)
+    end
+  end
+
+  defp blank?(value), do: is_nil(value) or value == ""
 end

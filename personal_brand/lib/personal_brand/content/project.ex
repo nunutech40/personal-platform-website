@@ -176,6 +176,9 @@ defmodule PersonalBrand.Content.Project do
     |> normalize_list_textarea(:disciplines)
     |> normalize_list_textarea(:technical_highlights)
     |> normalize_list_textarea(:metrics)
+    |> normalize_blank_value(:demo_url)
+    |> normalize_blank_value(:github_url)
+    |> normalize_blank_value(:app_store_url)
   end
 
   defp normalize_list_textareas(attrs), do: attrs
@@ -206,6 +209,16 @@ defmodule PersonalBrand.Content.Project do
     |> String.split(~r/\r?\n/, trim: true)
     |> Enum.map(&String.trim/1)
     |> Enum.reject(&(&1 == ""))
+  end
+
+  defp normalize_blank_value(attrs, field) do
+    string_key = Atom.to_string(field)
+
+    cond do
+      Map.get(attrs, field) == "" -> Map.put(attrs, field, nil)
+      Map.get(attrs, string_key) == "" -> Map.put(attrs, string_key, nil)
+      true -> attrs
+    end
   end
 
   defp normalize_list_value(value) do

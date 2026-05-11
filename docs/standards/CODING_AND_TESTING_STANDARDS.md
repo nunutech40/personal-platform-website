@@ -241,15 +241,13 @@ future payment secrets are not exposed
 
 ## Test Commands
 
-Prototype stage:
+Local scripts:
 
 ```bash
-node --check src/app.js
-node --check server.mjs
 bash -n scripts/start-local.sh scripts/stop-local.sh scripts/status-local.sh
 ```
 
-Phoenix stage:
+Phoenix app:
 
 ```bash
 mix format --check-formatted

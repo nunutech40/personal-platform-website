@@ -29,6 +29,12 @@ defmodule PersonalBrand.Content.Product do
   end
 
   def changeset(product, attrs) do
+    attrs =
+      attrs
+      |> normalize_list_inputs()
+      |> normalize_blank_urls()
+      |> put_generated_slug()
+
     product
     |> cast(attrs, [
       :title,
@@ -69,4 +75,91 @@ defmodule PersonalBrand.Content.Product do
     |> validate_length(:currency, is: 3, message: "must be a 3-letter currency code (e.g. USD)")
     |> unique_constraint(:slug)
   end
+
+  def slugify(value) when is_binary(value) do
+    value
+    |> String.downcase()
+    |> String.replace(~r/[^a-z0-9]+/, "-")
+    |> String.trim("-")
+  end
+
+  def slugify(_value), do: ""
+
+  defp normalize_list_inputs(attrs) when is_map(attrs), do: normalize_list_input(attrs, :included)
+  defp normalize_list_inputs(attrs), do: attrs
+
+  defp normalize_list_input(attrs, field) do
+    string_key = Atom.to_string(field)
+
+    cond do
+      is_binary(Map.get(attrs, field)) ->
+        Map.update!(attrs, field, &split_list_value/1)
+
+      is_binary(Map.get(attrs, string_key)) ->
+        Map.update!(attrs, string_key, &split_list_value/1)
+
+      is_list(Map.get(attrs, field)) ->
+        Map.update!(attrs, field, &normalize_list_value/1)
+
+      is_list(Map.get(attrs, string_key)) ->
+        Map.update!(attrs, string_key, &normalize_list_value/1)
+
+      true ->
+        attrs
+    end
+  end
+
+  defp split_list_value(value) do
+    value
+    |> String.split(~r/\r?\n/, trim: true)
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
+  end
+
+  defp normalize_list_value(value) do
+    value
+    |> Enum.map(&to_string/1)
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
+  end
+
+  defp normalize_blank_urls(attrs) when is_map(attrs),
+    do: normalize_blank_value(attrs, :checkout_url)
+
+  defp normalize_blank_urls(attrs), do: attrs
+
+  defp normalize_blank_value(attrs, field) do
+    string_key = Atom.to_string(field)
+
+    cond do
+      Map.get(attrs, field) == "" -> Map.put(attrs, field, nil)
+      Map.get(attrs, string_key) == "" -> Map.put(attrs, string_key, nil)
+      true -> attrs
+    end
+  end
+
+  defp put_generated_slug(attrs) when is_map(attrs) do
+    slug = get_attr(attrs, :slug)
+    title = get_attr(attrs, :title)
+
+    if blank?(slug) and is_binary(title) do
+      put_attr(attrs, :slug, slugify(title))
+    else
+      attrs
+    end
+  end
+
+  defp put_generated_slug(attrs), do: attrs
+
+  defp get_attr(attrs, field), do: Map.get(attrs, field) || Map.get(attrs, Atom.to_string(field))
+
+  defp put_attr(attrs, field, value) do
+    cond do
+      Map.has_key?(attrs, field) -> Map.put(attrs, field, value)
+      Map.has_key?(attrs, Atom.to_string(field)) -> Map.put(attrs, Atom.to_string(field), value)
+      true -> Map.put(attrs, field, value)
+    end
+  end
+
+  defp blank?(value), do: is_nil(value) or value == ""
 end

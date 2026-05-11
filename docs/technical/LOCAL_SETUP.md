@@ -59,6 +59,14 @@ Atau pakai script:
 ./scripts/start-local.sh
 ```
 
+Untuk agent/automation yang tidak boleh “stuck” menunggu proses foreground, jalankan Phoenix di background:
+
+```bash
+./scripts/start-local.sh --daemon
+```
+
+Mode foreground (`./scripts/start-local.sh`) memang akan terus berjalan sampai dihentikan dengan `Ctrl+C`. Itu normal untuk terminal manusia, tapi tidak ideal untuk agent yang sedang menjalankan command sekali jalan.
+
 ---
 
 ## Database
@@ -211,10 +219,22 @@ personal_brand/
 ## Scripts
 
 ```bash
-./scripts/start-local.sh    # Start PostgreSQL + Phoenix
-./scripts/stop-local.sh     # Stop Phoenix + PostgreSQL
-./scripts/status-local.sh   # Check status
+./scripts/start-local.sh           # Start PostgreSQL + Phoenix in foreground
+./scripts/start-local.sh --daemon  # Start PostgreSQL + Phoenix in background
+./scripts/status-local.sh          # Check PostgreSQL, Phoenix, HTTP, and DB status
+./scripts/stop-local.sh            # Stop Phoenix only
+./scripts/stop-local.sh --with-postgres  # Stop Phoenix and request PostgreSQL service stop
 ```
+
+`start-local.sh` aman dijalankan berulang. Kalau port `4000` sudah dipakai Phoenix, script akan menampilkan PID yang sedang jalan dan keluar tanpa membuka server kedua.
+
+Log untuk mode daemon:
+
+```txt
+personal_brand/tmp/local-server.log
+```
+
+Catatan: mode daemon memakai Erlang VM detached supaya server tetap hidup setelah command agent selesai. File log di atas mencatat start attempt; untuk health check utama tetap gunakan `./scripts/status-local.sh`.
 
 ---
 
@@ -276,11 +296,11 @@ Field project saat ini:
 | `architecture_notes` | Catatan arsitektur | Jelaskan boundary, dependency direction, dan pattern penting. |
 | `tradeoffs` | Trade-off teknis | Jelaskan constraint dan alasan keputusan. |
 | `result` | Outcome per baris | Bisa diisi satu hasil per baris di admin. |
-| `role` | Peran di project | Contoh: `Senior iOS Engineer`, `Mobile Engineering Lead`, `Full-stack Software Engineer`. |
-| `ownership` | Scope tanggung jawab | Contoh: `Solo builder`, `Lead mobile engineer`, `iOS contributor`. |
+| `role` | Peran di project | Bisa ketik manual; form memberi suggestion dari DB + role umum seperti `Software Engineer`, `Backend Engineer`, `Mobile Engineer`, `iOS Developer`. |
+| `ownership` | Scope tanggung jawab | Bisa ketik manual; form memberi suggestion dari DB + scope umum seperti `Feature owner`, `Solo builder`, `Technical lead`. |
 | `project_type` | Tipe project | Controlled value: `professional_work`, `client_work`, `open_source`, `personal_project`, `architecture_demo`, `internal_tool`, `case_study`. |
-| `platforms` | Platform per baris | Controlled value: `ios`, `android`, `flutter`, `macos`, `web`, `backend`, `cross_platform`. |
-| `disciplines` | Discipline per baris | Controlled value: `ios_development`, `mobile_engineering_lead`, `mobile_devops`, `flutter_development`, `backend_engineering`, `frontend_engineering`, `fullstack_engineering`, `macos_development`, `architecture`, `performance_optimization`. |
+| `platforms` | Checkbox taxonomy di admin | Controlled value: `ios`, `android`, `flutter`, `macos`, `web`, `backend`, `cross_platform`. |
+| `disciplines` | Checkbox taxonomy di admin | Controlled value: `ios_development`, `mobile_engineering_lead`, `mobile_devops`, `flutter_development`, `backend_engineering`, `frontend_engineering`, `fullstack_engineering`, `macos_development`, `architecture`, `performance_optimization`. |
 | `tech_stack` | Teknologi per baris | Bisa diisi satu teknologi per baris di admin. |
 | `year` | Tahun / periode | Contoh: `2025`, `2021-2024`. |
 | `duration` | Durasi/periode tampil | Lebih fleksibel dari `year`, contoh: `2021-2026`, `Contract project`. |
@@ -310,9 +330,22 @@ Yang sudah masuk di implementation slice portfolio:
 
 - Slug auto-generate saat create jika kosong, termasuk duplicate suffix.
 - Platform, discipline, project type, dan visibility divalidasi dengan controlled values.
+- Platform dan discipline memakai checkbox grid di admin supaya tidak perlu mengetik taxonomy manual.
+- Field teks seperti role, ownership, team size, company, dan client memakai suggestion dari data DB + fallback umum yang recruiter-friendly.
 - Cover media dipilih melalui Backpex relation field dari Admin > Media.
 - Public `/work` punya filter berdasarkan discipline/platform.
 - Project detail punya section ownership, technical approach, architecture notes, trade-offs, highlights, metrics, dan impact.
+
+## Posts and Products Admin Workflow
+
+Posts dan Products memakai standar admin yang sama dengan Projects untuk CRUD harian:
+
+- Slug bisa dikosongkan saat create dan akan dibuat otomatis dari title.
+- Index punya quick actions: `Ubah`, `Lihat Publik`, dan `Hapus`.
+- Boolean `featured` memakai segmented control `Biasa/Unggulan`.
+- Array-like field (`post.tags`, `product.included`) bisa diisi satu item per baris; post tags juga menerima koma.
+- Form punya placeholder dan help text untuk mengurangi input yang ambigu.
+- Product `checkout_url` boleh kosong; jika diisi harus diawali `http://` atau `https://`.
 
 ## Data Contract
 
