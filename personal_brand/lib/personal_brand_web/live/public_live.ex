@@ -43,12 +43,17 @@ defmodule PersonalBrandWeb.PublicLive do
             {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}
 
           project ->
+            cover_media = Content.get_media(project.cover_image_id)
+
             {:noreply,
              assign(socket,
                page: :work_detail,
                project: project,
-               cover_media: Content.get_media(project.cover_image_id),
-               page_title: project.title
+               cover_media: cover_media,
+               page_title: project.title,
+               meta_description: project.summary || project.description,
+               og_image: cover_media && cover_media.url,
+               og_type: "article"
              )}
         end
 
@@ -58,7 +63,14 @@ defmodule PersonalBrandWeb.PublicLive do
             {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}
 
           post ->
-            {:noreply, assign(socket, page: :writing_detail, post: post, page_title: post.title)}
+            {:noreply,
+             assign(socket,
+               page: :writing_detail,
+               post: post,
+               page_title: post.title,
+               meta_description: post.excerpt,
+               og_type: "article"
+             )}
         end
 
       :product_detail ->
@@ -68,7 +80,13 @@ defmodule PersonalBrandWeb.PublicLive do
 
           product ->
             {:noreply,
-             assign(socket, page: :product_detail, product: product, page_title: product.title)}
+             assign(socket,
+               page: :product_detail,
+               product: product,
+               page_title: product.title,
+               meta_description: product.summary,
+               og_type: "product"
+             )}
         end
 
       _ ->
@@ -212,6 +230,7 @@ defmodule PersonalBrandWeb.PublicLive do
       assigns
       |> assign(:featured_projects, featured_projects(assigns.projects))
       |> assign(:regular_projects, regular_projects(assigns.projects))
+      |> assign(:is_filtered, assigns.active_filter.key != :all)
 
     ~H"""
     <h1>Work</h1>
@@ -229,7 +248,11 @@ defmodule PersonalBrandWeb.PublicLive do
     <div class="detail-grid">
       <section>
         <%= if @projects == [] do %>
-          <.empty_state text="No published projects yet." />
+          <%= if @is_filtered do %>
+            <.empty_state_filtered filter_label={filter_label(@active_filter)} />
+          <% else %>
+            <.empty_state_no_projects />
+          <% end %>
         <% end %>
         <%= if @featured_projects != [] do %>
           <h2>Featured Projects</h2>
@@ -282,9 +305,13 @@ defmodule PersonalBrandWeb.PublicLive do
         <p>
           <strong>Role:</strong> {@project.role}<br />
           <strong>Ownership:</strong> {@project.ownership || "Case study contributor"}<br />
-          <strong :if={@project.company}>Company:</strong> {@project.company}<br :if={@project.company} />
+          <strong :if={@project.company}>Company:</strong> {@project.company}<br :if={
+            @project.company
+          } />
           <strong :if={@project.client}>Client:</strong> {@project.client}<br :if={@project.client} />
-          <strong :if={@project.team_size}>Team Size:</strong> {@project.team_size}<br :if={@project.team_size} />
+          <strong :if={@project.team_size}>Team Size:</strong> {@project.team_size}<br :if={
+            @project.team_size
+          } />
           <strong>Platform:</strong> {Enum.join(project_badges(@project), ", ")}<br />
           <strong>Stack:</strong> {Enum.join(@project.tech_stack || [], ", ")}<br />
           <strong>Period:</strong> {@project.duration || @project.year}
@@ -639,6 +666,25 @@ defmodule PersonalBrandWeb.PublicLive do
     """
   end
 
+  def empty_state_no_projects(assigns) do
+    ~H"""
+    <div class="empty-state">
+      <p><strong>Portfolio coming soon.</strong></p>
+      <p>Projects are being documented and will be published shortly.</p>
+      <p>Check back soon or <a href="/contact">get in touch</a> for early access.</p>
+    </div>
+    """
+  end
+
+  def empty_state_filtered(assigns) do
+    ~H"""
+    <div class="empty-state">
+      <p><strong>No projects found for {@filter_label}.</strong></p>
+      <p><a href="/work">View all projects</a> or try a different filter.</p>
+    </div>
+    """
+  end
+
   # ── Helpers ──────────────────────────────────────────────
 
   defp theme_class_name("simple"), do: "simple-theme"
@@ -738,6 +784,18 @@ defmodule PersonalBrandWeb.PublicLive do
   defp project_label(value) do
     Project.label_for(value)
   end
+
+  defp filter_label(%{key: :all}), do: "All Projects"
+
+  defp filter_label(%{key: {:discipline, value}}) do
+    Project.label_for(value)
+  end
+
+  defp filter_label(%{key: {:platform, value}}) do
+    Project.label_for(value)
+  end
+
+  defp filter_label(_), do: "this filter"
 
   defp present?(value) when is_binary(value), do: String.trim(value) != ""
   defp present?(value), do: not is_nil(value)

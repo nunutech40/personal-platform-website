@@ -82,7 +82,6 @@ defmodule PersonalBrandWeb.PublicLiveTest do
   end
 
   test "GET /work filters by discipline", %{conn: conn} do
-
     insert_project(%{
       title: "Postie",
       slug: "postie",

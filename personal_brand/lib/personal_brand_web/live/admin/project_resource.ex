@@ -32,8 +32,25 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   end
 
   @impl true
+  def filters do
+    [
+      status: %{
+        module: PersonalBrandWeb.Admin.Filters.ProjectStatus
+      },
+      featured: %{
+        module: PersonalBrandWeb.Admin.Filters.ProjectFeatured
+      }
+    ]
+  end
+
+  @impl true
   def item_actions(default_actions) do
-    Keyword.put(default_actions, :view_public, %{
+    default_actions
+    |> Keyword.put(:edit, %{
+      module: PersonalBrandWeb.Admin.ItemActions.EditProject,
+      only: [:row, :show]
+    })
+    |> Keyword.put(:view_public, %{
       module: PersonalBrandWeb.Admin.ItemActions.ViewPublicProject,
       only: [:row, :show]
     })
@@ -129,7 +146,6 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         except: [:index],
         panel: :classification
       },
-
       project_type: %{
         module: Backpex.Fields.Select,
         label: "Project Type",
@@ -144,6 +160,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         help_text: "Allowed: #{Enum.join(Project.platforms(), ", ")}",
         render: &render_badges/1,
         render_form: &render_textarea/1,
+        index_column_class: "min-w-40",
         panel: :classification
       },
       disciplines: %{
@@ -153,6 +170,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         help_text: "Allowed: #{Enum.join(Project.disciplines(), ", ")}",
         render: &render_badges/1,
         render_form: &render_textarea/1,
+        index_column_class: "min-w-48",
         panel: :classification
       },
       tech_stack: %{
@@ -189,16 +207,20 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         module: Backpex.Fields.Select,
         label: "Status",
         options: select_options(Project.statuses()),
+        render: &render_status_badge/1,
         panel: :identity
       },
       featured: %{
         module: Backpex.Fields.Boolean,
         label: "Featured",
+        render: &render_featured_badge/1,
         panel: :identity
       },
       sort_order: %{
         module: Backpex.Fields.Number,
         label: "Sort Order",
+        index_column_class: "w-24",
+        help_text: "Lower numbers appear first. 0 = highest priority.",
         panel: :identity
       },
       impact_summary: %{
@@ -323,6 +345,33 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       </span>
       <span :if={@values == []}>-</span>
     </div>
+    """
+  end
+
+  defp render_status_badge(assigns) do
+    assigns = assign(assigns, :display_value, display_label(assigns[:value]))
+
+    status_class =
+      case assigns[:value] do
+        "published" -> "badge badge-success badge-sm"
+        "draft" -> "badge badge-warning badge-sm"
+        "archived" -> "badge badge-ghost badge-sm"
+        _ -> "badge badge-outline badge-sm"
+      end
+
+    assigns = assign(assigns, :status_class, status_class)
+
+    ~H"""
+    <span class={@status_class}>{@display_value}</span>
+    """
+  end
+
+  defp render_featured_badge(assigns) do
+    ~H"""
+    <span>
+      <span :if={@value} class="badge badge-primary badge-sm">Featured</span>
+      <span :if={!@value} class="text-slate-400">-</span>
+    </span>
     """
   end
 

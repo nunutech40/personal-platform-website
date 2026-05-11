@@ -12,7 +12,6 @@ alias PersonalBrand.Content.Tag
 
 import Ecto.Query
 
-
 # ── Themes ─────────────────────────────────────────────────
 themes = [
   %{
@@ -439,7 +438,7 @@ IO.puts("✅ #{length(tag_records)} tags created")
 # ── Tag Associations ────────────────────────────────────────
 # Fetch inserted records by slug (more stable than relying on order)
 project_map =
-  Repo.all(from p in Project)
+  Repo.all(from(p in Project))
   |> Map.new(fn p -> {p.slug, p} end)
 
 [prod_ready, offline_first, design_systems] = Repo.all(from p in Post, order_by: [asc: p.title])
@@ -505,7 +504,6 @@ Repo.insert_all("project_tags", [
     updated_at: DateTime.utc_now()
   }
 ])
-
 
 # Post tags
 Repo.insert_all("post_tags", [
