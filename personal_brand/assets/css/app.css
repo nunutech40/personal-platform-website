@@ -216,6 +216,13 @@ li + li {
   border: 1px solid #c8c8c8;
 }
 
+.media-frame figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 15px;
+  font-style: italic;
+}
+
 .mock-visual {
   min-height: 280px;
   border: 1px solid #bdbdbd;

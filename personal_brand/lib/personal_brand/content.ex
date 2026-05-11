@@ -65,6 +65,20 @@ defmodule PersonalBrand.Content do
     Repo.one(SiteSetting)
   end
 
+  # ── Media ────────────────────────────────────────────────
+
+  def get_media(id) when is_binary(id) do
+    Repo.get(Media, id)
+  end
+
+  def get_media(_id), do: nil
+
+  def list_media_by_ids(ids) when is_list(ids) do
+    ids = Enum.reject(ids, &is_nil/1)
+
+    Repo.all(from m in Media, where: m.id in ^ids)
+  end
+
   # ── Projects ─────────────────────────────────────────────
 
   def list_projects do

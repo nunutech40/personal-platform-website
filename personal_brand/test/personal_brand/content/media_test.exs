@@ -61,8 +61,14 @@ defmodule PersonalBrand.Content.MediaTest do
       end
     end
 
-    test "rejects url without http scheme" do
+    test "accepts local upload url" do
       attrs = %{@valid_attrs | url: "/uploads/photo.jpg"}
+      changeset = Media.changeset(%Media{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "rejects unsupported relative url" do
+      attrs = %{@valid_attrs | url: "/files/photo.jpg"}
       changeset = Media.changeset(%Media{}, attrs)
       refute changeset.valid?
     end

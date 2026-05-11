@@ -43,7 +43,12 @@ defmodule PersonalBrandWeb.PublicLive do
 
           project ->
             {:noreply,
-             assign(socket, page: :work_detail, project: project, page_title: project.title)}
+             assign(socket,
+               page: :work_detail,
+               project: project,
+               cover_media: Content.get_media(project.cover_image_id),
+               page_title: project.title
+             )}
         end
 
       :writing_detail ->
@@ -80,11 +85,13 @@ defmodule PersonalBrandWeb.PublicLive do
           projects = Content.list_featured_projects()
           posts = Content.list_featured_posts()
           products = Content.list_featured_products()
+          project_media = media_by_id(projects)
 
           assign(socket,
             page: :home,
             page_title: "Home",
             projects: projects,
+            project_media: project_media,
             posts: posts,
             products: products,
             settings: settings
@@ -92,7 +99,13 @@ defmodule PersonalBrandWeb.PublicLive do
 
         :work_index ->
           projects = Content.list_published_projects()
-          assign(socket, page: :work_index, page_title: "Work", projects: projects)
+
+          assign(socket,
+            page: :work_index,
+            page_title: "Work",
+            projects: projects,
+            project_media: media_by_id(projects)
+          )
 
         :writing_index ->
           posts = Content.list_posts()
@@ -124,11 +137,17 @@ defmodule PersonalBrandWeb.PublicLive do
     ~H"""
     <%= case @page do %>
       <% :home -> %>
-        <.homepage settings={@settings} projects={@projects} posts={@posts} products={@products} />
+        <.homepage
+          settings={@settings}
+          projects={@projects}
+          project_media={@project_media}
+          posts={@posts}
+          products={@products}
+        />
       <% :work_index -> %>
-        <.work_index projects={@projects} />
+        <.work_index projects={@projects} project_media={@project_media} />
       <% :work_detail -> %>
-        <.work_detail project={@project} />
+        <.work_detail project={@project} cover_media={@cover_media} />
       <% :writing_index -> %>
         <.writing_index posts={@posts} />
       <% :writing_detail -> %>
@@ -181,7 +200,10 @@ defmodule PersonalBrandWeb.PublicLive do
         <.featured_products products={@products} />
         <.now_block />
       </div>
-      <.visual_frame text="Ship small. Learn fast." />
+      <.visual_frame
+        text="Ship small. Learn fast."
+        media={first_project_media(@projects, @project_media)}
+      />
     </div>
     """
   end
@@ -208,7 +230,10 @@ defmodule PersonalBrandWeb.PublicLive do
           </article>
         <% end %>
       </section>
-      <.visual_frame text="Project screenshots live here." />
+      <.visual_frame
+        text="Project screenshots live here."
+        media={first_project_media(@projects, @project_media)}
+      />
     </div>
     """
   end
@@ -245,7 +270,7 @@ defmodule PersonalBrandWeb.PublicLive do
           </ul>
         </section>
       </article>
-      <.visual_frame text={"#{@project.title} case study"} />
+      <.visual_frame text={"#{@project.title} case study"} media={@cover_media} />
     </div>
     """
   end
@@ -528,9 +553,14 @@ defmodule PersonalBrandWeb.PublicLive do
   def visual_frame(assigns) do
     ~H"""
     <figure class="media-frame">
-      <div class="mock-visual" role="img" aria-label={@text}>
-        <strong>{@text}</strong>
-      </div>
+      <%= if assigns[:media] do %>
+        <img src={@media.url} alt={@media.alt_text || @text} />
+        <figcaption>{@text}</figcaption>
+      <% else %>
+        <div class="mock-visual" role="img" aria-label={@text}>
+          <strong>{@text}</strong>
+        </div>
+      <% end %>
     </figure>
     """
   end
@@ -577,6 +607,18 @@ defmodule PersonalBrandWeb.PublicLive do
     else
       links
     end
+  end
+
+  defp media_by_id(projects) do
+    projects
+    |> Enum.map(& &1.cover_image_id)
+    |> Content.list_media_by_ids()
+    |> Map.new(fn media -> {media.id, media} end)
+  end
+
+  defp first_project_media(projects, media_by_id) do
+    projects
+    |> Enum.find_value(fn project -> Map.get(media_by_id, project.cover_image_id) end)
   end
 
   defp format_date(nil), do: ""

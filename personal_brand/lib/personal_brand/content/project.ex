@@ -29,6 +29,8 @@ defmodule PersonalBrand.Content.Project do
   end
 
   def changeset(project, attrs) do
+    attrs = normalize_list_textareas(attrs)
+
     project
     |> cast(attrs, [
       :title,
@@ -63,5 +65,35 @@ defmodule PersonalBrand.Content.Project do
       message: "must start with http:// or https://"
     )
     |> unique_constraint(:slug)
+  end
+
+  defp normalize_list_textareas(attrs) when is_map(attrs) do
+    attrs
+    |> normalize_list_textarea(:result)
+    |> normalize_list_textarea(:tech_stack)
+  end
+
+  defp normalize_list_textareas(attrs), do: attrs
+
+  defp normalize_list_textarea(attrs, field) do
+    string_key = Atom.to_string(field)
+
+    cond do
+      is_binary(Map.get(attrs, field)) ->
+        Map.update!(attrs, field, &split_textarea_value/1)
+
+      is_binary(Map.get(attrs, string_key)) ->
+        Map.update!(attrs, string_key, &split_textarea_value/1)
+
+      true ->
+        attrs
+    end
+  end
+
+  defp split_textarea_value(value) do
+    value
+    |> String.split(~r/\r?\n/, trim: true)
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
   end
 end

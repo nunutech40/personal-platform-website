@@ -69,6 +69,19 @@ defmodule PersonalBrand.Content.ProjectTest do
       assert get_field(changeset, :tech_stack) == ["Elixir", "Phoenix"]
     end
 
+    test "accepts newline separated array fields from admin forms" do
+      attrs = %{
+        @valid_attrs
+        | result: "Result A\nResult B",
+          tech_stack: "Elixir\nPhoenix LiveView\nPostgreSQL"
+      }
+
+      changeset = Project.changeset(%Project{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :result) == ["Result A", "Result B"]
+      assert get_field(changeset, :tech_stack) == ["Elixir", "Phoenix LiveView", "PostgreSQL"]
+    end
+
     test "accepts published status" do
       attrs = %{@valid_attrs | status: "published"}
       changeset = Project.changeset(%Project{}, attrs)

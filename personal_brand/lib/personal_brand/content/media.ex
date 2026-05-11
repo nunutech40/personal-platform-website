@@ -32,7 +32,9 @@ defmodule PersonalBrand.Content.Media do
     |> validate_required([:filename, :url])
     |> validate_length(:filename, min: 1, max: 255)
     |> validate_length(:alt_text, max: 500)
-    |> validate_format(:url, ~r/^https?:\/\//, message: "must start with http:// or https://")
+    |> validate_format(:url, ~r/^(https?:\/\/|\/uploads\/)/,
+      message: "must start with http://, https://, or /uploads/"
+    )
     |> validate_number(:size, greater_than_or_equal_to: 0)
   end
 end

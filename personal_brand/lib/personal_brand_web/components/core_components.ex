@@ -475,6 +475,13 @@ defmodule PersonalBrandWeb.CoreComponents do
   end
 
   @doc """
+  Translates Backpex UI labels.
+  """
+  def translate_backpex({msg, opts}) do
+    interpolate_message(msg, opts)
+  end
+
+  @doc """
   Translates an error message using gettext.
   """
   def translate_error({msg, opts}) do
@@ -487,9 +494,7 @@ defmodule PersonalBrandWeb.CoreComponents do
     #   Gettext.dgettext(PersonalBrandWeb.Gettext, "errors", msg, opts)
     # end
 
-    Enum.reduce(opts, msg, fn {key, value}, acc ->
-      String.replace(acc, "%{#{key}}", fn _ -> to_string(value) end)
-    end)
+    interpolate_message(msg, opts)
   end
 
   @doc """
@@ -497,5 +502,11 @@ defmodule PersonalBrandWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  defp interpolate_message(msg, opts) do
+    Enum.reduce(opts, msg, fn {key, value}, acc ->
+      String.replace(acc, "%{#{key}}", fn _ -> to_string(value) end)
+    end)
   end
 end

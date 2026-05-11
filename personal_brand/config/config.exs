@@ -13,7 +13,9 @@ config :personal_brand,
 
 # Configure Backpex
 config :backpex,
-  pubsub_server: PersonalBrand.PubSub
+  pubsub_server: PersonalBrand.PubSub,
+  translator_function: {PersonalBrandWeb.CoreComponents, :translate_backpex},
+  error_translator_function: {PersonalBrandWeb.CoreComponents, :translate_error}
 
 # Configure the endpoint
 config :personal_brand, PersonalBrandWeb.Endpoint,
