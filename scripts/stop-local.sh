@@ -4,19 +4,20 @@
 
 echo "=== Stopping Personal Brand Platform ==="
 
-# Kill Phoenix server
-PIDS=$(pgrep -f "mix phx.server" 2>/dev/null || true)
-if [ -n "$PIDS" ]; then
-  echo "Stopping Phoenix server (PID: $PIDS)..."
-  kill $PIDS 2>/dev/null || true
-  sleep 1
-fi
-
-# Kill any remaining beam processes
-BEAM_PIDS=$(pgrep -f "beam.smp" 2>/dev/null || true)
-if [ -n "$BEAM_PIDS" ]; then
-  echo "Stopping Erlang VM..."
-  kill $BEAM_PIDS 2>/dev/null || true
+# Kill Phoenix server (by port 4000)
+PHX_PID=$(lsof -ti :4000 2>/dev/null || true)
+if [ -n "$PHX_PID" ]; then
+  echo "Stopping Phoenix server (PID: $PHX_PID)..."
+  kill $PHX_PID 2>/dev/null || true
+  sleep 2
+  # Force kill if still running
+  PHX_PID=$(lsof -ti :4000 2>/dev/null || true)
+  if [ -n "$PHX_PID" ]; then
+    kill -9 $PHX_PID 2>/dev/null || true
+  fi
+  echo "Phoenix: ✅ Stopped"
+else
+  echo "Phoenix: ❌ Not running"
 fi
 
 echo "=== Stopped ==="

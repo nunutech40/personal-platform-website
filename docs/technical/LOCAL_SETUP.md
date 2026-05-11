@@ -22,11 +22,17 @@ mix --version       # >= 1.17
 
 # PostgreSQL (via Homebrew)
 brew list postgresql@16
-/opt/homebrew/bin/psql --version
+/opt/homebrew/opt/postgresql@16/bin/psql --version
 
 # Node.js (untuk asset build Phoenix)
 node --version      # >= 18
 ```
+
+> **⚠️ PostgreSQL PATH:** Di macOS dengan Homebrew, `psql` dan `pg_isready` mungkin tidak ada di PATH default. Script di repo ini sudah pakai absolute path (`/opt/homebrew/opt/postgresql@16/bin/`). Kalau mau akses manual, tambahin ke PATH:
+> ```bash
+> export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+> ```
+
 
 ---
 
