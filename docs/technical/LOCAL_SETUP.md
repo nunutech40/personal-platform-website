@@ -191,7 +191,9 @@ personal_brand/
 | `/admin` | Dashboard | ✅ Backpex |
 | `/admin/login` | Login | ✅ |
 | `/admin/logout` | Logout | ✅ |
-| `/admin/projects` | CRUD projects | ✅ Backpex |
+| `/admin/projects` | List/search projects | ✅ Backpex |
+| `/admin/projects/new` | Create project | ✅ Backpex |
+| `/admin/projects/:id/edit` | Edit project | ✅ Backpex |
 | `/admin/posts` | CRUD posts | ✅ Backpex |
 | `/admin/products` | CRUD products | ✅ Backpex |
 | `/admin/media` | Media library | ✅ Backpex |
@@ -237,6 +239,61 @@ personal_brand/lib/personal_brand_web/components/layouts/public.html.heex
 `public.html.heex` adalah LiveView layout fragment, bukan dokumen HTML penuh. Dokumen HTML utama tetap di `root.html.heex`.
 
 Static prototype root lama (`index.html`, `styles.css`, `src/app.js`, `server.mjs`, dan root `package.json`) sudah tidak menjadi jalur development. Jangan pakai `npm run dev`/port `5173` untuk mengecek FE.
+
+## Project Portfolio Workflow
+
+Project portfolio adalah area paling penting untuk recruiter Software Engineer. Gunakan route publik berikut untuk QA:
+
+```text
+http://localhost:4000/work
+http://localhost:4000/work/<slug>
+```
+
+Gunakan admin berikut untuk input dan edit:
+
+```text
+http://localhost:4000/admin/projects
+http://localhost:4000/admin/projects/new
+http://localhost:4000/admin/projects/<id>/edit
+```
+
+Field project saat ini:
+
+| Field | Fungsi | Catatan |
+|-------|--------|---------|
+| `title` | Nama project | Contoh: `RajaOngkir iOS App`, `Postie`, `Personal Platform Website` |
+| `slug` | URL publik `/work/:slug` | Saat ini masih manual. Target improvement: auto-generate dari title dan auto-resolve duplicate. |
+| `summary` | One-line recruiter pitch | Tampilkan impact singkat, bukan deskripsi panjang. |
+| `description` | Overview case study | Menjawab konteks dan scope project. |
+| `problem` | Problem yang diselesaikan | Harus mempertimbangkan kebutuhan user/business. |
+| `solution` | Solusi teknis | Jelaskan architecture, decision, dan ownership. |
+| `result` | Outcome per baris | Bisa diisi satu hasil per baris di admin. |
+| `role` | Peran di project | Contoh: `Senior iOS Engineer`, `Mobile Engineering Lead`, `Full-stack Software Engineer`. |
+| `tech_stack` | Teknologi per baris | Bisa diisi satu teknologi per baris di admin. |
+| `year` | Tahun / periode | Contoh: `2025`, `2021-2024`. |
+| `status` | `draft`, `published`, `archived` | Hanya published yang ditampilkan publik. |
+| `featured` | Prioritas tampil | Untuk project penting di home/work. |
+| `demo_url` | Link demo/live | Optional. |
+| `github_url` | Link repository | Optional, terutama untuk open-source/demo. |
+| `cover_image_id` | UUID media cover | Saat ini manual. Target improvement: media picker dari admin. |
+
+Untuk portfolio yang ditujukan ke recruiter, project detail perlu menjawab:
+
+- Role dan ownership kamu.
+- Platform/discipline: iOS, Mobile Lead, Flutter, Backend, Frontend, macOS, atau Full-stack.
+- Problem bisnis/produk yang diselesaikan.
+- Architecture/technical decision yang menunjukkan seniority.
+- Trade-off atau constraint penting.
+- Result/impact yang bisa dipercaya.
+- Screenshot/media dan link pendukung jika tersedia.
+
+Gap yang sudah dicatat untuk improvement berikutnya:
+
+- Slug masih diketik manual dan rawan typo/redundant.
+- `role`, `tech_stack`, platform, dan discipline masih free text sehingga rawan inkonsisten.
+- Cover media masih pakai UUID manual.
+- Public `/work` belum punya filter berdasarkan discipline/platform.
+- Project detail belum punya section khusus untuk ownership, architecture decision, trade-off, metrics, dan recruiter-facing impact.
 
 ## Data Contract
 
