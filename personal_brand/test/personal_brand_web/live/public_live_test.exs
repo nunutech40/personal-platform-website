@@ -25,7 +25,17 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       role: "Mobile Engineering Lead",
       platforms: ["ios"],
       disciplines: ["ios_development", "mobile_engineering_lead"],
-      impact_summary: "Menyatukan kebutuhan shipping ke dalam workflow mobile yang cepat."
+      impact_summary: "Menyatukan kebutuhan shipping ke dalam workflow mobile yang cepat.",
+      featured: true
+    })
+
+    insert_project(%{
+      title: "Postie",
+      slug: "postie",
+      status: "published",
+      summary: "Native macOS API client untuk testing request.",
+      platforms: ["macos"],
+      disciplines: ["macos_development"]
     })
 
     insert_project(%{
@@ -38,7 +48,10 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     conn = get(conn, ~p"/work")
 
     html = html_response(conn, 200)
+    assert html =~ "Featured Projects"
+    assert html =~ "Other Projects"
     assert html =~ "RajaOngkir iOS App"
+    assert html =~ "Postie"
     assert html =~ "Mobile Engineering Lead"
     assert html =~ "iOS"
     refute html =~ "Draft Project"

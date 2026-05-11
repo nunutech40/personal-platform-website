@@ -20,6 +20,26 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   def plural_name, do: "Projects"
 
   @impl true
+  def panels do
+    [
+      identity: "Identity",
+      classification: "Classification",
+      recruiter_pitch: "Recruiter Pitch",
+      case_study: "Case Study",
+      evidence: "Evidence",
+      media_links: "Media & Links"
+    ]
+  end
+
+  @impl true
+  def item_actions(default_actions) do
+    Keyword.put(default_actions, :view_public, %{
+      module: PersonalBrandWeb.Admin.ItemActions.ViewPublicProject,
+      only: [:row, :show]
+    })
+  end
+
+  @impl true
   def layout(_assigns) do
     {PersonalBrandWeb.Layouts, :admin}
   end
@@ -30,49 +50,57 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       title: %{
         module: Backpex.Fields.Text,
         label: "Title",
-        searchable: true
+        searchable: true,
+        panel: :identity
       },
       slug: %{
         module: Backpex.Fields.Text,
         label: "Slug",
         help_text:
-          "Leave blank on create to auto-generate. Be careful changing a published slug because public links depend on it."
+          "Leave blank on create to auto-generate. Be careful changing a published slug because public links depend on it.",
+        panel: :identity
       },
       summary: %{
         module: Backpex.Fields.Textarea,
         label: "Summary",
         rows: 3,
-        index_column_class: "min-w-80"
+        index_column_class: "min-w-80",
+        panel: :recruiter_pitch
       },
       description: %{
         module: Backpex.Fields.Textarea,
         label: "Description",
         rows: 8,
-        except: [:index]
+        except: [:index],
+        panel: :case_study
       },
       problem: %{
         module: Backpex.Fields.Textarea,
         label: "Problem",
         rows: 5,
-        except: [:index]
+        except: [:index],
+        panel: :case_study
       },
       solution: %{
         module: Backpex.Fields.Textarea,
         label: "Solution",
         rows: 5,
-        except: [:index]
+        except: [:index],
+        panel: :case_study
       },
       architecture_notes: %{
         module: Backpex.Fields.Textarea,
         label: "Architecture Notes",
         rows: 6,
-        except: [:index]
+        except: [:index],
+        panel: :case_study
       },
       tradeoffs: %{
         module: Backpex.Fields.Textarea,
         label: "Trade-offs",
         rows: 5,
-        except: [:index]
+        except: [:index],
+        panel: :case_study
       },
       result: %{
         module: Backpex.Fields.Textarea,
@@ -80,23 +108,27 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         rows: 6,
         render: &render_list/1,
         render_form: &render_textarea/1,
-        except: [:index]
+        except: [:index],
+        panel: :evidence
       },
       role: %{
         module: Backpex.Fields.Text,
         label: "Role",
-        searchable: true
+        searchable: true,
+        panel: :classification
       },
       ownership: %{
         module: Backpex.Fields.Text,
         label: "Ownership",
-        except: [:index]
+        except: [:index],
+        panel: :classification
       },
       project_type: %{
         module: Backpex.Fields.Select,
         label: "Project Type",
         options: select_options(Project.project_types()),
-        render: &render_label/1
+        render: &render_label/1,
+        panel: :classification
       },
       platforms: %{
         module: Backpex.Fields.Textarea,
@@ -104,7 +136,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         rows: 4,
         help_text: "Allowed: #{Enum.join(Project.platforms(), ", ")}",
         render: &render_badges/1,
-        render_form: &render_textarea/1
+        render_form: &render_textarea/1,
+        panel: :classification
       },
       disciplines: %{
         module: Backpex.Fields.Textarea,
@@ -112,51 +145,61 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         rows: 5,
         help_text: "Allowed: #{Enum.join(Project.disciplines(), ", ")}",
         render: &render_badges/1,
-        render_form: &render_textarea/1
+        render_form: &render_textarea/1,
+        panel: :classification
       },
       tech_stack: %{
         module: Backpex.Fields.Textarea,
         label: "Tech Stack (one per line)",
         rows: 4,
         render: &render_list/1,
-        render_form: &render_textarea/1
+        render_form: &render_textarea/1,
+        panel: :evidence
       },
       year: %{
         module: Backpex.Fields.Text,
-        label: "Year"
+        label: "Year",
+        panel: :identity
       },
       duration: %{
         module: Backpex.Fields.Text,
-        label: "Duration"
+        label: "Duration",
+        panel: :identity
       },
       company: %{
         module: Backpex.Fields.Text,
         label: "Company",
-        except: [:index]
+        except: [:index],
+        panel: :classification
       },
       client: %{
         module: Backpex.Fields.Text,
         label: "Client",
-        except: [:index]
+        except: [:index],
+        panel: :classification
       },
       status: %{
         module: Backpex.Fields.Select,
         label: "Status",
-        options: select_options(Project.statuses())
+        options: select_options(Project.statuses()),
+        panel: :identity
       },
       featured: %{
         module: Backpex.Fields.Boolean,
-        label: "Featured"
+        label: "Featured",
+        panel: :identity
       },
       sort_order: %{
         module: Backpex.Fields.Number,
-        label: "Sort Order"
+        label: "Sort Order",
+        panel: :identity
       },
       impact_summary: %{
         module: Backpex.Fields.Textarea,
         label: "Impact Summary",
         rows: 3,
-        except: [:index]
+        except: [:index],
+        panel: :recruiter_pitch
       },
       technical_highlights: %{
         module: Backpex.Fields.Textarea,
@@ -164,7 +207,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         rows: 6,
         render: &render_list/1,
         render_form: &render_textarea/1,
-        except: [:index]
+        except: [:index],
+        panel: :evidence
       },
       metrics: %{
         module: Backpex.Fields.Textarea,
@@ -172,25 +216,30 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         rows: 5,
         render: &render_list/1,
         render_form: &render_textarea/1,
-        except: [:index]
+        except: [:index],
+        panel: :evidence
       },
       case_study_visibility: %{
         module: Backpex.Fields.Select,
         label: "Case Study Visibility",
         options: select_options(Project.case_study_visibilities()),
-        render: &render_label/1
+        render: &render_label/1,
+        panel: :case_study
       },
       demo_url: %{
         module: Backpex.Fields.Text,
-        label: "Demo URL"
+        label: "Demo URL",
+        panel: :media_links
       },
       github_url: %{
         module: Backpex.Fields.Text,
-        label: "GitHub URL"
+        label: "GitHub URL",
+        panel: :media_links
       },
       app_store_url: %{
         module: Backpex.Fields.Text,
-        label: "App Store URL"
+        label: "App Store URL",
+        panel: :media_links
       },
       cover_image: %{
         module: Backpex.Fields.BelongsTo,
@@ -200,9 +249,46 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         live_resource: PersonalBrandWeb.Admin.MediaResource,
         prompt: "Choose cover image",
         help_text: "Upload media first in Admin > Media, then select it here.",
-        except: [:index]
+        except: [:index],
+        panel: :media_links
+      },
+      updated_at: %{
+        module: Backpex.Fields.DateTime,
+        label: "Updated",
+        except: [:new, :edit],
+        orderable: true
       }
     ]
+  end
+
+  @impl true
+  def render_resource_slot(
+        %{item: %{status: "published", slug: slug}} = assigns,
+        :edit,
+        :before_main
+      ) do
+    assigns = assign(assigns, :public_path, "/work/#{slug}")
+
+    ~H"""
+    <div class="alert alert-warning mb-4">
+      <div>
+        <p class="font-semibold">Published project URL: <a href={@public_path}>{@public_path}</a></p>
+        <p class="text-sm">
+          Changing the slug will change this public case study URL, so only edit it intentionally.
+        </p>
+      </div>
+    </div>
+    """
+  end
+
+  def render_resource_slot(assigns, :new, :before_main) do
+    ~H"""
+    <div class="alert alert-info mb-4">
+      <p>
+        Fill the title first. Slug can stay blank because the system will generate a unique public URL automatically.
+      </p>
+    </div>
+    """
   end
 
   def create_changeset(project, attrs, metadata) do

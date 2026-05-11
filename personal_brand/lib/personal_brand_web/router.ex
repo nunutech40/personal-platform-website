@@ -46,24 +46,26 @@ defmodule PersonalBrandWeb.Router do
   scope "/admin", PersonalBrandWeb.Admin do
     pipe_through [:browser, :require_admin]
 
-    live "/", DashboardLive, :index
+    live_session :admin, on_mount: Backpex.InitAssigns do
+      live "/", DashboardLive, :index
 
-    # Backpex LiveResources
-    live_resources("/projects", ProjectResource, only: [:index, :show, :new, :edit, :delete])
+      # Backpex LiveResources
+      live_resources("/projects", ProjectResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources("/posts", PostResource, only: [:index, :show, :new, :edit, :delete])
+      live_resources("/posts", PostResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources("/products", ProductResource, only: [:index, :show, :new, :edit, :delete])
+      live_resources("/products", ProductResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources("/media", MediaResource, only: [:index, :show, :new, :edit, :delete])
+      live_resources("/media", MediaResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources("/site-settings", SiteSettingResource,
-      only: [:index, :show, :new, :edit, :delete]
-    )
+      live_resources("/site-settings", SiteSettingResource,
+        only: [:index, :show, :new, :edit, :delete]
+      )
 
-    live_resources("/themes", ThemeResource, only: [:index, :show, :new, :edit, :delete])
+      live_resources("/themes", ThemeResource, only: [:index, :show, :new, :edit, :delete])
 
-    live_resources("/tags", TagResource, only: [:index, :show, :new, :edit, :delete])
+      live_resources("/tags", TagResource, only: [:index, :show, :new, :edit, :delete])
+    end
   end
 
   # Admin auth routes (outside require_admin pipeline)

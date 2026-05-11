@@ -208,6 +208,11 @@ defmodule PersonalBrandWeb.PublicLive do
   # ── Work Index ───────────────────────────────────────────
 
   def work_index(assigns) do
+    assigns =
+      assigns
+      |> assign(:featured_projects, featured_projects(assigns.projects))
+      |> assign(:regular_projects, regular_projects(assigns.projects))
+
     ~H"""
     <h1>Work</h1>
     <p>Project portfolio untuk menunjukkan ownership, technical depth, dan impact.</p>
@@ -226,24 +231,13 @@ defmodule PersonalBrandWeb.PublicLive do
         <%= if @projects == [] do %>
           <.empty_state text="No published projects yet." />
         <% end %>
-        <%= for project <- @projects do %>
-          <article class="item">
-            <div class="item-title">
-              <a href={"/work/#{project.slug}"}>{project.title}</a>
-            </div>
-            <p>{project.summary}</p>
-            <p :if={project.impact_summary} class="lead">{project.impact_summary}</p>
-            <p class="meta">
-              {project.role}
-              <%= if project.duration || project.year do %>
-                · {project.duration || project.year}
-              <% end %>
-            </p>
-            <div class="tag-list">
-              <span :for={badge <- project_badges(project)} class="tag">{badge}</span>
-            </div>
-            <p class="meta">{Enum.join(project.tech_stack || [], ", ")}</p>
-          </article>
+        <%= if @featured_projects != [] do %>
+          <h2>Featured Projects</h2>
+          <.work_project_item :for={project <- @featured_projects} project={project} />
+        <% end %>
+        <%= if @regular_projects != [] do %>
+          <h2>{if @featured_projects == [], do: "Projects", else: "Other Projects"}</h2>
+          <.work_project_item :for={project <- @regular_projects} project={project} />
         <% end %>
       </section>
       <.visual_frame
@@ -251,6 +245,28 @@ defmodule PersonalBrandWeb.PublicLive do
         media={first_project_media(@projects, @project_media)}
       />
     </div>
+    """
+  end
+
+  def work_project_item(assigns) do
+    ~H"""
+    <article class="item">
+      <div class="item-title">
+        <a href={"/work/#{@project.slug}"}>{@project.title}</a>
+      </div>
+      <p>{@project.summary}</p>
+      <p :if={@project.impact_summary} class="lead">{@project.impact_summary}</p>
+      <p class="meta">
+        {@project.role}
+        <%= if @project.duration || @project.year do %>
+          · {@project.duration || @project.year}
+        <% end %>
+      </p>
+      <div class="tag-list">
+        <span :for={badge <- project_badges(@project)} class="tag">{badge}</span>
+      </div>
+      <p class="meta">{Enum.join(@project.tech_stack || [], ", ")}</p>
+    </article>
     """
   end
 
@@ -659,6 +675,9 @@ defmodule PersonalBrandWeb.PublicLive do
     projects
     |> Enum.find_value(fn project -> Map.get(media_by_id, project.cover_image_id) end)
   end
+
+  defp featured_projects(projects), do: Enum.filter(projects, & &1.featured)
+  defp regular_projects(projects), do: Enum.reject(projects, & &1.featured)
 
   defp work_filters do
     [
