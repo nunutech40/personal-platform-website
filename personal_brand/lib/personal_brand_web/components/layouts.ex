@@ -176,6 +176,39 @@ defmodule PersonalBrandWeb.Layouts do
     ]
   end
 
+  def admin_preview_path(assigns) do
+    assigns
+    |> admin_public_base_path()
+    |> admin_preview_path_for_item(admin_preview_item(assigns))
+  end
+
+  defp admin_public_base_path(%{live_resource: PersonalBrandWeb.Admin.ProjectResource}),
+    do: "/work"
+
+  defp admin_public_base_path(%{live_resource: PersonalBrandWeb.Admin.PostResource}),
+    do: "/writing"
+
+  defp admin_public_base_path(%{live_resource: PersonalBrandWeb.Admin.ProductResource}),
+    do: "/products"
+
+  defp admin_public_base_path(_assigns), do: "/"
+
+  defp admin_preview_path_for_item("/", _item), do: "/"
+
+  defp admin_preview_path_for_item(base_path, %{slug: slug})
+       when is_binary(slug) and slug != "" do
+    base_path <> "/" <> slug
+  end
+
+  defp admin_preview_path_for_item(base_path, _item), do: base_path
+
+  defp admin_preview_item(assigns) do
+    assigns[:item] || changeset_data(assigns[:changeset])
+  end
+
+  defp changeset_data(%Ecto.Changeset{data: data}), do: data
+  defp changeset_data(_changeset), do: nil
+
   defp admin_breadcrumb_parts(nil), do: ["Dashboard"]
   defp admin_breadcrumb_parts("/admin"), do: ["Dashboard"]
   defp admin_breadcrumb_parts("/admin/"), do: ["Dashboard"]
