@@ -64,6 +64,13 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   @impl true
   def fields do
     [
+      admin_actions: %{
+        module: Backpex.Fields.Text,
+        label: "Actions",
+        only: [:index],
+        render: &render_admin_actions/1,
+        index_column_class: "min-w-64"
+      },
       title: %{
         module: Backpex.Fields.Text,
         label: "Title",
@@ -344,6 +351,36 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         {display_label(value)}
       </span>
       <span :if={@values == []}>-</span>
+    </div>
+    """
+  end
+
+  defp render_admin_actions(assigns) do
+    assigns = assign(assigns, :public_path, "/work/#{assigns.item.slug}")
+
+    ~H"""
+    <div class="flex min-w-64 items-center gap-2">
+      <.link
+        navigate={"/admin/projects/#{@primary_key}/edit"}
+        class="rounded border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-700 transition hover:border-blue-300 hover:bg-blue-50"
+      >
+        Edit
+      </.link>
+      <.link
+        navigate={@public_path}
+        class="rounded border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+      >
+        Preview
+      </.link>
+      <button
+        type="button"
+        phx-click="item-action"
+        phx-value-action-key="delete"
+        phx-value-item-id={@primary_key}
+        class="rounded border border-red-200 px-2 py-1 text-xs font-semibold text-red-700 transition hover:border-red-300 hover:bg-red-50"
+      >
+        Delete
+      </button>
     </div>
     """
   end
