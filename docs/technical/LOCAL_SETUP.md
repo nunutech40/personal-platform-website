@@ -347,6 +347,31 @@ Posts dan Products memakai standar admin yang sama dengan Projects untuk CRUD ha
 - Form punya placeholder dan help text untuk mengurangi input yang ambigu.
 - Product `checkout_url` boleh kosong; jika diisi harus diawali `http://` atau `https://`.
 
+## Media, Site Settings, and Themes Admin Workflow
+
+Media, Site Settings, dan Themes juga mengikuti standar admin yang sama: index punya aksi cepat, form punya section yang jelas, placeholder, help text, dan validasi changeset.
+
+Media:
+
+- `/admin/media` menampilkan preview thumbnail untuk gambar, link buka file, edit, dan delete.
+- `/admin/media/new` bisa upload file lewat Backpex upload field atau mengisi metadata manual.
+- `filename` dan `url` wajib. URL harus diawali `http://`, `https://`, atau `/uploads/`.
+- `alt_text` perlu diisi untuk gambar portfolio agar screenshot tetap punya konteks aksesibilitas.
+
+Site Settings:
+
+- `/admin/site-settings` mengatur identitas website, CTA homepage, profil, social links, active theme, dan daftar featured ID opsional.
+- `active_theme` dipilih dari theme yang ada di database. Kalau belum ada theme, fallback admin menampilkan `old_web_classic`.
+- `social_links` diisi satu link per baris dengan format `Label=URL`, contoh `GitHub=https://github.com/username`.
+- `featured_project_ids` dan `featured_product_ids` bisa diisi satu UUID per baris. Untuk workflow portfolio utama, prioritas tampilan tetap lebih praktis lewat flag `featured` dan `sort_order` di resource Project/Product.
+
+Themes:
+
+- `/admin/themes` mengelola registry theme.
+- `key` harus lowercase alphanumeric dengan underscore, contoh `old_web_classic`.
+- `config` bisa dikosongkan atau diisi JSON object valid, contoh `{"accent_color":"#111827"}`.
+- Toggle `Aktif di registry` menandai theme tersedia. Theme publik yang dipakai tetap dipilih lewat Site Settings > Active Theme.
+
 ## Data Contract
 
 Data dari prototype lama sudah dipindah ke database dan Phoenix assigns:
@@ -376,8 +401,9 @@ Data dari prototype lama sudah dipindah ke database dan Phoenix assigns:
 - ✅ Public routes (work, writing, products, about, now, contact)
 - ✅ old_web_classic theme styles in Phoenix assets
 - ✅ Theme resolver via `site_settings.active_theme`
+- ✅ Media upload/local storage workflow in admin
+- ✅ Admin CRUD polish for projects, posts, products, media, site settings, and themes
 
 ### Remaining
-- ❌ Media upload
 - ❌ SEO / OG tags
 - ❌ RSS / sitemap

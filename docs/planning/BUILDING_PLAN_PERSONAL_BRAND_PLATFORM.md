@@ -1398,6 +1398,20 @@ MVP note:
 
 ## 8.6 Admin Media
 
+Implementation status per 2026-05-12:
+
+```txt
+Done:
+- upload field with local storage callbacks
+- media metadata CRUD in Backpex
+- image thumbnail preview on index/show
+- quick actions for edit, open file, and delete
+- alt text, content type, size, URL, storage path, and attachable metadata fields
+
+Remaining:
+- richer in-form media picker UX for every content relation if Backpex relation UI becomes limiting
+```
+
 Must support:
 
 ```txt
@@ -1417,6 +1431,20 @@ local disk storage
 ---
 
 ## 8.7 Admin Site Settings
+
+Implementation status per 2026-05-12:
+
+```txt
+Done:
+- identity, homepage CTA, profile, theme, and featured content panels
+- active_theme select sourced from themes table with old_web_classic fallback
+- social_links textarea normalized from Label=URL lines into map data
+- featured_project_ids and featured_product_ids textarea normalized into UUID arrays
+
+Not in current schema:
+- active_homepage_variant
+- featured_post_ids
+```
 
 Must support editing:
 
@@ -1439,6 +1467,20 @@ featured_product_ids
 ---
 
 ## 8.8 Admin Themes
+
+Implementation status per 2026-05-12:
+
+```txt
+Done:
+- theme list and CRUD in Backpex
+- preview action to the public homepage
+- active registry toggle with clear Aktif/Nonaktif state
+- config JSON textarea normalized into map data
+- active public theme selected through Site Settings
+
+Remaining:
+- dedicated visual theme preview screen before applying active_theme
+```
 
 Must support:
 
@@ -1834,6 +1876,8 @@ Done when:
 
 Priority: High
 
+Implementation status per 2026-05-12: Done for MVP CRUD. Admin Projects, Posts, Products, Media, Site Settings, and Themes now use persisted Backpex resources with placeholders, help text, validation, row actions, and clearer boolean controls. Further work should focus on content quality and richer preview/picker ergonomics rather than basic CRUD.
+
 Current prototype note:
 
 ```txt
@@ -1900,6 +1944,8 @@ Done when:
 ## Phase 7 — Media Management
 
 Priority: Medium
+
+Implementation status per 2026-05-12: Done for MVP. Media can be uploaded/stored locally, listed in admin with thumbnail preview, edited with metadata, deleted with storage cleanup, and selected as cover media through content relations where available.
 
 Tasks:
 

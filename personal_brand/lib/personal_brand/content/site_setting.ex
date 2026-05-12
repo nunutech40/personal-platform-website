@@ -26,6 +26,12 @@ defmodule PersonalBrand.Content.SiteSetting do
   end
 
   def changeset(site_setting, attrs) do
+    attrs =
+      attrs
+      |> normalize_social_links()
+      |> normalize_id_list(:featured_project_ids)
+      |> normalize_id_list(:featured_product_ids)
+
     site_setting
     |> cast(attrs, [
       :site_name,
@@ -65,5 +71,79 @@ defmodule PersonalBrand.Content.SiteSetting do
     )
     |> validate_format(:primary_cta_url, ~r/^\//, message: "must start with /")
     |> validate_format(:secondary_cta_url, ~r/^\//, message: "must start with /")
+    |> validate_format(:active_theme, ~r/^[a-z0-9_]+$/,
+      message: "must be lowercase alphanumeric with underscores only"
+    )
+  end
+
+  defp normalize_social_links(attrs) when is_map(attrs) do
+    normalize_map_textarea(attrs, :social_links)
+  end
+
+  defp normalize_social_links(attrs), do: attrs
+
+  defp normalize_map_textarea(attrs, field) do
+    string_key = Atom.to_string(field)
+
+    cond do
+      is_binary(Map.get(attrs, field)) ->
+        Map.update!(attrs, field, &parse_key_value_lines/1)
+
+      is_binary(Map.get(attrs, string_key)) ->
+        Map.update!(attrs, string_key, &parse_key_value_lines/1)
+
+      true ->
+        attrs
+    end
+  end
+
+  defp parse_key_value_lines(value) do
+    value
+    |> String.split(~r/\r?\n/, trim: true)
+    |> Enum.reduce(%{}, fn line, acc ->
+      case String.split(line, ~r/\s*=\s*/, parts: 2) do
+        [key, url] when key != "" and url != "" ->
+          Map.put(acc, String.trim(key), String.trim(url))
+
+        _parts ->
+          acc
+      end
+    end)
+  end
+
+  defp normalize_id_list(attrs, field) when is_map(attrs) do
+    string_key = Atom.to_string(field)
+
+    cond do
+      is_binary(Map.get(attrs, field)) ->
+        Map.update!(attrs, field, &split_id_lines/1)
+
+      is_binary(Map.get(attrs, string_key)) ->
+        Map.update!(attrs, string_key, &split_id_lines/1)
+
+      is_list(Map.get(attrs, field)) ->
+        Map.update!(attrs, field, &clean_id_list/1)
+
+      is_list(Map.get(attrs, string_key)) ->
+        Map.update!(attrs, string_key, &clean_id_list/1)
+
+      true ->
+        attrs
+    end
+  end
+
+  defp normalize_id_list(attrs, _field), do: attrs
+
+  defp split_id_lines(value) do
+    value
+    |> String.split(~r/[\r\n,]+/, trim: true)
+    |> clean_id_list()
+  end
+
+  defp clean_id_list(values) do
+    values
+    |> Enum.map(&to_string/1)
+    |> Enum.map(&String.trim/1)
+    |> Enum.reject(&(&1 == ""))
   end
 end

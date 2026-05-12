@@ -68,6 +68,27 @@ defmodule PersonalBrand.Content.SiteSettingTest do
              }
     end
 
+    test "accepts social links as key value lines from admin forms" do
+      attrs = %{
+        site_name: "My Site",
+        headline: "Welcome",
+        primary_cta_text: "Get Started",
+        primary_cta_url: "/start",
+        active_theme: "old_web_classic",
+        profile_name: "John Doe",
+        profile_email: "john@example.com",
+        social_links: "GitHub=https://github.com/john\nLinkedIn=https://linkedin.com/in/john"
+      }
+
+      changeset = SiteSetting.changeset(%SiteSetting{}, attrs)
+      assert changeset.valid?
+
+      assert get_field(changeset, :social_links) == %{
+               "GitHub" => "https://github.com/john",
+               "LinkedIn" => "https://linkedin.com/in/john"
+             }
+    end
+
     test "accepts featured IDs as arrays" do
       id1 = Ecto.UUID.generate()
       id2 = Ecto.UUID.generate()
@@ -82,6 +103,28 @@ defmodule PersonalBrand.Content.SiteSettingTest do
         profile_email: "john@example.com",
         featured_project_ids: [id1, id2],
         featured_product_ids: [id2]
+      }
+
+      changeset = SiteSetting.changeset(%SiteSetting{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :featured_project_ids) == [id1, id2]
+      assert get_field(changeset, :featured_product_ids) == [id2]
+    end
+
+    test "accepts featured IDs as newline separated admin input" do
+      id1 = Ecto.UUID.generate()
+      id2 = Ecto.UUID.generate()
+
+      attrs = %{
+        site_name: "My Site",
+        headline: "Welcome",
+        primary_cta_text: "Get Started",
+        primary_cta_url: "/start",
+        active_theme: "old_web_classic",
+        profile_name: "John Doe",
+        profile_email: "john@example.com",
+        featured_project_ids: "#{id1}\n#{id2}",
+        featured_product_ids: id2
       }
 
       changeset = SiteSetting.changeset(%SiteSetting{}, attrs)
@@ -196,6 +239,25 @@ defmodule PersonalBrand.Content.SiteSettingTest do
       changeset = SiteSetting.changeset(%SiteSetting{}, attrs)
       refute changeset.valid?
       assert errors_on(changeset)[:profile_name] == ["can't be blank"]
+    end
+
+    test "rejects invalid active_theme key format" do
+      attrs = %{
+        site_name: "My Site",
+        headline: "Welcome",
+        primary_cta_text: "Get Started",
+        primary_cta_url: "/start",
+        active_theme: "Premium Dark",
+        profile_name: "John Doe",
+        profile_email: "john@example.com"
+      }
+
+      changeset = SiteSetting.changeset(%SiteSetting{}, attrs)
+      refute changeset.valid?
+
+      assert errors_on(changeset)[:active_theme] == [
+               "must be lowercase alphanumeric with underscores only"
+             ]
     end
   end
 end

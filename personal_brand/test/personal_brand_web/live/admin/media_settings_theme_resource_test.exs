@@ -1,0 +1,200 @@
+defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
+  use PersonalBrandWeb.ConnCase
+
+  alias PersonalBrand.Accounts
+  alias PersonalBrand.Content.Media
+  alias PersonalBrand.Content.SiteSetting
+  alias PersonalBrand.Content.Theme
+  alias PersonalBrand.Repo
+
+  import Phoenix.LiveViewTest
+
+  test "GET /admin/media/new renders standardized media form", %{conn: conn} do
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/media/new")
+
+    assert html =~ "Upload"
+    assert html =~ "Metadata"
+    assert html =~ "Upload maksimal 20MB"
+    assert html =~ "Alt Text"
+    assert html =~ "Storage Path"
+  end
+
+  test "GET /admin/media includes preview and row actions", %{conn: conn} do
+    media = insert_media(%{filename: "cover.png", url: "/uploads/media/cover.png"})
+
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/media")
+
+    assert html =~ "cover.png"
+    assert html =~ ~s(href="/admin/media/#{media.id}/edit")
+    assert html =~ ~s(href="/uploads/media/cover.png")
+    assert html =~ ~s(phx-value-action-key="delete")
+  end
+
+  test "GET /admin/site-settings/new renders standardized settings form", %{conn: conn} do
+    insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
+
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/site-settings/new")
+
+    assert html =~ "Identitas Website"
+    assert html =~ "Homepage CTA"
+    assert html =~ "Profil"
+    assert html =~ "Theme"
+    assert html =~ "Social Links"
+    assert html =~ "Old Web Classic"
+  end
+
+  test "admin site settings form accepts social links and featured IDs textareas", %{conn: conn} do
+    insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
+    project_id = Ecto.UUID.generate()
+    product_id = Ecto.UUID.generate()
+
+    {:ok, view, _html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/site-settings/new")
+
+    view
+    |> element("#resource-form")
+    |> render_submit(%{
+      "change" =>
+        site_setting_attrs(%{
+          "social_links" =>
+            "GitHub=https://github.com/nunu\nLinkedIn=https://linkedin.com/in/nunu",
+          "featured_project_ids" => project_id,
+          "featured_product_ids" => product_id
+        }),
+      "save-type" => "save"
+    })
+
+    assert_redirect(view, ~p"/admin/site-settings")
+
+    setting = Repo.get_by!(SiteSetting, site_name: "Nunu Test")
+    assert setting.social_links["GitHub"] == "https://github.com/nunu"
+    assert setting.featured_project_ids == [project_id]
+    assert setting.featured_product_ids == [product_id]
+  end
+
+  test "GET /admin/themes/new renders standardized theme form", %{conn: conn} do
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/themes/new")
+
+    assert html =~ "Info Theme"
+    assert html =~ "Konfigurasi"
+    assert html =~ "Config JSON"
+    assert html =~ "Lowercase, angka, dan underscore saja"
+  end
+
+  test "admin theme form creates theme with JSON config", %{conn: conn} do
+    {:ok, view, _html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/themes/new")
+
+    view
+    |> element("#resource-form")
+    |> render_submit(%{
+      "change" =>
+        theme_attrs(%{
+          "key" => "clean_focus",
+          "name" => "Clean Focus",
+          "config" => ~s({"accent_color":"#111827"})
+        }),
+      "save-type" => "save"
+    })
+
+    assert_redirect(view, ~p"/admin/themes")
+
+    theme = Repo.get_by!(Theme, key: "clean_focus")
+    assert theme.config == %{"accent_color" => "#111827"}
+  end
+
+  test "GET /admin/themes includes edit preview row actions", %{conn: conn} do
+    theme = insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
+
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/themes")
+
+    assert html =~ "Old Web Classic"
+    assert html =~ ~s(href="/admin/themes/#{theme.id}/edit")
+    assert html =~ ~s(href="/")
+  end
+
+  defp log_in_admin(conn) do
+    init_test_session(conn, admin_token: Accounts.generate_session_token(1))
+  end
+
+  defp insert_media(attrs) do
+    defaults = %{
+      filename: "media.png",
+      content_type: "image/png",
+      size: 1200,
+      url: "/uploads/media/media.png",
+      alt_text: "Media preview"
+    }
+
+    %Media{}
+    |> Media.changeset(Map.merge(defaults, attrs))
+    |> Repo.insert!()
+  end
+
+  defp insert_theme(attrs) do
+    defaults = %{
+      key: "theme_key",
+      name: "Theme Name",
+      description: "Theme description",
+      is_active: true,
+      config: %{}
+    }
+
+    %Theme{}
+    |> Theme.changeset(Map.merge(defaults, attrs))
+    |> Repo.insert!()
+  end
+
+  defp site_setting_attrs(attrs) do
+    Map.merge(
+      %{
+        "site_name" => "Nunu Test",
+        "headline" => "Build and ship",
+        "subheadline" => "Personal platform",
+        "primary_cta_text" => "View Work",
+        "primary_cta_url" => "/work",
+        "secondary_cta_text" => "Read Writing",
+        "secondary_cta_url" => "/writing",
+        "active_theme" => "old_web_classic",
+        "profile_name" => "Nunu Nugraha",
+        "profile_title" => "Software Engineer",
+        "profile_location" => "Jakarta",
+        "profile_email" => "nunu@example.com",
+        "profile_bio" => "Builder"
+      },
+      attrs
+    )
+  end
+
+  defp theme_attrs(attrs) do
+    Map.merge(
+      %{
+        "key" => "theme_key",
+        "name" => "Theme Name",
+        "description" => "Theme description",
+        "is_active" => "true",
+        "config" => "{}"
+      },
+      attrs
+    )
+  end
+end

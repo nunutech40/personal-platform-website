@@ -60,6 +60,20 @@ defmodule PersonalBrand.Content.ThemeTest do
       assert get_field(changeset, :config) == %{"primary_color" => "#333", "font" => "serif"}
     end
 
+    test "accepts config as JSON textarea input" do
+      attrs = Map.merge(@valid_attrs, %{config: ~s({"primary_color":"#333","font":"serif"})})
+      changeset = Theme.changeset(%Theme{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :config) == %{"primary_color" => "#333", "font" => "serif"}
+    end
+
+    test "rejects invalid JSON config textarea input" do
+      attrs = Map.merge(@valid_attrs, %{config: "{invalid"})
+      changeset = Theme.changeset(%Theme{}, attrs)
+      refute changeset.valid?
+      assert errors_on(changeset)[:config] == ["is invalid"]
+    end
+
     test "rejects key with hyphens" do
       attrs = %{@valid_attrs | key: "my-theme"}
       changeset = Theme.changeset(%Theme{}, attrs)

@@ -338,6 +338,7 @@ Status implementation per 2026-05-11:
 - Slice 4: Done in code. `/work` menampilkan card recruiter-focused, filter discipline/platform, sort order, dan pemisahan Featured Projects di atas daftar project lain.
 - Slice 5: Done in code. `/work/:slug` punya section ownership, technical approach, architecture notes, trade-offs, implementation highlights, results, metrics, dan links.
 - Slice 6: Done for initial seed. Seed portfolio berisi 5 project prioritas dari CV dengan copy Bahasa Indonesia dan batas detail proprietary.
+- Follow-up admin standardization per 2026-05-12: Done in code for adjacent content resources. Posts, Products, Media, Site Settings, and Themes now follow the same admin baseline used by Projects: visible row actions, placeholders/help text, changeset validation path, clearer boolean controls, and safer structured textarea handling where schema stores maps/arrays.
 
 ### Slice 1 - Slug Generation
 
