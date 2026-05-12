@@ -249,19 +249,27 @@ Alur manual browser:
 
 Catatan form: `tech_stack`, `result`, `technical_highlights`, dan `metrics` disimpan sebagai array dari textarea satu-item-per-baris. Jangan ubah ke SQL workaround kecuali sedang repair data lama atau bulk import.
 
-### Penulisan Case Study yang Readable
+### Penulisan 3 Section Teknis yang Readable
 
 Field panjang seperti `description`, `problem`, `solution`, `architecture_notes`, dan `tradeoffs` boleh lebih dari satu paragraf.
 
-Gunakan pola ini:
+Khusus 3 section teknis, jangan menaruh semua fakta ke satu paragraf panjang. Setiap section punya tugas berbeda:
+
+| Public section | Admin field | Tujuan |
+|---|---|---|
+| `Technical Approach` | `solution` | Menjelaskan cara project dibangun: stack utama, flow implementasi, integration point, dan keputusan teknis yang langsung menyelesaikan problem. |
+| `Architecture Notes` | `architecture_notes` | Menjelaskan struktur sistem: boundary module, data flow, dependency direction, state management, storage, atau query layer. |
+| `Trade-offs` | `tradeoffs` | Menjelaskan keputusan yang sengaja diambil, alternatif yang tidak dipilih, konsekuensi, dan follow-up jika project dilanjutkan. |
+
+Format yang disarankan:
 
 ```txt
-Paragraf pertama menjelaskan konteks.
+Paragraf pertama menjelaskan inti pendekatan.
 
-Paragraf kedua menjelaskan keputusan atau detail teknis.
+Paragraf kedua menjelaskan detail implementasi atau batasan penting.
 ```
 
-Untuk daftar keputusan, tulis dengan numbering eksplisit:
+Untuk daftar keputusan, tulis dengan numbering eksplisit supaya public detail merendernya sebagai ordered list:
 
 ```txt
 Keputusan arsitektur kunci:
@@ -270,7 +278,14 @@ Keputusan arsitektur kunci:
 3. Pakai NSTextView untuk payload besar.
 ```
 
-Public detail akan merender blank line sebagai paragraf baru dan numbering sebagai ordered list. Hindari memasukkan 5 keputusan berbeda ke satu paragraf panjang.
+Standar kualitas:
+
+- 1 paragraph idealnya 2-4 kalimat, bukan 8-10 kalimat.
+- Jangan mengulang isi yang sama di `solution`, `architecture_notes`, dan `tradeoffs`.
+- `solution` boleh lebih naratif; `architecture_notes` lebih struktural; `tradeoffs` lebih reflektif.
+- Jika ada 3+ keputusan, pakai numbering.
+- Hindari buzzword tanpa bukti seperti "scalable", "robust", atau "clean architecture" kecuali dijelaskan lewat implementasi nyata.
+- Public detail akan merender blank line sebagai paragraf baru dan numbering sebagai ordered list.
 
 ## Step 5 — Review Public Output
 

@@ -132,6 +132,25 @@ Alur browser:
 
 Catatan form: `tech_stack`, `result`, `technical_highlights`, dan `metrics` disimpan sebagai array dari textarea satu-item-per-baris. Workflow normal tidak perlu SQL workaround.
 
+### Re-artikulasi 3 Section Teknis
+
+Gunakan pola ini saat user bilang section teknis "kurang kebaca", "nggak nyambung", atau "terlalu panjang":
+
+| Section publik | Field admin | Cara edit |
+|---|---|---|
+| `Technical Approach` | `solution` | Tulis 1-2 paragraf tentang cara implementasi. Mulai dari pendekatan utama, lalu jelaskan integration point atau flow teknis yang relevan. |
+| `Architecture Notes` | `architecture_notes` | Tulis struktur sistem. Jika ada beberapa keputusan, awali dengan kalimat pengantar lalu tulis `1.`, `2.`, `3.`. |
+| `Trade-offs` | `tradeoffs` | Tulis keputusan dan konsekuensi. Jangan cuma menyebut teknologi; jelaskan kenapa memilih itu dan apa harga yang dibayar. |
+
+Checklist edit:
+
+- Satu paragraf maksimal 2-4 kalimat.
+- Pisahkan ide berbeda dengan blank line.
+- Pakai numbering untuk 3+ keputusan.
+- Jangan mengulang kalimat yang sama di tiga section.
+- Pastikan setiap section bisa dibaca sendiri tanpa harus menebak konteks dari section sebelumnya.
+- Setelah save, cek public `/work/<slug>` dan pastikan HTML menampilkan beberapa `<p>` atau ordered list, bukan satu blok teks panjang.
+
 ## Step 5 — Edit Cover Image dari Asset Lokal atau README
 
 Jika user meminta ganti image:

@@ -87,6 +87,36 @@ Gunakan urutan berpikir ini:
 6. **Make it scannable**
    Summary pendek, detail panjang di `description/problem/solution`, bullet di `result/metrics/highlights`.
 
+## Pattern untuk Technical Approach, Architecture Notes, dan Trade-offs
+
+Tiga field ini sering terlihat buruk kalau ditulis sebagai satu paragraf panjang. Pakai pembagian berikut:
+
+```txt
+Technical Approach:
+Paragraf 1: pendekatan implementasi utama.
+
+Paragraf 2: detail teknis penting, integration point, atau workflow yang menunjukkan ownership.
+
+Architecture Notes:
+Kalimat pengantar tentang boundary/struktur.
+1. Keputusan arsitektur pertama dan alasannya.
+2. Keputusan arsitektur kedua dan alasannya.
+3. Keputusan arsitektur ketiga dan alasannya.
+
+Trade-offs:
+Kalimat pengantar tentang constraint.
+1. Pilihan yang diambil, alternatif yang tidak dipilih, dan konsekuensinya.
+2. Pilihan berikutnya, alasan, dan follow-up.
+```
+
+Prinsipnya:
+
+- `solution` menjawab **how it was built**.
+- `architecture_notes` menjawab **how it is structured**.
+- `tradeoffs` menjawab **why this choice, not another choice**.
+- Jangan mengulang stack list di tiga field ini; gunakan stack hanya jika membantu menjelaskan keputusan.
+- Public renderer memecah blank line menjadi paragraf dan numbering menjadi ordered list, jadi draft harus sengaja memakai struktur itu.
+
 ## Quality Checklist
 
 Sebelum publish:
