@@ -2,6 +2,7 @@ defmodule PersonalBrandWeb.Admin.ThemeResource do
   use PersonalBrandWeb, :html
 
   alias PersonalBrand.Content.Theme
+  alias PersonalBrandWeb.Admin.ResourceUI
 
   use Backpex.LiveResource,
     adapter: Backpex.Adapters.Ecto,
@@ -28,12 +29,19 @@ defmodule PersonalBrandWeb.Admin.ThemeResource do
 
   @impl true
   def item_actions(default_actions) do
-    Keyword.update!(default_actions, :delete, &Map.put(&1, :only, [:index]))
+    ResourceUI.item_actions_without_bulk_delete(default_actions)
   end
 
   @impl true
   def layout(_assigns) do
     {PersonalBrandWeb.Layouts, :admin}
+  end
+
+  @impl true
+  def render_resource_slot(assigns, :index, :main) do
+    ~H"""
+    <ResourceUI.index_main {assigns} />
+    """
   end
 
   @impl true

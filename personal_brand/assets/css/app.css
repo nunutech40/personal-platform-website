@@ -368,15 +368,28 @@ li + li {
 .project-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
   margin: 22px 0 26px;
   border: 2px solid var(--line);
-  background: var(--line);
 }
 
 .project-facts div {
   background: var(--page);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
   padding: 10px 12px;
+}
+
+.project-facts div:nth-child(2n) {
+  border-right: 0;
+}
+
+.project-facts div:last-child,
+.project-facts div:nth-last-child(2):nth-child(odd) {
+  border-bottom: 0;
+}
+
+.project-facts div:last-child:nth-child(odd) {
+  border-right: 0;
 }
 
 .project-facts dt {
@@ -393,6 +406,22 @@ li + li {
   margin: 0;
   font-size: 16px;
   line-height: 1.42;
+}
+
+.tech-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tech-list span {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 5px 9px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .evidence-list {
@@ -783,6 +812,78 @@ textarea {
   border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.04);
+}
+
+.admin-singleton-note {
+  max-width: 720px;
+  margin: 0 0 18px;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1e3a8a;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-resource-main {
+  width: 100%;
+}
+
+.admin-resource-card {
+  overflow: hidden;
+  border: 1px solid #d8e0ec;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05);
+}
+
+.admin-empty-state {
+  display: flex;
+  min-height: 280px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 56px 24px;
+  text-align: center;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 56%);
+}
+
+.admin-empty-state-icon {
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+}
+
+.admin-empty-eyebrow {
+  margin: 18px 0 8px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-empty-state h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 800;
+}
+
+.admin-empty-state p {
+  max-width: 520px;
+  margin: 12px auto 0;
+  color: #64748b;
+  font-size: 15px;
 }
 
 .admin-badge {

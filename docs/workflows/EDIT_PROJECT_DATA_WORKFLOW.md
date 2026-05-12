@@ -31,6 +31,8 @@ Public now: http://localhost:4000/now
 Public contact: http://localhost:4000/contact
 ```
 
+`/admin/site-settings` langsung membuka edit form singleton Site Settings. Jangan buat record baru dan jangan hapus record ini karena dipakai sebagai patokan website publik.
+
 ## Step 1 — Pahami Permintaan Edit
 
 Identifikasi project target dan field yang diminta berubah.
@@ -122,6 +124,7 @@ Alur browser:
    - `result`
    - `technical_highlights`
    - `metrics`
+   Untuk `tech_stack`, pastikan teknologi/library penting benar-benar terisi karena detail work menampilkannya sebagai section `Tech & Libraries`.
 8. Untuk taxonomy, pakai checkbox `Platform` dan `Keahlian / Discipline`.
 9. Save.
 
@@ -184,6 +187,7 @@ Checklist review:
 - Detail work dari atas sampai footer punya flow: breadcrumb → title/summary → facts → case study sections → evidence/results → links/media → footer.
 - Overview/problem/solution/trade-offs tidak kosong kalau seharusnya tampil.
 - Role, ownership, focus, stack, highlights, result/metrics menunjukkan pekerjaan nyata, bukan jargon.
+- `Tech & Libraries` tampil jika `tech_stack` tersedia; isinya harus cukup granular untuk recruiter melihat exposure bahasa, framework, database, library, dan tooling.
 - Detail work tidak menampilkan section kosong seperti Results/Links tanpa isi.
 - Cover image baru tampil dan tidak merusak layout.
 - Link publik memakai slug yang benar.

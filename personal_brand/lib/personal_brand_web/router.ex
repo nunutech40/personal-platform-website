@@ -58,9 +58,8 @@ defmodule PersonalBrandWeb.Router do
 
       live_resources("/media", MediaResource, only: [:index, :show, :new, :edit, :delete])
 
-      live_resources("/site-settings", SiteSettingResource,
-        only: [:index, :show, :new, :edit, :delete]
-      )
+      live "/site-settings", SiteSettingRedirectLive, :index
+      live_resources("/site-settings", SiteSettingResource, only: [:show, :edit])
 
       live_resources("/themes", ThemeResource, only: [:index, :show, :new, :edit, :delete])
 

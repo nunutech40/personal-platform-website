@@ -182,6 +182,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       metrics: ["150 tests passing"],
       impact_summary: "Recruiter bisa membaca case study lebih cepat.",
       demo_video_url: "https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4",
+      tech_stack: ["Elixir", "Phoenix LiveView", "Backpex"],
       platforms: ["web"],
       disciplines: ["fullstack_engineering"]
     })
@@ -192,6 +193,9 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "Personal Platform Website"
     assert html =~ "My Role &amp; Ownership"
     assert html =~ "Technical Approach"
+    assert html =~ "Tech & Libraries"
+    assert html =~ "Phoenix LiveView"
+    assert html =~ "Backpex"
     assert html =~ "Trade-offs"
     assert html =~ "150 tests passing"
     assert html =~ "Video Demo"

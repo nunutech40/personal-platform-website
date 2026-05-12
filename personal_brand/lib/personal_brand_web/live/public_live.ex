@@ -374,16 +374,21 @@ defmodule PersonalBrandWeb.PublicLive do
             <dt>Focus</dt>
             <dd>{Enum.join(project_badges(@project), ", ")}</dd>
           </div>
-          <div :if={list_present?(@project.tech_stack)}>
-            <dt>Stack</dt>
-            <dd>{Enum.join(@project.tech_stack || [], ", ")}</dd>
-          </div>
         </dl>
 
         <p :if={@project.case_study_visibility in ["limited", "private_summary"]} class="notice">
           Some implementation details are summarized to respect proprietary project boundaries.
         </p>
         <.detail_section title="Overview" body={@project.description} />
+        <section :if={list_present?(@project.tech_stack)} class="detail-section">
+          <h2>Tech & Libraries</h2>
+          <p>
+            Teknologi dan library yang dipakai atau disentuh di project ini:
+          </p>
+          <div class="tech-list">
+            <span :for={tech <- list_value(@project.tech_stack)}>{tech}</span>
+          </div>
+        </section>
         <.detail_section title="Problem" body={@project.problem} />
         <.detail_section title="My Role & Ownership" body={@project.ownership} />
         <.detail_section title="Technical Approach" body={@project.solution} />

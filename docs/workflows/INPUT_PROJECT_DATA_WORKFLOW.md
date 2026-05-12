@@ -32,6 +32,8 @@ Public now: http://localhost:4000/now
 Public contact: http://localhost:4000/contact
 ```
 
+`/admin/site-settings` adalah singleton shortcut. Route ini langsung membuka form edit record Site Settings yang menjadi patokan sistem, bukan list dan bukan form `new`.
+
 ## Step 1 — Pahami Project yang Mau Diinput
 
 Sebelum buka form, AI harus membaca konteks secukupnya:
@@ -188,7 +190,8 @@ Sebelum input, pastikan draft bisa dijawab cepat oleh pembaca:
 - 5 detik pertama: recruiter tahu role, platform, dan seniority signal.
 - 30 detik pertama: recruiter tahu problem, ownership, architecture decision, dan impact.
 - Evidence: `technical_highlights`, `result`, `metrics`, `github_url`, `demo_url`, atau `demo_video_url` tidak dibiarkan kosong jika project punya bukti publik.
-- Jangan isi stack terlalu luas. Hanya teknologi yang benar-benar dipakai dan membantu positioning.
+- `tech_stack` wajib cukup artikulatif untuk recruiter: isi framework, bahasa, database, library, admin/tooling, dan package penting yang benar-benar dipakai di project.
+- Jangan isi stack terlalu luas. Hanya teknologi/library yang benar-benar dipakai atau disentuh dan membantu positioning.
 - Untuk partner/customer, copy harus tetap aman: jangan expose credential, client secret, detail proprietary, atau angka internal yang tidak boleh dibuka.
 
 ## Step 4 — Input via Browser
@@ -206,6 +209,7 @@ Alur manual browser:
    - `result`
    - `technical_highlights`
    - `metrics`
+   Untuk `tech_stack`, pecah cukup granular supaya recruiter bisa melihat exposure teknologi/library, contoh: `Elixir`, `Phoenix LiveView`, `Ecto`, `PostgreSQL`, `Backpex`, `Tailwind CSS`, `daisyUI`.
 8. Set:
    - `status = Published`
    - `featured = ON` untuk project prioritas
@@ -246,6 +250,7 @@ Checklist review:
 - Support links di Contact hanya muncul jika Saweria atau Buy Me Coffee sudah diisi.
 - Judul dan summary enak discan.
 - Role dan ownership langsung jelas.
+- Section `Tech & Libraries` tampil di detail work jika `tech_stack` diisi, dan isinya membantu recruiter memahami teknologi yang pernah dipakai.
 - Problem tidak generik.
 - Solution menunjukkan technical decision nyata.
 - Stack tidak berlebihan.

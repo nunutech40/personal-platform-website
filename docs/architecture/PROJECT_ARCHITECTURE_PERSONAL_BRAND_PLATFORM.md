@@ -450,10 +450,13 @@ scope "/admin", PersonalBrandWeb.Admin do
   live "/products/:id/edit", ProductFormLive, :edit
 
   live "/media", MediaLive, :index
-  live "/site-settings", SiteSettingsLive, :edit
+  live "/site-settings", SiteSettingRedirectLive, :index
+  live "/site-settings/:id/edit", SiteSettingResource.Form, :edit
   live "/themes", ThemeSettingsLive, :index
 end
 ```
+
+`site_settings` is a singleton content/config resource. The index route redirects directly to the existing edit form; there is no public admin list/new/delete flow for this resource.
 
 ### Future commerce routes
 
@@ -816,6 +819,8 @@ status
 featured
 published_at
 ```
+
+`tech_stack` is rendered prominently on the public work detail page as `Tech & Libraries`, so it should include the real languages, frameworks, databases, admin libraries, UI libraries, and tooling used in that project.
 
 ### Admin posts
 

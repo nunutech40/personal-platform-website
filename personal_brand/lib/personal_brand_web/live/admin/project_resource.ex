@@ -3,6 +3,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
 
   alias PersonalBrand.Content
   alias PersonalBrand.Content.Project
+  alias PersonalBrandWeb.Admin.ResourceUI
 
   use Backpex.LiveResource,
     adapter: Backpex.Adapters.Ecto,
@@ -392,6 +393,12 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   end
 
   @impl true
+  def render_resource_slot(assigns, :index, :main) do
+    ~H"""
+    <ResourceUI.index_main {assigns} />
+    """
+  end
+
   def render_resource_slot(
         %{item: %{status: "published", slug: slug}} = assigns,
         :edit,

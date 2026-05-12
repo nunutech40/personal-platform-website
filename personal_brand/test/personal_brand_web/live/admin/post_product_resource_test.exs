@@ -104,6 +104,19 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
     assert html =~ ~s(phx-value-action-key="delete")
   end
 
+  test "GET /admin/products empty state is polished and hides bulk delete", %{conn: conn} do
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/products")
+
+    assert html =~ "Belum ada data yang dibuat."
+    assert html =~ "Mulai dengan satu item yang rapi."
+    assert html =~ "New Product"
+    refute html =~ ">Delete<"
+    refute html =~ ~s(name="select_per_page[value]")
+  end
+
   defp log_in_admin(conn) do
     init_test_session(conn, admin_token: Accounts.generate_session_token(1))
   end

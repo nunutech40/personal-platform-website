@@ -3,6 +3,7 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
 
   alias PersonalBrand.Content
   alias PersonalBrand.Content.SiteSetting
+  alias PersonalBrandWeb.Admin.ResourceUI
 
   use Backpex.LiveResource,
     adapter: Backpex.Adapters.Ecto,
@@ -36,7 +37,34 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
 
   @impl true
   def item_actions(default_actions) do
-    Keyword.update!(default_actions, :delete, &Map.put(&1, :only, [:index]))
+    default_actions
+    |> Keyword.delete(:delete)
+    |> Keyword.update(:show, nil, &Map.put(&1, :only, [:show]))
+  end
+
+  @impl true
+  def can?(_assigns, action, _item) when action in [:new, :delete], do: false
+
+  def can?(_assigns, _action, _item), do: true
+
+  @impl true
+  def return_to(_socket, _assigns, _live_action, _form_action, %SiteSetting{id: id}) do
+    ~p"/admin/site-settings/#{id}/edit"
+  end
+
+  @impl true
+  def render_resource_slot(assigns, :index, :actions) do
+    ~H"""
+    <p class="admin-singleton-note">
+      Site Settings adalah konfigurasi tunggal untuk website publik. Edit record yang ada, jangan buat versi baru.
+    </p>
+    """
+  end
+
+  def render_resource_slot(assigns, :index, :main) do
+    ~H"""
+    <ResourceUI.index_main {assigns} />
+    """
   end
 
   @impl true
@@ -352,15 +380,6 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
       >
         Lihat Situs
       </.link>
-      <button
-        type="button"
-        phx-click="item-action"
-        phx-value-action-key="delete"
-        phx-value-item-id={@primary_key}
-        class="rounded border border-red-200 px-2 py-1 text-xs font-semibold text-red-700 transition hover:border-red-300 hover:bg-red-50"
-      >
-        Hapus
-      </button>
     </div>
     """
   end

@@ -53,13 +53,43 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
              ~s(src="https://raw.githubusercontent.com/nunutech40/repo/main/docs/assets/cover.png")
   end
 
-  test "GET /admin/site-settings/new renders standardized settings form", %{conn: conn} do
+  test "GET /admin/site-settings redirects directly to singleton edit form", %{
+    conn: conn
+  } do
     insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
+    setting = insert_site_setting()
+
+    assert {:error, {:live_redirect, %{to: path}}} =
+             conn
+             |> log_in_admin()
+             |> live(~p"/admin/site-settings")
+
+    assert path == ~p"/admin/site-settings/#{setting.id}/edit"
+  end
+
+  test "GET /admin/site-settings/:id/edit keeps settings singleton actions clean", %{conn: conn} do
+    insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
+    setting = insert_site_setting()
 
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/site-settings/new")
+      |> live(~p"/admin/site-settings/#{setting.id}/edit")
+
+    assert html =~ "Nunu Test"
+    refute html =~ "New Site Setting"
+    refute html =~ "Delete"
+    refute html =~ "Hapus"
+  end
+
+  test "GET /admin/site-settings/:id/edit renders standardized settings form", %{conn: conn} do
+    insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
+    setting = insert_site_setting()
+
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/site-settings/#{setting.id}/edit")
 
     assert html =~ "Identitas Website"
     assert html =~ "Homepage CTA"
@@ -78,13 +108,14 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
 
   test "admin site settings form accepts social links and featured IDs textareas", %{conn: conn} do
     insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
+    setting = insert_site_setting(%{site_name: "Existing Site"})
     project_id = Ecto.UUID.generate()
     product_id = Ecto.UUID.generate()
 
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/site-settings/new")
+      |> live(~p"/admin/site-settings/#{setting.id}/edit")
 
     view
     |> element("#resource-form")
@@ -105,9 +136,10 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
       "save-type" => "save"
     })
 
-    assert_redirect(view, ~p"/admin/site-settings")
+    assert_redirect(view, ~p"/admin/site-settings/#{setting.id}/edit")
 
-    setting = Repo.get_by!(SiteSetting, site_name: "Nunu Test")
+    setting = Repo.get!(SiteSetting, setting.id)
+    assert setting.site_name == "Nunu Test"
     assert setting.social_links["GitHub"] == "https://github.com/nunu"
     assert setting.about_tools == ["Elixir", "Phoenix LiveView"]
     assert setting.about_values == ["Readable code", "Useful products"]
@@ -198,6 +230,17 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     %Theme{}
     |> Theme.changeset(Map.merge(defaults, attrs))
     |> Repo.insert!()
+  end
+
+  defp insert_site_setting(attrs \\ %{}) do
+    site_setting_attrs(%{})
+    |> Map.merge(stringify_attrs(attrs))
+    |> then(&SiteSetting.changeset(%SiteSetting{}, &1))
+    |> Repo.insert!()
+  end
+
+  defp stringify_attrs(attrs) do
+    Map.new(attrs, fn {key, value} -> {to_string(key), value} end)
   end
 
   defp site_setting_attrs(attrs) do

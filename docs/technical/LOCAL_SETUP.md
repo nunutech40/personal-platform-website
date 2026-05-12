@@ -253,7 +253,7 @@ personal_brand/
 | `/admin/posts` | CRUD posts | ✅ Backpex |
 | `/admin/products` | CRUD products | ✅ Backpex |
 | `/admin/media` | Media library | ✅ Backpex |
-| `/admin/site-settings` | Site settings | ✅ Backpex |
+| `/admin/site-settings` | Site settings singleton edit shortcut | ✅ Backpex |
 | `/admin/themes` | Theme settings | ✅ Backpex |
 
 ---
@@ -343,7 +343,7 @@ Field project saat ini:
 | `project_type` | Tipe project | Controlled value: `professional_work`, `client_work`, `open_source`, `personal_project`, `architecture_demo`, `internal_tool`, `case_study`. |
 | `platforms` | Checkbox taxonomy di admin | Controlled value: `ios`, `android`, `flutter`, `macos`, `web`, `backend`, `cross_platform`. |
 | `disciplines` | Checkbox taxonomy di admin | Controlled value: `ios_development`, `mobile_engineering_lead`, `mobile_devops`, `flutter_development`, `backend_engineering`, `frontend_engineering`, `fullstack_engineering`, `macos_development`, `architecture`, `performance_optimization`. |
-| `tech_stack` | Teknologi per baris | Bisa diisi satu teknologi per baris di admin. |
+| `tech_stack` | Teknologi/library per baris | Bisa diisi satu teknologi per baris di admin. Detail work menampilkannya sebagai `Tech & Libraries` supaya recruiter cepat melihat exposure stack. |
 | `year` | Tahun / periode | Contoh: `2025`, `2021-2024`. |
 | `duration` | Durasi/periode tampil | Lebih fleksibel dari `year`, contoh: `2021-2026`, `Contract project`. |
 | `status` | `draft`, `published`, `archived` | Hanya published yang ditampilkan publik. |
@@ -395,7 +395,7 @@ Posts dan Products memakai standar admin yang sama dengan Projects untuk CRUD ha
 
 ## Media, Site Settings, and Themes Admin Workflow
 
-Media, Site Settings, dan Themes juga mengikuti standar admin yang sama: index punya aksi cepat, form punya section yang jelas, placeholder, help text, dan validasi changeset.
+Media dan Themes mengikuti standar admin yang sama: index punya aksi cepat, form punya section yang jelas, placeholder, help text, dan validasi changeset. Site Settings adalah pengecualian singleton: route index langsung membuka edit form record aktif.
 
 Media:
 
@@ -406,8 +406,9 @@ Media:
 
 Site Settings:
 
-- `/admin/site-settings` mengatur identitas website, CTA homepage, profil, halaman About/Now, support links, payment reference links, social links, active theme, dan daftar featured ID opsional.
-- Data personal website seperti nama, headline homepage, bio, email, lokasi, dan link sosial hidup di tabel `site_settings`. Setelah reset kosong, buat satu record Site Settings dari admin untuk mengisi data personal kembali.
+- `/admin/site-settings` langsung membuka edit form singleton Site Settings; tidak ada list, new, atau delete flow untuk resource ini.
+- Site Settings mengatur identitas website, CTA homepage, profil, halaman About/Now, support links, payment reference links, social links, active theme, dan daftar featured ID opsional.
+- Data personal website seperti nama, headline homepage, bio, email, lokasi, dan link sosial hidup di tabel `site_settings`. Setelah reset kosong, restore satu record Site Settings dari seed/SQL fallback, lalu edit record tersebut dari admin.
 - `active_theme` dipilih dari theme yang ada di database. Kalau belum ada theme, fallback admin menampilkan `old_web_classic`.
 - `social_links` diisi satu link per baris dengan format `Label=URL`, contoh `GitHub=https://github.com/username`.
 - `featured_project_ids` dan `featured_product_ids` bisa diisi satu UUID per baris. Untuk workflow portfolio utama, prioritas tampilan tetap lebih praktis lewat flag `featured` dan `sort_order` di resource Project/Product.
