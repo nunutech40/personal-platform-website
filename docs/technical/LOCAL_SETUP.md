@@ -77,8 +77,8 @@ Konfigurasi ada di `personal_brand/config/dev.exs`:
 
 ```elixir
 config :personal_brand, PersonalBrand.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "nununugraha",
+  password: "",
   hostname: "localhost",
   database: "personal_brand_dev",
   stacktrace: true,
@@ -90,7 +90,7 @@ config :personal_brand, PersonalBrand.Repo,
 
 ```bash
 # Masuk ke database
-/opt/homebrew/bin/psql -U postgres -d personal_brand_dev
+/opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev
 
 # Lihat semua tabel
 \dt
@@ -118,9 +118,51 @@ mix ecto.migrate
 # Rollback
 mix ecto.rollback
 
-# Reset database (drop + create + migrate + seed)
+# Reset database dari dalam folder personal_brand
 mix ecto.reset
 ```
+
+### Clean Reset Workflow
+
+Untuk mengulang development dari awal dan membersihkan data admin yang sudah kotor, gunakan script repo dari root project:
+
+```bash
+./scripts/reset-local-db.sh --yes
+```
+
+Perilaku default:
+
+- Hanya berjalan untuk `MIX_ENV=dev`.
+- Drop dan recreate `personal_brand_dev`.
+- Jalankan migration.
+- Jalankan `priv/repo/seeds.exs` sebagai baseline data.
+- Kalau Phoenix sedang berjalan di `localhost:4000`, script akan stop dulu sebelum drop DB lalu start lagi via daemon.
+- PostgreSQL tetap dibiarkan hidup.
+
+Opsi tambahan:
+
+```bash
+# Reset DB + hapus uploaded files lokal
+./scripts/reset-local-db.sh --yes --with-uploads
+
+# Reset DB kosong tanpa seed
+./scripts/reset-local-db.sh --yes --empty
+
+# Reset DB tapi jangan restart Phoenix
+./scripts/reset-local-db.sh --yes --no-restart
+```
+
+Setelah reset, jika ingin memastikan project `Personal Platform Website` memakai copy portfolio yang paling recruiter-ready, jalankan SQL fallback:
+
+```bash
+/opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev -f scripts/sql/upsert-personal-platform-project.sql
+```
+
+Kapan pakai database yang sama vs beda database:
+
+- Pakai `personal_brand_dev` + reset script untuk kerja harian. Ini paling simpel dan cocok saat ingin balik ke baseline bersih.
+- Pakai DB baru hanya kalau butuh eksperimen paralel yang tidak boleh merusak data dev utama. Untuk itu buat config sementara via env/config terpisah, bukan mengubah `dev.exs` setiap hari.
+- Test suite sudah memakai database terpisah: `personal_brand_test`, jadi reset dev tidak mengganggu test database.
 
 ### Seed Data
 
@@ -130,7 +172,7 @@ Berisi data dummy untuk development:
 - 1 admin account (admin / admin123)
 - 4 themes (old_web_classic, simple, us_builder, premium_dark)
 - 1 site_settings
-- 3 projects (HabitKit, SplitWise++, PromptBoard)
+- 5 portfolio projects prioritas dari CV dan Personal Platform Website
 - 3 posts (blog articles)
 - 2 products (Flux Icons, SnipKit)
 

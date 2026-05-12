@@ -446,6 +446,24 @@ project_map =
 
 tag_map = Enum.into(tag_records, %{}, fn t -> {t.name, t} end)
 
+join_row = fn attrs ->
+  now = DateTime.utc_now()
+
+  attrs
+  |> Map.new(fn {key, value} ->
+    if key in [:project_id, :post_id, :product_id, :tag_id] do
+      {key, Ecto.UUID.dump!(value)}
+    else
+      {key, value}
+    end
+  end)
+  |> Map.merge(%{
+    id: Ecto.UUID.bingenerate(),
+    inserted_at: now,
+    updated_at: now
+  })
+end
+
 # Project tags
 rajaongkir = project_map["rajaongkir-ios-app"]
 ios_modular = project_map["ios-distributed-modular-architecture"]
@@ -453,135 +471,51 @@ postie = project_map["postie"]
 prodia = project_map["prodia-booking-flow-optimization"]
 personal_platform = project_map["personal-platform-website"]
 
-Repo.insert_all("project_tags", [
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: rajaongkir.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: ios_modular.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: postie.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: prodia.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: personal_platform.id,
-    tag_id: tag_map["Elixir"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: personal_platform.id,
-    tag_id: tag_map["Phoenix"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    project_id: personal_platform.id,
-    tag_id: tag_map["PostgreSQL"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  }
-])
+Repo.insert_all(
+  "project_tags",
+  Enum.map(
+    [
+      %{project_id: rajaongkir.id, tag_id: tag_map["Flutter"].id},
+      %{project_id: ios_modular.id, tag_id: tag_map["Flutter"].id},
+      %{project_id: postie.id, tag_id: tag_map["Flutter"].id},
+      %{project_id: prodia.id, tag_id: tag_map["Flutter"].id},
+      %{project_id: personal_platform.id, tag_id: tag_map["Elixir"].id},
+      %{project_id: personal_platform.id, tag_id: tag_map["Phoenix"].id},
+      %{project_id: personal_platform.id, tag_id: tag_map["PostgreSQL"].id}
+    ],
+    join_row
+  )
+)
 
 # Post tags
-Repo.insert_all("post_tags", [
-  %{
-    id: Ecto.UUID.generate(),
-    post_id: prod_ready.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    post_id: prod_ready.id,
-    tag_id: tag_map["Shipping"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    post_id: offline_first.id,
-    tag_id: tag_map["Product"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    post_id: offline_first.id,
-    tag_id: tag_map["Mobile"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    post_id: design_systems.id,
-    tag_id: tag_map["Design"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    post_id: design_systems.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  }
-])
+Repo.insert_all(
+  "post_tags",
+  Enum.map(
+    [
+      %{post_id: prod_ready.id, tag_id: tag_map["Flutter"].id},
+      %{post_id: prod_ready.id, tag_id: tag_map["Shipping"].id},
+      %{post_id: offline_first.id, tag_id: tag_map["Product"].id},
+      %{post_id: offline_first.id, tag_id: tag_map["Mobile"].id},
+      %{post_id: design_systems.id, tag_id: tag_map["Design"].id},
+      %{post_id: design_systems.id, tag_id: tag_map["Flutter"].id}
+    ],
+    join_row
+  )
+)
 
 # Product tags
-Repo.insert_all("product_tags", [
-  %{
-    id: Ecto.UUID.generate(),
-    product_id: flux_icons.id,
-    tag_id: tag_map["Design"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    product_id: flux_icons.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    product_id: snipkit.id,
-    tag_id: tag_map["Flutter"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  },
-  %{
-    id: Ecto.UUID.generate(),
-    product_id: snipkit.id,
-    tag_id: tag_map["Product"].id,
-    inserted_at: DateTime.utc_now(),
-    updated_at: DateTime.utc_now()
-  }
-])
+Repo.insert_all(
+  "product_tags",
+  Enum.map(
+    [
+      %{product_id: flux_icons.id, tag_id: tag_map["Design"].id},
+      %{product_id: flux_icons.id, tag_id: tag_map["Flutter"].id},
+      %{product_id: snipkit.id, tag_id: tag_map["Flutter"].id},
+      %{product_id: snipkit.id, tag_id: tag_map["Product"].id}
+    ],
+    join_row
+  )
+)
 
 IO.puts("✅ Tag associations created")
 

@@ -29,6 +29,11 @@ defmodule PersonalBrandWeb.Admin.MediaResource do
   end
 
   @impl true
+  def item_actions(default_actions) do
+    Keyword.update!(default_actions, :delete, &Map.put(&1, :only, [:index]))
+  end
+
+  @impl true
   def layout(_assigns) do
     {PersonalBrandWeb.Layouts, :admin}
   end
