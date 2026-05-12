@@ -76,7 +76,8 @@ defmodule PersonalBrandWeb.PublicLive do
                page_title: project.title,
                meta_description: project.summary || project.description,
                og_image: cover_media && cover_media.url,
-               og_type: "article"
+               og_type: "article",
+               canonical_url: "https://nunutech40.dev/work/#{project.slug}"
              )}
         end
 
@@ -92,7 +93,8 @@ defmodule PersonalBrandWeb.PublicLive do
                post: post,
                page_title: post.title,
                meta_description: post.excerpt,
-               og_type: "article"
+               og_type: "article",
+               canonical_url: "https://nunutech40.dev/writing/#{post.slug}"
              )}
         end
 
@@ -108,7 +110,8 @@ defmodule PersonalBrandWeb.PublicLive do
                product: product,
                page_title: product.title,
                meta_description: product.summary,
-               og_type: "product"
+               og_type: "product",
+               canonical_url: "https://nunutech40.dev/products/#{product.slug}"
              )}
         end
 

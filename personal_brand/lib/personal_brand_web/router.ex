@@ -24,6 +24,9 @@ defmodule PersonalBrandWeb.Router do
   scope "/", PersonalBrandWeb do
     pipe_through :browser
 
+    get "/sitemap.xml", SeoController, :sitemap
+    get "/writing/feed.xml", SeoController, :rss
+
     live "/", PublicLive, :index
     live "/work", PublicLive, :work_index
     live "/work/:slug", PublicLive, :work_detail
