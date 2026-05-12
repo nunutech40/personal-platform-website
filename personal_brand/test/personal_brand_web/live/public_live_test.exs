@@ -1,7 +1,7 @@
 defmodule PersonalBrandWeb.PublicLiveTest do
   use PersonalBrandWeb.ConnCase
 
-  alias PersonalBrand.Content.{Product, Project}
+  alias PersonalBrand.Content.{Media, Product, Project}
   alias PersonalBrand.Content.SiteSetting
   alias PersonalBrand.Repo
 
@@ -171,6 +171,14 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     |> Ecto.Changeset.change(%{profile_email: "hello@example.com"})
     |> Repo.update!()
 
+    certificate =
+      Repo.insert!(%Media{
+        filename: "flutter-certificate.pdf",
+        content_type: "application/pdf",
+        url: "/uploads/media/flutter-certificate.pdf",
+        alt_text: "Flutter certificate PDF"
+      })
+
     insert_project(%{
       title: "Personal Platform Website",
       slug: "personal-platform-website",
@@ -189,6 +197,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       impact_summary: "Recruiter bisa membaca case study lebih cepat.",
       demo_video_url: "https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4",
       github_url: "https://github.com/nunutech40/private-repo",
+      certificate_media_id: certificate.id,
       tech_stack: ["Elixir", "Phoenix LiveView", "Backpex"],
       platforms: ["web"],
       disciplines: ["fullstack_engineering"]
@@ -212,6 +221,8 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "GitHub — request access"
     assert html =~ "mailto:hello@example.com?subject=GitHub+access+request"
     refute html =~ ~s(href="https://github.com/nunutech40/private-repo")
+    assert html =~ "Download Certificate"
+    assert html =~ ~s(href="/uploads/media/flutter-certificate.pdf")
 
     assert html =~
              ~s(src="https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4")

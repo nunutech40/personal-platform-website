@@ -187,6 +187,21 @@ Jika README project menyediakan link demo:
 4. Google Drive, YouTube, atau GitHub release asset non-direct tetap tampil sebagai link.
 5. Save.
 
+## Step 6.5 — Edit Certificate PDF
+
+Jika user meminta certificate bisa diunduh dari work detail:
+
+1. Upload PDF ke `http://localhost:4000/admin/media/new` atau gunakan URL PDF eksternal yang permanen.
+2. Pastikan `Content Type = application/pdf`.
+3. Isi filename yang jelas dan aman untuk publik.
+4. Save media.
+5. Kembali ke edit project.
+6. Pilih media PDF di field `Sertifikat PDF`.
+7. Save project.
+8. Review `/work/<slug>` dan pastikan link `Download Certificate` muncul.
+
+Catatan deploy VPS: jika PDF diupload lokal, file fisiknya berada di `personal_brand/priv/static/uploads/media/`. Saat pindah production, folder upload dan row `media` terkait harus ikut dipindahkan. Untuk jangka panjang, lebih aman memakai object storage/CDN agar file tidak tergantung filesystem release.
+
 ## Step 7 — Review Public Output
 
 Setelah save, wajib cek:
@@ -217,6 +232,7 @@ Checklist review:
 - Jika slug berubah, URL lama sudah tidak dipakai di handoff.
 - `demo_url` muncul sebagai Live Demo jika ada.
 - `demo_video_url` muncul sebagai Video Demo; direct video file tampil inline.
+- Certificate PDF muncul sebagai `Download Certificate` jika `Sertifikat PDF` sudah dipilih.
 
 Kalau hasil belum sesuai, balik ke admin edit form, perbaiki, save, lalu cek ulang.
 

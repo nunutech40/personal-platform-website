@@ -358,6 +358,7 @@ Field project saat ini:
 | `github_url` | Link repository | Optional, terutama untuk open-source/demo. |
 | `app_store_url` | Link App Store | Optional untuk project iOS/mobile. |
 | `cover_image` | Media cover | Pilih dari Admin > Media; tidak perlu copy UUID manual untuk workflow umum. |
+| `certificate_media` | Media PDF sertifikat | Pilih dari Admin > Media; tampil sebagai `Download Certificate` di detail work. |
 
 Untuk portfolio yang ditujukan ke recruiter, project detail perlu menjawab:
 

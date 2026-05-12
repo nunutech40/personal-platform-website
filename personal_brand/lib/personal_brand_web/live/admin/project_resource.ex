@@ -391,6 +391,18 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         except: [:index],
         panel: :media_links
       },
+      certificate_media: %{
+        module: Backpex.Fields.BelongsTo,
+        label: "Sertifikat PDF",
+        display_field: :filename,
+        display_field_form: :filename,
+        live_resource: PersonalBrandWeb.Admin.MediaResource,
+        prompt: "Pilih sertifikat PDF",
+        help_text:
+          "Upload PDF sertifikat di Admin > Media dengan content type application/pdf, lalu pilih di sini. Tampil sebagai download link di detail work.",
+        except: [:index],
+        panel: :media_links
+      },
       updated_at: %{
         module: Backpex.Fields.DateTime,
         label: "Terakhir Diubah",

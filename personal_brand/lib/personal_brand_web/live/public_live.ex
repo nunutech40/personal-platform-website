@@ -82,12 +82,14 @@ defmodule PersonalBrandWeb.PublicLive do
 
           project ->
             cover_media = Content.get_media(project.cover_image_id)
+            certificate_media = Content.get_media(project.certificate_media_id)
 
             {:noreply,
              assign(socket,
                page: :work_detail,
                project: project,
                cover_media: cover_media,
+               certificate_media: certificate_media,
                page_title: project.title,
                meta_description: project.summary || project.description,
                og_image: cover_media && cover_media.url,
@@ -212,7 +214,12 @@ defmodule PersonalBrandWeb.PublicLive do
           active_filter={@active_filter}
         />
       <% :work_detail -> %>
-        <.work_detail project={@project} cover_media={@cover_media} profile_email={@profile_email} />
+        <.work_detail
+          project={@project}
+          cover_media={@cover_media}
+          certificate_media={@certificate_media}
+          profile_email={@profile_email}
+        />
       <% :writing_index -> %>
         <.writing_index posts={@posts} />
       <% :writing_detail -> %>
@@ -426,6 +433,11 @@ defmodule PersonalBrandWeb.PublicLive do
               </a>
             </li>
             <li :if={@project.app_store_url}><a href={@project.app_store_url}>App Store</a></li>
+            <li :if={@certificate_media}>
+              <a href={@certificate_media.url} download target="_blank" rel="noopener noreferrer">
+                Download Certificate
+              </a>
+            </li>
           </ul>
         </section>
         <section :if={direct_video_url?(@project.demo_video_url)} class="detail-section">
@@ -1032,7 +1044,13 @@ defmodule PersonalBrandWeb.PublicLive do
 
   defp project_links?(project) do
     Enum.any?(
-      [project.demo_url, project.demo_video_url, project.github_url, project.app_store_url],
+      [
+        project.demo_url,
+        project.demo_video_url,
+        project.github_url,
+        project.app_store_url,
+        project.certificate_media_id
+      ],
       &present?/1
     )
   end

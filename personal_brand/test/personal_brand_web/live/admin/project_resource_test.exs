@@ -18,6 +18,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert html =~ "Pitch untuk Recruiter"
     assert html =~ "Isi Judul Project dulu"
     assert html =~ "Gambar Cover"
+    assert html =~ "Sertifikat PDF"
     assert html =~ "Tanggal Sortir"
     assert html =~ "Pilih platform yang dipakai"
     assert html =~ ~s(name="change[platforms][]")

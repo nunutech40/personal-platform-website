@@ -49,6 +49,7 @@ defmodule PersonalBrand.Content.Project do
     field :demo_video_url, :string
     field :github_url, :string
     belongs_to :cover_image, PersonalBrand.Content.Media
+    belongs_to :certificate_media, PersonalBrand.Content.Media
     field :project_type, :string
     field :company, :string
     field :client, :string
@@ -124,6 +125,7 @@ defmodule PersonalBrand.Content.Project do
       :demo_video_url,
       :github_url,
       :cover_image_id,
+      :certificate_media_id,
       :project_type,
       :company,
       :client,

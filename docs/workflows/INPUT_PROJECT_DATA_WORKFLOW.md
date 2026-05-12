@@ -152,6 +152,7 @@ Field tambahan yang diisi dari README:
 demo_url          → dari Live Demo di README
 demo_video_url    → dari Video Demo di README
 cover_image       → media record dengan URL dari Screenshots / Preview / Cover README
+certificate_media → media record PDF untuk certificate, course completion, atau credential pendukung
 ```
 
 Kalau project proprietary:
@@ -244,8 +245,16 @@ Alur manual browser:
 10. **Isi link demo**:
    - `demo_url` untuk live site/app/demo interaktif.
    - `demo_video_url` untuk video demo dari README/GitHub/Drive/YouTube.
-11. Save.
-12. Klik preview atau buka `/work/<slug>`.
+11. **Input certificate PDF** (jika project punya sertifikat):
+   - Buka `http://localhost:4000/admin/media/new`.
+   - Upload file PDF certificate atau isi URL eksternal permanen jika PDF sudah ada di storage publik.
+   - Pastikan `Content Type = application/pdf`.
+   - Isi filename yang jelas, contoh `flutter-certificate-nunu-nugraha.pdf`.
+   - Save media.
+   - Kembali ke form project, pilih media tersebut di field `Sertifikat PDF`.
+   - Di public detail, certificate tampil sebagai `Download Certificate`.
+12. Save.
+13. Klik preview atau buka `/work/<slug>`.
 
 Catatan form: `tech_stack`, `result`, `technical_highlights`, dan `metrics` disimpan sebagai array dari textarea satu-item-per-baris. Jangan ubah ke SQL workaround kecuali sedang repair data lama atau bulk import.
 
@@ -323,6 +332,7 @@ Checklist review:
 - Jika ada data kosong, halaman tetap menampilkan empty state yang masuk akal, bukan error.
 - **demo_url** muncul sebagai Live Demo.
 - **demo_video_url** muncul sebagai Video Demo; direct `.mp4/.webm` tampil inline di halaman detail.
+- **certificate_media** muncul sebagai Download Certificate jika PDF dipilih.
 
 Kalau ada yang belum sesuai, AI harus kembali ke admin edit form, perbaiki field terkait, save lagi, lalu ulangi review URL di atas.
 
