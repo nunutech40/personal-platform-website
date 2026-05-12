@@ -124,101 +124,26 @@ Alur manual browser:
 9. Save.
 10. Klik preview atau buka `/work/<slug>`.
 
-### Catatan Penting dari Experience
+## Step 5 — Review Public Output
 
-#### 1. Array Fields (tech_stack, result, technical_highlights, metrics)
-
-Ada bug: form Backpex tidak menampilkan nilai array fields yang sudah ada di database (textarea tampil kosong). Jika AI mengisi textarea lalu save, data mungkin tidak tersimpan.
-
-**Workaround:** Setelah save via browser, verifikasi di database:
-
-```bash
-/opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev -c "SELECT tech_stack, result, technical_highlights, metrics FROM projects WHERE slug = '<slug>';"
-```
-
-Jika masih kosong (`{}`), gunakan SQL UPDATE langsung:
-
-```bash
-/opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev -c "UPDATE projects SET tech_stack = ARRAY['item1','item2','item3'] WHERE slug = '<slug>';"
-```
-
-Contoh:
-
-```bash
-/opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev -c "UPDATE projects SET tech_stack = ARRAY['Elixir','Phoenix LiveView','PostgreSQL','Ecto','Backpex'] WHERE slug = 'personal-platform-website';"
-```
-
-Setelah SQL fallback, refresh halaman publik untuk verifikasi.
-
-#### 2. Cover Image dari File Lokal
-
-File input di form Backpex bersifat hidden (LiveUpload). **Tidak bisa di-upload langsung via Playwright `upload_file`.**
-
-Workaround untuk upload cover image:
-
-**Opsi A — Copy file langsung ke folder uploads + insert SQL:**
-
-```bash
-# 1. Copy file ke folder uploads
-cp /path/ke/gambar.png personal_brand/priv/static/uploads/media/gambar.png
-
-# 2. Insert record media
-/opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev -c "INSERT INTO media (id, filename, alt_text, content_type, size, url, file_path, inserted_at, updated_at) VALUES (gen_random_uuid(), 'gambar.png', 'Deskripsi gambar', 'image/png', 0, '/uploads/media/gambar.png', 'uploads/media/gambar.png', NOW(), NOW()) RETURNING id;"
-
-# 3. Set cover image
-/opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev -c "UPDATE projects SET cover_image_id = '<id-dari-hasil-returning>' WHERE slug = '<slug>';"
-```
-
-**Opsi B — Upload via Admin > Media dulu (manual), lalu pilih di form edit project.**
-
-#### 3. Update Multiple Fields Sekaligus via SQL
-
-Untuk efisiensi, AI bisa menggabungkan beberapa update dalam satu query:
-
-```bash
-/opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev -c "UPDATE projects SET cover_image_id = '<id>', tech_stack = ARRAY['item1','item2'], result = ARRAY['hasil1','hasil2'] WHERE slug = '<slug>';"
-```
-
-## Step 5 — Verifikasi Visual di Browser
-
-**Ini WAJIB dilakukan.** Jangan cuma cek database atau percaya save berhasil.
-
-### 5a. Cek Halaman Work List
-
-Buka di browser:
+Setelah save, AI harus cek:
 
 ```txt
 http://localhost:4000/work
-```
-
-Verifikasi:
-- [ ] Project muncul di daftar dengan judul yang benar
-- [ ] Summary/ringkasan terbaca dengan baik
-- [ ] Role dan platform/discipline tampil
-- [ ] Cover image (jika ada) muncul di card
-- [ ] Urutan project sesuai sort_order
-
-### 5b. Cek Halaman Detail Project
-
-Buka di browser:
-
-```txt
 http://localhost:4000/work/<slug>
 ```
 
-Verifikasi:
-- [ ] Judul dan metadata (role, ownership, team_size, platform, discipline, stack, tahun) tampil
-- [ ] Cover image tampil di hero/detail page
-- [ ] Description, problem, solution terbaca natural
-- [ ] Architecture notes dan tradeoffs menunjukkan seniority
-- [ ] Technical highlights muncul sebagai bullet points
-- [ ] Result dan metrics tampil
-- [ ] Link GitHub dan Demo bekerja (jika ada)
-- [ ] Tidak ada data sensitif yang tidak sengaja terekspos
+Checklist review:
 
-### 5c. Screenshot sebagai Bukti
-
-Ambil screenshot halaman detail dan simpan sebagai bukti verifikasi.
+- Judul dan summary enak discan.
+- Role dan ownership langsung jelas.
+- Problem tidak generik.
+- Solution menunjukkan technical decision nyata.
+- Stack tidak berlebihan.
+- Highlight teknis tampil sebagai bukti, bukan jargon.
+- Result/metrics tidak mengarang.
+- Case study aman untuk publik.
+- Link preview/detail bekerja.
 
 ## Step 6 — SQL Fallback untuk Personal Platform Website
 

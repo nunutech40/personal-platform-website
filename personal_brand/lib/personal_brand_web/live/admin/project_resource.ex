@@ -723,25 +723,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   end
 
   defp render_textarea(assigns) do
-    # Backpex bug: assigns[:value] untuk field array ({:array, :string}) sering kosong
-    # saat edit karena Phoenix.HTML.Form.input_value tidak handle list dengan benar.
-    # Fallback: ambil dari form value langsung, atau dari assigns[:value] sebagai list.
-    textarea_val =
-      case {assigns[:value], assigns.form[assigns.name]} do
-        {_, %Phoenix.HTML.FormField{value: val}} when is_list(val) and val != [] ->
-          Enum.join(val, "\n")
-
-        {val, _} when is_list(val) and val != [] ->
-          Enum.join(val, "\n")
-
-        {val, _} when is_binary(val) and val != "" ->
-          val
-
-        _ ->
-          ""
-      end
-
-    assigns = assign(assigns, :textarea_value, textarea_val)
+    assigns =
+      assign(assigns, :textarea_value, textarea_value(assigns[:value]))
 
     ~H"""
     <div class="px-6 py-4 sm:py-3">
@@ -761,6 +744,10 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
     </div>
     """
   end
+
+  defp textarea_value(value) when is_list(value), do: Enum.join(value, "\n")
+  defp textarea_value(value) when is_binary(value), do: value
+  defp textarea_value(_value), do: ""
 
   defp list_value(value) when is_list(value), do: value
   defp list_value(value) when is_binary(value) and value != "", do: [value]
