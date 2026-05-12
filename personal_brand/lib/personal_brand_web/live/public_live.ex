@@ -395,7 +395,6 @@ defmodule PersonalBrandWeb.PublicLive do
             <li :if={@project.app_store_url}><a href={@project.app_store_url}>App Store</a></li>
           </ul>
         </section>
-        <.seo_url_box url={"https://nunutech40.dev/work/#{@project.slug}"} />
       </article>
       <aside class="case-study-side">
         <.visual_frame text={"#{@project.title} case study"} media={@cover_media} />
@@ -441,7 +440,6 @@ defmodule PersonalBrandWeb.PublicLive do
         {Phoenix.HTML.raw(@post.content_html || @post.content_markdown || "")}
       </div>
       <hr />
-      <.seo_url_box url={"https://nunutech40.dev/writing/#{@post.slug}"} />
       <p><a href="/writing">Back to writing</a> | <a href="/work">See related work</a></p>
     </article>
     """
@@ -505,7 +503,6 @@ defmodule PersonalBrandWeb.PublicLive do
             <p>{answer}</p>
           <% end %>
         </section>
-        <.seo_url_box url={"https://nunutech40.dev/products/#{@product.slug}"} />
       </article>
       <.visual_frame text={"#{@product.title} preview"} />
     </div>
@@ -738,24 +735,6 @@ defmodule PersonalBrandWeb.PublicLive do
       <p><strong>No projects found for {@filter_label}.</strong></p>
       <p><a href="/work">View all projects</a> or try a different filter.</p>
     </div>
-    """
-  end
-
-  def seo_url_box(assigns) do
-    ~H"""
-    <section class="detail-section seo-url-box">
-      <h2>SEO / Share URL</h2>
-      <p class="meta">
-        Copy URL ini untuk submit ke
-        <a href="https://search.google.com/search-console" target="_blank" rel="noopener">
-          Google Search Console
-        </a>
-        atau bagikan di media sosial.
-      </p>
-      <code style="display:block; padding:0.5em; background:#f5f5f5; border:1px solid #ddd; border-radius:4px; word-break:break-all; font-size:0.9em;">
-        {@url}
-      </code>
-    </section>
     """
   end
 

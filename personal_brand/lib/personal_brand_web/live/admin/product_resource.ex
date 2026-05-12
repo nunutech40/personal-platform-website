@@ -160,6 +160,15 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
         render_form: &render_included_textarea/1,
         except: [:index],
         panel: :content
+      },
+      seo_url: %{
+        module: Backpex.Fields.Text,
+        label: "SEO / Share URL",
+        render: &render_seo_url/1,
+        help_text:
+          "Copy URL ini untuk submit ke Google Search Console atau bagikan di media sosial.",
+        except: [:new, :edit, :index],
+        panel: :media_links
       }
     ]
   end
@@ -365,4 +374,26 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
   defp display_value(value) when is_list(value) and value != [], do: Enum.join(value, ", ")
   defp display_value(value) when is_binary(value), do: value
   defp display_value(_value), do: "-"
+
+  defp render_seo_url(assigns) do
+    slug = assigns.item.slug
+    url = "https://nunutech40.dev/products/#{slug}"
+
+    assigns = assign(assigns, :seo_url, url)
+
+    ~H"""
+    <div>
+      <code style="display:block; padding:0.5em; background:#f5f5f5; border:1px solid #ddd; border-radius:4px; word-break:break-all; font-size:0.9em;">
+        {@seo_url}
+      </code>
+      <p class="mt-2 text-sm opacity-70">
+        Copy URL ini untuk submit ke
+        <a href="https://search.google.com/search-console" target="_blank" rel="noopener" class="link">
+          Google Search Console
+        </a>
+        atau bagikan di media sosial.
+      </p>
+    </div>
+    """
+  end
 end

@@ -135,6 +135,15 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         help_text: "Opsional. Maksimal 160 karakter.",
         except: [:index],
         panel: :seo
+      },
+      seo_url: %{
+        module: Backpex.Fields.Text,
+        label: "SEO / Share URL",
+        render: &render_seo_url/1,
+        help_text:
+          "Copy URL ini untuk submit ke Google Search Console atau bagikan di media sosial.",
+        except: [:new, :edit, :index],
+        panel: :seo
       }
     ]
   end
@@ -334,4 +343,26 @@ defmodule PersonalBrandWeb.Admin.PostResource do
   defp list_value(value) when is_list(value), do: value
   defp list_value(value) when is_binary(value) and value != "", do: [value]
   defp list_value(_value), do: []
+
+  defp render_seo_url(assigns) do
+    slug = assigns.item.slug
+    url = "https://nunutech40.dev/writing/#{slug}"
+
+    assigns = assign(assigns, :seo_url, url)
+
+    ~H"""
+    <div>
+      <code style="display:block; padding:0.5em; background:#f5f5f5; border:1px solid #ddd; border-radius:4px; word-break:break-all; font-size:0.9em;">
+        {@seo_url}
+      </code>
+      <p class="mt-2 text-sm opacity-70">
+        Copy URL ini untuk submit ke
+        <a href="https://search.google.com/search-console" target="_blank" rel="noopener" class="link">
+          Google Search Console
+        </a>
+        atau bagikan di media sosial.
+      </p>
+    </div>
+    """
+  end
 end
