@@ -18,6 +18,7 @@ defmodule PersonalBrandWeb.PublicLive do
         profile_bio: settings.profile_bio,
         profile_email: settings.profile_email,
         profile_location: settings.profile_location,
+        support_links: support_links(settings),
         social_links: settings.social_links || %{},
         ordered_social_links:
           ordered_social_links(settings.social_links || %{}, settings.profile_email),
@@ -49,6 +50,20 @@ defmodule PersonalBrandWeb.PublicLive do
       profile_bio:
         "This site is running with an empty database. Publish profile content from admin.",
       social_links: %{},
+      about_intro: nil,
+      about_focus: nil,
+      about_tools: [],
+      about_values: [],
+      now_building: nil,
+      now_learning: nil,
+      now_focus: nil,
+      now_updated_at: nil,
+      saweria_url: nil,
+      buy_me_coffee_url: nil,
+      tips_cta_title: nil,
+      tips_cta_body: nil,
+      xendit_checkout_url: nil,
+      xendit_webhook_url: nil,
       featured_project_ids: [],
       featured_product_ids: []
     }
@@ -207,11 +222,15 @@ defmodule PersonalBrandWeb.PublicLive do
       <% :product_detail -> %>
         <.product_detail product={@product} />
       <% :about_page -> %>
-        <.about_page profile_bio={@profile_bio} />
+        <.about_page settings={@settings} />
       <% :now_page -> %>
-        <.now_page />
+        <.now_page settings={@settings} />
       <% :contact_page -> %>
-        <.contact_page profile_email={@profile_email} social_links={@ordered_social_links} />
+        <.contact_page
+          profile_email={@profile_email}
+          social_links={@ordered_social_links}
+          support_links={@support_links}
+        />
       <% _ -> %>
         <.not_found />
     <% end %>
@@ -236,7 +255,7 @@ defmodule PersonalBrandWeb.PublicLive do
         <.featured_work projects={@projects} />
         <.recent_writing posts={@posts} />
         <.featured_products products={@products} />
-        <.now_block />
+        <.now_block settings={@settings} />
       </div>
       <.visual_frame
         text="Ship small. Learn fast."
@@ -519,40 +538,44 @@ defmodule PersonalBrandWeb.PublicLive do
   # ── About Page ───────────────────────────────────────────
 
   def about_page(assigns) do
+    assigns =
+      assigns
+      |> assign(:intro, assigns.settings.about_intro || assigns.settings.profile_bio)
+      |> assign(:focus, assigns.settings.about_focus)
+      |> assign(:tools, list_value(assigns.settings.about_tools))
+      |> assign(:values, list_value(assigns.settings.about_values))
+
     ~H"""
     <div class="detail-grid">
       <section>
         <h1>About</h1>
-        <p>{@profile_bio}</p>
-        <p>
-          I like useful mobile apps, calm interfaces, readable code, and small products that solve real problems.
+        <p :if={present?(@intro)}>{@intro}</p>
+        <p :if={!present?(@intro)}>
+          Profile details have not been published yet.
         </p>
       </section>
       <.visual_frame text="Handmade but useful." />
     </div>
     <hr />
     <div class="two-col">
-      <section>
+      <section :if={present?(@focus) or @tools != []}>
         <h2>What I Do</h2>
-        <p>I build mobile apps with Flutter, from idea to release.</p>
-        <p>I turn fuzzy product ideas into simple flows, prototypes, and shipped software.</p>
-        <h2>Tools I Use</h2>
-        <ul>
-          <li><a href="https://flutter.dev">Flutter</a> for mobile apps</li>
-          <li><a href="https://elixir-lang.org">Elixir</a> for scalable backend logic</li>
-          <li><a href="https://www.postgresql.org">PostgreSQL</a> for relational data</li>
-          <li><a href="https://figma.com">Figma</a> for product design</li>
-        </ul>
+        <p :if={present?(@focus)}>{@focus}</p>
+        <section :if={@tools != []}>
+          <h2>Tools I Use</h2>
+          <ul>
+            <li :for={tool <- @tools}>{tool}</li>
+          </ul>
+        </section>
       </section>
       <section>
-        <h2>What I Care About</h2>
-        <ul>
-          <li>Building useful things that solve real problems</li>
-          <li>Clean code, simple design, and good performance</li>
-          <li>Developer experience and thoughtful UX</li>
-          <li>Indie mindset: ship small, learn fast, iterate</li>
-        </ul>
-        <.now_block />
+        <section :if={@values != []}>
+          <h2>What I Care About</h2>
+          <ul>
+            <li :for={value <- @values}>{value}</li>
+          </ul>
+        </section>
+        <.now_block settings={@settings} />
       </section>
     </div>
     """
@@ -561,16 +584,33 @@ defmodule PersonalBrandWeb.PublicLive do
   # ── Now Page ─────────────────────────────────────────────
 
   def now_page(assigns) do
+    assigns =
+      assigns
+      |> assign(:building, assigns.settings.now_building)
+      |> assign(:learning, assigns.settings.now_learning)
+      |> assign(:focus, assigns.settings.now_focus)
+      |> assign(:updated_at, assigns.settings.now_updated_at)
+
     ~H"""
     <h1>Now</h1>
     <p class="lead">A small snapshot of what is getting attention right now.</p>
+    <p :if={@updated_at} class="meta">Updated {format_date(@updated_at)}</p>
     <hr />
-    <h2>Currently Building</h2>
-    <p><strong>DevPad</strong> - A lightweight toolbox for everyday developer tasks.</p>
-    <h2>Learning</h2>
-    <p>Elixir, Phoenix LiveView, commerce flows, and better writing habits.</p>
-    <h2>Shipping</h2>
-    <p>Personal brand platform MVP with product catalog and theme switching.</p>
+    <section :if={present?(@building)}>
+      <h2>Currently Building</h2>
+      <p>{@building}</p>
+    </section>
+    <section :if={present?(@learning)}>
+      <h2>Learning</h2>
+      <p>{@learning}</p>
+    </section>
+    <section :if={present?(@focus)}>
+      <h2>Focus</h2>
+      <p>{@focus}</p>
+    </section>
+    <p :if={!present?(@building) and !present?(@learning) and !present?(@focus)}>
+      No current update has been published yet.
+    </p>
     """
   end
 
@@ -597,6 +637,14 @@ defmodule PersonalBrandWeb.PublicLive do
       <h2>Social</h2>
       <ul>
         <li :for={{label, url} <- @social_links}>
+          <a href={url}>{label}</a>
+        </li>
+      </ul>
+    </section>
+    <section :if={@support_links != []}>
+      <h2>Support</h2>
+      <ul>
+        <li :for={{label, url} <- @support_links}>
           <a href={url}>{label}</a>
         </li>
       </ul>
@@ -685,13 +733,17 @@ defmodule PersonalBrandWeb.PublicLive do
   end
 
   def now_block(assigns) do
+    assigns =
+      assigns
+      |> assign(:building, assigns.settings.now_building)
+      |> assign(:focus, assigns.settings.now_focus)
+
     ~H"""
-    <section>
+    <section :if={present?(@building) or present?(@focus)}>
       <h2>Now</h2>
-      <p>
-        <strong>Building</strong> <a href="/now">DevPad</a>, A lightweight toolbox for everyday developer tasks.
-      </p>
-      <p>Personal brand platform MVP with product catalog and theme switching.</p>
+      <p :if={present?(@building)}><strong>Building</strong> {@building}</p>
+      <p :if={present?(@focus)}>{@focus}</p>
+      <p><a href="/now">View current focus</a></p>
     </section>
     """
   end
@@ -909,6 +961,14 @@ defmodule PersonalBrandWeb.PublicLive do
   defp map_value(_value), do: %{}
 
   defp map_present?(value), do: map_value(value) != %{}
+
+  defp support_links(settings) do
+    [
+      {"Saweria", settings.saweria_url},
+      {"Buy Me Coffee", settings.buy_me_coffee_url}
+    ]
+    |> Enum.filter(fn {_label, url} -> present?(url) end)
+  end
 
   defp format_date(nil), do: ""
 

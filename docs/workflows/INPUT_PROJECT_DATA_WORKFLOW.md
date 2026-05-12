@@ -23,6 +23,15 @@ New project: http://localhost:4000/admin/projects/new
 Public work: http://localhost:4000/work
 ```
 
+Jika input/review juga menyentuh data website umum:
+
+```txt
+Site settings: http://localhost:4000/admin/site-settings
+Public about: http://localhost:4000/about
+Public now: http://localhost:4000/now
+Public contact: http://localhost:4000/contact
+```
+
 ## Step 1 — Pahami Project yang Mau Diinput
 
 Sebelum buka form, AI harus membaca konteks secukupnya:
@@ -233,6 +242,8 @@ Checklist review:
 - Navigation urut dan tidak membingungkan: Home, Work, Writing, Products, About, Now, Contact.
 - Primary path untuk recruiter jelas: header/nav, hero CTA, dan Featured Work mengarah ke `/work`.
 - Social/contact link yang tampil memang bisa diklik dan sesuai persona publik.
+- About, Now, dan Contact mengambil data dari Site Settings, bukan copy hardcoded.
+- Support links di Contact hanya muncul jika Saweria atau Buy Me Coffee sudah diisi.
 - Judul dan summary enak discan.
 - Role dan ownership langsung jelas.
 - Problem tidak generik.

@@ -25,6 +25,10 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 
 - [workflows/PUSH_WORKFLOW.md](workflows/PUSH_WORKFLOW.md)
 
+## Monetization Planning
+
+- [planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md](planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md) — Midtrans-only plan for free/tips/paid posts, access-token unlock, product fulfillment, and Saweria/Buy Me Coffee support links.
+
 ## Standards
 
 - [standards/CODING_AND_TESTING_STANDARDS.md](standards/CODING_AND_TESTING_STANDARDS.md)

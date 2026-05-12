@@ -16,7 +16,21 @@ defmodule PersonalBrand.Content.SiteSettingTest do
     profile_title: "Developer",
     profile_location: "Jakarta",
     profile_email: "john@example.com",
-    profile_bio: "A developer"
+    profile_bio: "A developer",
+    about_intro: "I build useful software.",
+    about_focus: "Mobile and web platforms.",
+    about_tools: ["Elixir", "Flutter"],
+    about_values: ["Readable code", "Useful products"],
+    now_building: "Personal platform",
+    now_learning: "Payment flows",
+    now_focus: "Portfolio polish",
+    now_updated_at: ~D[2026-05-12],
+    saweria_url: "https://saweria.co/nunu",
+    buy_me_coffee_url: "https://www.buymeacoffee.com/nunu",
+    tips_cta_title: "Support this writing",
+    tips_cta_body: "If this helped, tips are welcome.",
+    xendit_checkout_url: "https://checkout.xendit.co/example",
+    xendit_webhook_url: "https://example.com/webhooks/xendit"
   }
 
   describe "changeset/2" do
@@ -87,6 +101,44 @@ defmodule PersonalBrand.Content.SiteSettingTest do
                "GitHub" => "https://github.com/john",
                "LinkedIn" => "https://linkedin.com/in/john"
              }
+    end
+
+    test "accepts public page, support, and payment link settings" do
+      changeset =
+        SiteSetting.changeset(%SiteSetting{}, %{
+          @valid_attrs
+          | about_tools: "Elixir\nPhoenix LiveView\nFlutter",
+            about_values: "Useful products\nReadable code",
+            now_updated_at: "2026-05-12",
+            saweria_url: "",
+            buy_me_coffee_url: "https://www.buymeacoffee.com/nunu",
+            xendit_checkout_url: "https://checkout.xendit.co/example",
+            xendit_webhook_url: ""
+        })
+
+      assert changeset.valid?
+      assert get_field(changeset, :about_tools) == ["Elixir", "Phoenix LiveView", "Flutter"]
+      assert get_field(changeset, :about_values) == ["Useful products", "Readable code"]
+      assert get_field(changeset, :now_updated_at) == ~D[2026-05-12]
+      assert get_field(changeset, :saweria_url) == nil
+      assert get_field(changeset, :xendit_webhook_url) == nil
+    end
+
+    test "rejects invalid support and payment URLs" do
+      attrs = %{
+        @valid_attrs
+        | saweria_url: "saweria.co/nunu",
+          buy_me_coffee_url: "buymeacoffee.com/nunu",
+          xendit_checkout_url: "checkout.xendit.co/example",
+          xendit_webhook_url: "/webhooks/xendit"
+      }
+
+      changeset = SiteSetting.changeset(%SiteSetting{}, attrs)
+      refute changeset.valid?
+      assert "must start with http:// or https://" in errors_on(changeset)[:saweria_url]
+      assert "must start with http:// or https://" in errors_on(changeset)[:buy_me_coffee_url]
+      assert "must start with http:// or https://" in errors_on(changeset)[:xendit_checkout_url]
+      assert "must start with http:// or https://" in errors_on(changeset)[:xendit_webhook_url]
     end
 
     test "accepts featured IDs as arrays" do

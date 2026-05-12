@@ -388,6 +388,10 @@ Posts dan Products memakai standar admin yang sama dengan Projects untuk CRUD ha
 - Array-like field (`post.tags`, `product.included`) bisa diisi satu item per baris; post tags juga menerima koma.
 - Form punya placeholder dan help text untuk mengurangi input yang ambigu.
 - Product `checkout_url` boleh kosong; jika diisi harus diawali `http://` atau `https://`.
+- Post monetization is planned but not implemented yet. Planned access modes: `free`, `tips`, and `paid`.
+- Free posts will use global Saweria / Buy Me Coffee links from Site Settings.
+- Tips and paid posts should use Midtrans when proper payment gating is implemented. Do not add Xendit fields unless a Xendit account exists.
+- Paid/tips unlock should avoid customer login at first: use email + order + access token.
 
 ## Media, Site Settings, and Themes Admin Workflow
 
@@ -402,11 +406,15 @@ Media:
 
 Site Settings:
 
-- `/admin/site-settings` mengatur identitas website, CTA homepage, profil, social links, active theme, dan daftar featured ID opsional.
+- `/admin/site-settings` mengatur identitas website, CTA homepage, profil, halaman About/Now, support links, payment reference links, social links, active theme, dan daftar featured ID opsional.
 - Data personal website seperti nama, headline homepage, bio, email, lokasi, dan link sosial hidup di tabel `site_settings`. Setelah reset kosong, buat satu record Site Settings dari admin untuk mengisi data personal kembali.
 - `active_theme` dipilih dari theme yang ada di database. Kalau belum ada theme, fallback admin menampilkan `old_web_classic`.
 - `social_links` diisi satu link per baris dengan format `Label=URL`, contoh `GitHub=https://github.com/username`.
 - `featured_project_ids` dan `featured_product_ids` bisa diisi satu UUID per baris. Untuk workflow portfolio utama, prioritas tampilan tetap lebih praktis lewat flag `featured` dan `sort_order` di resource Project/Product.
+- About page content is CMS-managed through `about_intro`, `about_focus`, `about_tools`, and `about_values`.
+- Now page content is CMS-managed through `now_building`, `now_learning`, `now_focus`, and `now_updated_at`.
+- Support links live here too: `saweria_url`, `buy_me_coffee_url`, `tips_cta_title`, and `tips_cta_body`.
+- Optional Xendit reference links can be stored as `xendit_checkout_url` and `xendit_webhook_url`, but Midtrans remains the planned payment provider for real paid content/product flows.
 
 Themes:
 

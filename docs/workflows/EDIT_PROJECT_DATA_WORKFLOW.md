@@ -22,6 +22,15 @@ Project index: http://localhost:4000/admin/projects
 Public work: http://localhost:4000/work
 ```
 
+Jika revisi juga menyentuh profile/About/Now/Contact/support links, edit lewat:
+
+```txt
+Site settings: http://localhost:4000/admin/site-settings
+Public about: http://localhost:4000/about
+Public now: http://localhost:4000/now
+Public contact: http://localhost:4000/contact
+```
+
 ## Step 1 — Pahami Permintaan Edit
 
 Identifikasi project target dan field yang diminta berubah.
@@ -168,6 +177,8 @@ Checklist review:
 - Homepage headline bukan placeholder/testing copy.
 - Navigation urut dan tidak membingungkan: Home, Work, Writing, Products, About, Now, Contact.
 - Primary recruiter path jelas: hero CTA dan Featured Work mengarah ke `/work`.
+- About, Now, dan Contact tetap mengambil data dari Site Settings.
+- Support links di Contact hanya tampil jika Saweria atau Buy Me Coffee sudah terisi.
 - Project masih muncul/hilang sesuai `status`, `featured`, dan `sort_order`.
 - Detail page memakai copy terbaru.
 - Detail work dari atas sampai footer punya flow: breadcrumb → title/summary → facts → case study sections → evidence/results → links/media → footer.

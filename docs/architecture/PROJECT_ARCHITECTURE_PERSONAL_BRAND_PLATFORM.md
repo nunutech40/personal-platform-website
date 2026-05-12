@@ -903,6 +903,32 @@ Midtrans hosted payment page
 manual fulfillment
 ```
 
+For writing monetization, free posts use support links while gated posts use Midtrans:
+
+```txt
+Free post
+↓
+Full article
+↓
+Optional Saweria / Buy Me Coffee CTA from site_settings
+```
+
+```txt
+Tips/Paid post preview
+↓
+Email + selected amount/fixed price
+↓
+Midtrans checkout
+↓
+Midtrans HTTP notification/webhook
+↓
+order marked paid
+↓
+access token unlocks /writing/:slug
+```
+
+No customer login is required for the first paid-content implementation. Access is granted through a private token link.
+
 ### Why this is enough for MVP
 
 The project focus is portfolio first.
@@ -920,8 +946,17 @@ payments
 Midtrans Snap/API
 Midtrans webhook
 digital entitlement
+post access grants
 shipping flow
 admin order management
+```
+
+Provider rule:
+
+```txt
+Midtrans is the only payment provider planned.
+Xendit is not used unless the user explicitly adds a Xendit account later.
+Saweria and Buy Me Coffee are donation/support links only.
 ```
 
 Do not build the full commerce system in MVP unless specifically requested.

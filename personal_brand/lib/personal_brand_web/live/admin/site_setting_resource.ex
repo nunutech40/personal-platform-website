@@ -25,6 +25,10 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
       identity: "Identitas Website",
       homepage: "Homepage CTA",
       profile: "Profil",
+      about: "About Page",
+      now: "Now Page",
+      support: "Support / Tips",
+      payments: "Payment Links",
       theme: "Theme",
       featured: "Featured Content"
     ]
@@ -166,6 +170,134 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
         render_form: &render_map_textarea/1,
         except: [:index],
         panel: :profile
+      },
+      about_intro: %{
+        module: Backpex.Fields.Textarea,
+        label: "About Intro",
+        rows: 5,
+        placeholder:
+          "Ringkasan profil untuk halaman About. Jelaskan siapa kamu, positioning, dan konteks profesional.",
+        help_text: "Dipakai sebagai paragraf pembuka halaman About.",
+        except: [:index],
+        panel: :about
+      },
+      about_focus: %{
+        module: Backpex.Fields.Textarea,
+        label: "About Focus",
+        rows: 5,
+        placeholder:
+          "Contoh: Saya fokus membangun produk mobile/web yang maintainable, jelas secara UX, dan bisa dikembangkan bertahap.",
+        help_text: "Dipakai untuk menjelaskan fokus kerja atau positioning.",
+        except: [:index],
+        panel: :about
+      },
+      about_tools: %{
+        module: Backpex.Fields.Textarea,
+        label: "Tools / Tech",
+        rows: 6,
+        placeholder: "Elixir + Phoenix LiveView\nPostgreSQL\nFlutter\nSwift\nFigma",
+        help_text: "Satu item per baris. Tampil sebagai list di halaman About.",
+        render: &render_list/1,
+        render_form: &render_textarea/1,
+        except: [:index],
+        panel: :about
+      },
+      about_values: %{
+        module: Backpex.Fields.Textarea,
+        label: "Values / Prinsip",
+        rows: 6,
+        placeholder:
+          "Clean architecture\nUseful product thinking\nReadable code\nShip small, learn fast",
+        help_text: "Satu prinsip per baris. Tampil sebagai list di halaman About.",
+        render: &render_list/1,
+        render_form: &render_textarea/1,
+        except: [:index],
+        panel: :about
+      },
+      now_building: %{
+        module: Backpex.Fields.Textarea,
+        label: "Now - Building",
+        rows: 4,
+        placeholder: "Personal brand platform, paid writing flow, dan product catalog.",
+        help_text: "Apa yang sedang dibangun sekarang.",
+        except: [:index],
+        panel: :now
+      },
+      now_learning: %{
+        module: Backpex.Fields.Textarea,
+        label: "Now - Learning",
+        rows: 4,
+        placeholder: "Phoenix LiveView, Midtrans payment flow, writing habit.",
+        help_text: "Apa yang sedang dipelajari.",
+        except: [:index],
+        panel: :now
+      },
+      now_focus: %{
+        module: Backpex.Fields.Textarea,
+        label: "Now - Focus",
+        rows: 4,
+        placeholder: "Membuat portfolio dan writing lebih jelas untuk recruiter dan partner.",
+        help_text: "Fokus utama saat ini.",
+        except: [:index],
+        panel: :now
+      },
+      now_updated_at: %{
+        module: Backpex.Fields.Date,
+        label: "Now Updated At",
+        help_text: "Tanggal terakhir halaman Now diperbarui.",
+        except: [:index],
+        panel: :now
+      },
+      saweria_url: %{
+        module: Backpex.Fields.Text,
+        label: "Saweria URL",
+        placeholder: "https://saweria.co/username",
+        help_text: "Link support/tips untuk CTA di post gratis.",
+        except: [:index],
+        panel: :support
+      },
+      buy_me_coffee_url: %{
+        module: Backpex.Fields.Text,
+        label: "Buy Me Coffee URL",
+        placeholder: "https://www.buymeacoffee.com/username",
+        help_text: "Link support/tips untuk CTA di post gratis.",
+        except: [:index],
+        panel: :support
+      },
+      tips_cta_title: %{
+        module: Backpex.Fields.Text,
+        label: "Tips CTA Title",
+        placeholder: "Support this writing",
+        help_text: "Judul CTA support di akhir post gratis.",
+        except: [:index],
+        panel: :support
+      },
+      tips_cta_body: %{
+        module: Backpex.Fields.Textarea,
+        label: "Tips CTA Body",
+        rows: 4,
+        placeholder:
+          "Kalau tulisan ini membantu, kamu bisa support lewat Saweria atau Buy Me Coffee.",
+        help_text: "Body copy CTA support di post gratis.",
+        except: [:index],
+        panel: :support
+      },
+      xendit_checkout_url: %{
+        module: Backpex.Fields.Text,
+        label: "Xendit Checkout URL",
+        placeholder: "https://checkout.xendit.co/...",
+        help_text:
+          "Opsional untuk referensi link Xendit di masa depan. Midtrans tetap payment utama saat ini.",
+        except: [:index],
+        panel: :payments
+      },
+      xendit_webhook_url: %{
+        module: Backpex.Fields.Text,
+        label: "Xendit Webhook URL",
+        placeholder: "https://example.com/webhooks/xendit",
+        help_text: "Opsional untuk catatan/config masa depan. Jangan isi secret/API key di sini.",
+        except: [:index],
+        panel: :payments
       },
       featured_project_ids: %{
         module: Backpex.Fields.Textarea,

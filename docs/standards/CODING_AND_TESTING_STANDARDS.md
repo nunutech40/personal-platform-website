@@ -239,6 +239,23 @@ coming_soon product shows safe state
 future payment secrets are not exposed
 ```
 
+### Paid content and tips slices
+
+Required:
+
+```txt
+free post renders full content and optional support CTA
+tips post renders preview/tip gate and configured amount options
+paid post hides full content without valid access token
+paid/tips order creation uses Midtrans only
+Midtrans webhook verifies signature_key before unlocking access
+webhook handling is idempotent by provider order ID
+access tokens are stored hashed, not in plain text
+Saweria and Buy Me Coffee links are treated as donation links, not automatic unlock providers
+no Xendit integration unless explicitly requested after account availability changes
+optional Xendit admin reference URLs must stay as inert notes and must not unlock content
+```
+
 ## Test Commands
 
 Local scripts:

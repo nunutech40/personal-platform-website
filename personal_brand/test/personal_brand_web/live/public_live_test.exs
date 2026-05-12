@@ -69,6 +69,55 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "No featured products yet."
   end
 
+  test "GET /about /now /contact render CMS-managed settings", %{conn: conn} do
+    setting = Repo.one!(SiteSetting)
+
+    setting
+    |> Ecto.Changeset.change(%{
+      profile_email: "hello@example.com",
+      social_links: %{"GitHub" => "https://github.com/nunu"},
+      about_intro: "I build useful software.",
+      about_focus: "I focus on mobile and Phoenix platforms.",
+      about_tools: ["Elixir", "Phoenix LiveView", "Flutter"],
+      about_values: ["Readable code", "Useful products"],
+      now_building: "Admin-driven public pages",
+      now_learning: "Midtrans payment flows",
+      now_focus: "Portfolio polish",
+      now_updated_at: ~D[2026-05-12],
+      saweria_url: "https://saweria.co/nunu",
+      buy_me_coffee_url: "https://www.buymeacoffee.com/nunu"
+    })
+    |> Repo.update!()
+
+    about_html =
+      conn
+      |> get(~p"/about")
+      |> html_response(200)
+
+    assert about_html =~ "I build useful software."
+    assert about_html =~ "Phoenix LiveView"
+    assert about_html =~ "Useful products"
+
+    now_html =
+      conn
+      |> get(~p"/now")
+      |> html_response(200)
+
+    assert now_html =~ "Admin-driven public pages"
+    assert now_html =~ "Midtrans payment flows"
+    assert now_html =~ "Updated May 12, 2026"
+
+    contact_html =
+      conn
+      |> get(~p"/contact")
+      |> html_response(200)
+
+    assert contact_html =~ "hello@example.com"
+    assert contact_html =~ "GitHub"
+    assert contact_html =~ "Saweria"
+    assert contact_html =~ "Buy Me Coffee"
+  end
+
   test "GET /work filters by platform", %{conn: conn} do
     insert_project(%{
       title: "Postie",

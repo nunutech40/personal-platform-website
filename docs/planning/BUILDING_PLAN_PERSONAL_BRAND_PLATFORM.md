@@ -56,6 +56,7 @@ Phase 5: partial - admin auth/dashboard and Backpex CRUD exist; admin editor UX,
 Phase 6: partial - checkout_url exists as external link; no Midtrans API/webhook/orders
 Phase 7: done - media upload with Backpex.Fields.Upload, local disk storage, alt text, and file management
 Phase 8+: not started or not verified - SEO/RSS/sitemap/robots need dedicated implementation
+Content monetization: planned - see `docs/planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md`
 ```
 
 Next recommended step:
@@ -68,6 +69,14 @@ Finish Phase 5 admin UX on top of Backpex:
 4. add a Markdown-first post editor or improved Backpex form panels
 5. document/admin-test the route/form behavior that changes
 ```
+
+Commerce and paid content planning has been separated into:
+
+```txt
+docs/planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md
+```
+
+Use that plan before adding Saweria/Buy Me Coffee links, tips posts, paid posts, orders, Midtrans webhook handling, or digital/physical product fulfillment.
 
 ## AI Execution Workflow
 

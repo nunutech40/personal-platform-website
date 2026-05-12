@@ -64,8 +64,15 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     assert html =~ "Identitas Website"
     assert html =~ "Homepage CTA"
     assert html =~ "Profil"
+    assert html =~ "About Page"
+    assert html =~ "Now Page"
+    assert html =~ "Support / Tips"
+    assert html =~ "Payment Links"
     assert html =~ "Theme"
     assert html =~ "Social Links"
+    assert html =~ "Saweria URL"
+    assert html =~ "Buy Me Coffee URL"
+    assert html =~ "Xendit Checkout URL"
     assert html =~ "Old Web Classic"
   end
 
@@ -86,6 +93,12 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
         site_setting_attrs(%{
           "social_links" =>
             "GitHub=https://github.com/nunu\nLinkedIn=https://linkedin.com/in/nunu",
+          "about_tools" => "Elixir\nPhoenix LiveView",
+          "about_values" => "Readable code\nUseful products",
+          "now_updated_at" => "2026-05-12",
+          "saweria_url" => "https://saweria.co/nunu",
+          "buy_me_coffee_url" => "https://www.buymeacoffee.com/nunu",
+          "xendit_checkout_url" => "https://checkout.xendit.co/example",
           "featured_project_ids" => project_id,
           "featured_product_ids" => product_id
         }),
@@ -96,6 +109,12 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
 
     setting = Repo.get_by!(SiteSetting, site_name: "Nunu Test")
     assert setting.social_links["GitHub"] == "https://github.com/nunu"
+    assert setting.about_tools == ["Elixir", "Phoenix LiveView"]
+    assert setting.about_values == ["Readable code", "Useful products"]
+    assert setting.now_updated_at == ~D[2026-05-12]
+    assert setting.saweria_url == "https://saweria.co/nunu"
+    assert setting.buy_me_coffee_url == "https://www.buymeacoffee.com/nunu"
+    assert setting.xendit_checkout_url == "https://checkout.xendit.co/example"
     assert setting.featured_project_ids == [project_id]
     assert setting.featured_product_ids == [product_id]
   end
