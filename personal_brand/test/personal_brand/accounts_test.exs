@@ -8,6 +8,11 @@ defmodule PersonalBrand.AccountsTest do
       assert {:ok, %{id: 1, username: "admin"}} = Accounts.authenticate("admin", "admin123")
     end
 
+    test "returns {:ok, admin} with local admin email alias" do
+      assert {:ok, %{id: 1, username: "admin"}} =
+               Accounts.authenticate("admin@personalbrand.dev", "admin123")
+    end
+
     test "returns {:error, :invalid_credentials} with wrong username" do
       assert {:error, :invalid_credentials} = Accounts.authenticate("wrong", "admin123")
     end

@@ -14,8 +14,9 @@ defmodule PersonalBrand.Accounts do
   def authenticate(username, password) do
     admin_username = Application.get_env(:personal_brand, :admin_username) || "admin"
     admin_password = Application.get_env(:personal_brand, :admin_password) || "admin123"
+    accepted_usernames = [admin_username, "#{admin_username}@personalbrand.dev"]
 
-    if secure_compare(username, admin_username) and secure_compare(password, admin_password) do
+    if username in accepted_usernames and secure_compare(password, admin_password) do
       {:ok, %{id: 1, username: admin_username}}
     else
       {:error, :invalid_credentials}

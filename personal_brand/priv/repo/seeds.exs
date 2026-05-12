@@ -521,5 +521,5 @@ IO.puts("✅ Tag associations created")
 
 IO.puts("")
 IO.puts("🎉 Seed complete!")
-IO.puts("   Login: admin@personalbrand.dev / admin123")
+IO.puts("   Login: admin / admin123")
 IO.puts("   Site: http://localhost:4000")
