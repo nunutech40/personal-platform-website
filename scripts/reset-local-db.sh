@@ -4,7 +4,7 @@
 #
 # Usage:
 #   ./scripts/reset-local-db.sh --yes
-#   ./scripts/reset-local-db.sh --yes --empty
+#   ./scripts/reset-local-db.sh --yes --seed
 #   ./scripts/reset-local-db.sh --yes --with-uploads
 #   ./scripts/reset-local-db.sh --yes --no-restart
 
@@ -14,7 +14,7 @@ POSTGRES_BIN="/opt/homebrew/opt/postgresql@16/bin"
 APP_DIR="personal_brand"
 DB_NAME="personal_brand_dev"
 RESET_UPLOADS=false
-SEED=true
+SEED=false
 RESTART=true
 CONFIRMED=false
 
@@ -24,13 +24,15 @@ Usage: ./scripts/reset-local-db.sh --yes [options]
 
 Options:
   --yes           Required confirmation. This drops and recreates $DB_NAME.
-  --empty         Do not run priv/repo/seeds.exs after migrations.
+  --seed          Run priv/repo/seeds.exs after migrations.
+  --empty         Keep the database empty after migrations. This is the default.
   --with-uploads  Also delete local uploaded files under priv/static/uploads.
   --no-restart    Do not restart Phoenix after reset.
   -h, --help      Show this help.
 
 Examples:
   ./scripts/reset-local-db.sh --yes
+  ./scripts/reset-local-db.sh --yes --seed
   ./scripts/reset-local-db.sh --yes --with-uploads
   ./scripts/reset-local-db.sh --yes --empty --no-restart
 EOF
@@ -43,6 +45,9 @@ while [ $# -gt 0 ]; do
       ;;
     --empty)
       SEED=false
+      ;;
+    --seed)
+      SEED=true
       ;;
     --with-uploads)
       RESET_UPLOADS=true

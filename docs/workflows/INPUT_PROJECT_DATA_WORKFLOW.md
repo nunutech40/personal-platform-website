@@ -126,15 +126,17 @@ Alur manual browser:
 
 ## Step 5 — Review Public Output
 
-Setelah save, AI harus cek:
+Setelah save, AI wajib cek public output. Jangan berhenti di "data berhasil disimpan".
 
 ```txt
+http://localhost:4000/
 http://localhost:4000/work
 http://localhost:4000/work/<slug>
 ```
 
 Checklist review:
 
+- Homepage tidak crash dan project tampil jika memang featured/published.
 - Judul dan summary enak discan.
 - Role dan ownership langsung jelas.
 - Problem tidak generik.
@@ -144,6 +146,10 @@ Checklist review:
 - Result/metrics tidak mengarang.
 - Case study aman untuk publik.
 - Link preview/detail bekerja.
+- Cover image tampil jika sudah dipilih; kalau belum ada, fallback visual tidak merusak layout.
+- Jika ada data kosong, halaman tetap menampilkan empty state yang masuk akal, bukan error.
+
+Kalau ada yang belum sesuai, AI harus kembali ke admin edit form, perbaiki field terkait, save lagi, lalu ulangi review URL di atas.
 
 ## Step 6 — SQL Fallback untuk Personal Platform Website
 

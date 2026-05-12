@@ -7,7 +7,7 @@ defmodule PersonalBrandWeb.PublicLive do
   # ── Mount ────────────────────────────────────────────────
 
   def mount(_params, _session, socket) do
-    settings = Content.get_site_settings!()
+    settings = Content.get_site_settings() || default_site_settings()
     theme_class = theme_class_name(settings.active_theme)
 
     socket =
@@ -29,6 +29,29 @@ defmodule PersonalBrandWeb.PublicLive do
       )
 
     {:ok, socket, layout: {PersonalBrandWeb.Layouts, :public}}
+  end
+
+  defp default_site_settings do
+    %{
+      site_name: "Nunu Nugraha",
+      headline: "No public content has been published yet.",
+      subheadline:
+        "Add site settings, projects, writing, products, and media from the admin panel.",
+      primary_cta_text: "View Work",
+      primary_cta_url: "/work",
+      secondary_cta_text: "Read Writing",
+      secondary_cta_url: "/writing",
+      active_theme: "old_web_classic",
+      profile_name: "Nunu Nugraha",
+      profile_title: "Content is ready to be configured.",
+      profile_location: nil,
+      profile_email: nil,
+      profile_bio:
+        "This site is running with an empty database. Publish profile content from admin.",
+      social_links: %{},
+      featured_project_ids: [],
+      featured_product_ids: []
+    }
   end
 
   # ── Route Handling ───────────────────────────────────────
@@ -96,11 +119,11 @@ defmodule PersonalBrandWeb.PublicLive do
 
   def handle_params(params, _uri, socket) do
     path = socket.assigns.live_action
+    settings = socket.assigns.settings
 
     socket =
       case path do
         :index ->
-          settings = socket.assigns.settings
           projects = Content.list_featured_projects()
           posts = Content.list_featured_posts()
           products = Content.list_featured_products()
@@ -326,18 +349,18 @@ defmodule PersonalBrandWeb.PublicLive do
         <.detail_section title="Technical Approach" body={@project.solution} />
         <.detail_section title="Architecture Notes" body={@project.architecture_notes} />
         <.detail_section title="Trade-offs" body={@project.tradeoffs} />
-        <section :if={@project.technical_highlights != []} class="detail-section">
+        <section :if={list_present?(@project.technical_highlights)} class="detail-section">
           <h2>Implementation Highlights</h2>
           <ul>
-            <li :for={item <- @project.technical_highlights}>{item}</li>
+            <li :for={item <- list_value(@project.technical_highlights)}>{item}</li>
           </ul>
         </section>
         <section class="detail-section">
           <h2>Results</h2>
           <ul>
             <li :if={@project.impact_summary}>{@project.impact_summary}</li>
-            <li :for={item <- @project.result}>{item}</li>
-            <li :for={item <- @project.metrics}>{item}</li>
+            <li :for={item <- list_value(@project.result)}>{item}</li>
+            <li :for={item <- list_value(@project.metrics)}>{item}</li>
           </ul>
         </section>
         <section class="detail-section">
@@ -444,12 +467,12 @@ defmodule PersonalBrandWeb.PublicLive do
         <section class="detail-section">
           <h2>What Included</h2>
           <ul>
-            <li :for={item <- @product.included}>{item}</li>
+            <li :for={item <- list_value(@product.included)}>{item}</li>
           </ul>
         </section>
-        <section class="detail-section">
+        <section :if={map_present?(@product.faq)} class="detail-section">
           <h2>FAQ</h2>
-          <%= for {question, answer} <- @product.faq do %>
+          <%= for {question, answer} <- map_value(@product.faq) do %>
             <h3>{question}</h3>
             <p>{answer}</p>
           <% end %>
@@ -530,7 +553,11 @@ defmodule PersonalBrandWeb.PublicLive do
     <section>
       <h2>Email</h2>
       <p>
-        <a href={"mailto:#{@profile_email}"}>{@profile_email}</a>
+        <%= if present?(@profile_email) do %>
+          <a href={"mailto:#{@profile_email}"}>{@profile_email}</a>
+        <% else %>
+          No public email has been configured yet.
+        <% end %>
       </p>
     </section>
     <section>
@@ -717,6 +744,7 @@ defmodule PersonalBrandWeb.PublicLive do
   defp media_by_id(projects) do
     projects
     |> Enum.map(& &1.cover_image_id)
+    |> Enum.reject(&is_nil/1)
     |> Content.list_media_by_ids()
     |> Map.new(fn media -> {media.id, media} end)
   end
@@ -800,6 +828,16 @@ defmodule PersonalBrandWeb.PublicLive do
   defp present?(value) when is_binary(value), do: String.trim(value) != ""
   defp present?(value), do: not is_nil(value)
 
+  defp list_value(value) when is_list(value), do: value
+  defp list_value(_value), do: []
+
+  defp list_present?(value), do: list_value(value) != []
+
+  defp map_value(value) when is_map(value), do: value
+  defp map_value(_value), do: %{}
+
+  defp map_present?(value), do: map_value(value) != %{}
+
   defp format_date(nil), do: ""
 
   defp format_date(date) do
@@ -811,6 +849,8 @@ defmodule PersonalBrandWeb.PublicLive do
   end
 
   defp format_money(product) do
-    "#{product.currency} #{product.price}"
+    price = if product.price, do: product.price, else: "TBD"
+    currency = product.currency || ""
+    String.trim("#{currency} #{price}")
   end
 end

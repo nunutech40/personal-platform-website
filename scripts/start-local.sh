@@ -88,7 +88,7 @@ if [ ! -d "deps" ]; then
   mix deps.get
 fi
 
-# Setup database if needed (skip seed because seeds.exs has compile errors)
+# Setup database if needed. Seed data is intentionally opt-in via reset-local-db.sh --seed.
 echo "Setting up database..."
 mix ecto.create 2>/dev/null || true
 mix ecto.migrate 2>/dev/null || true

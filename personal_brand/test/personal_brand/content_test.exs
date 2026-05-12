@@ -327,5 +327,9 @@ defmodule PersonalBrand.ContentTest do
       Repo.insert!(%SiteSetting{active_theme: "nonexistent_theme"})
       assert Content.get_active_theme() == nil
     end
+
+    test "get_active_theme/0 returns nil when settings are empty" do
+      assert Content.get_active_theme() == nil
+    end
   end
 end

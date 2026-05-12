@@ -1,7 +1,7 @@
 defmodule PersonalBrandWeb.PublicLiveTest do
   use PersonalBrandWeb.ConnCase
 
-  alias PersonalBrand.Content.Project
+  alias PersonalBrand.Content.{Product, Project}
   alias PersonalBrand.Content.SiteSetting
   alias PersonalBrand.Repo
 
@@ -55,6 +55,18 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "Mobile Engineering Lead"
     assert html =~ "iOS"
     refute html =~ "Draft Project"
+  end
+
+  test "GET / renders empty database fallback without seeded settings", %{conn: conn} do
+    Repo.delete_all(SiteSetting)
+
+    conn = get(conn, ~p"/")
+
+    html = html_response(conn, 200)
+    assert html =~ "No public content has been published yet."
+    assert html =~ "No featured work yet."
+    assert html =~ "No writing published yet."
+    assert html =~ "No featured products yet."
   end
 
   test "GET /work filters by platform", %{conn: conn} do
@@ -134,6 +146,44 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "150 tests passing"
   end
 
+  test "GET /work/:slug handles sparse optional list fields", %{conn: conn} do
+    Repo.insert!(%Project{
+      title: "Sparse Project",
+      slug: "sparse-project",
+      status: "published",
+      year: "2026",
+      result: nil,
+      metrics: nil,
+      technical_highlights: nil
+    })
+
+    conn = get(conn, ~p"/work/sparse-project")
+
+    html = html_response(conn, 200)
+    assert html =~ "Sparse Project"
+    assert html =~ "Results"
+    refute html =~ "Implementation Highlights"
+  end
+
+  test "GET /products/:slug handles sparse optional product fields", %{conn: conn} do
+    insert_product(%{
+      title: "Sparse Product",
+      slug: "sparse-product",
+      summary: nil,
+      description: nil,
+      included: nil,
+      faq: nil,
+      currency: nil
+    })
+
+    conn = get(conn, ~p"/products/sparse-product")
+
+    html = html_response(conn, 200)
+    assert html =~ "Sparse Product"
+    assert html =~ "TBD"
+    refute html =~ "FAQ"
+  end
+
   test "GET /work/:slug hides draft project detail", %{conn: conn} do
     insert_project(%{
       title: "Draft Project",
@@ -170,6 +220,21 @@ defmodule PersonalBrandWeb.PublicLiveTest do
 
     %Project{}
     |> Project.changeset(Map.merge(defaults, attrs))
+    |> Repo.insert!()
+  end
+
+  defp insert_product(attrs) do
+    defaults = %{
+      title: "Product",
+      slug: "product",
+      summary: "Summary",
+      product_type: "digital",
+      status: "active",
+      price: nil,
+      currency: "USD"
+    }
+
+    struct(Product, Map.merge(defaults, attrs))
     |> Repo.insert!()
   end
 end

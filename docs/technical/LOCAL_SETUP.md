@@ -135,7 +135,7 @@ Perilaku default:
 - Hanya berjalan untuk `MIX_ENV=dev`.
 - Drop dan recreate `personal_brand_dev`.
 - Jalankan migration.
-- Jalankan `priv/repo/seeds.exs` sebagai baseline data.
+- Tidak menjalankan seed; database dibiarkan kosong setelah migration.
 - Kalau Phoenix sedang berjalan di `localhost:4000`, script akan stop dulu sebelum drop DB lalu start lagi via daemon.
 - PostgreSQL tetap dibiarkan hidup.
 
@@ -145,8 +145,8 @@ Opsi tambahan:
 # Reset DB + hapus uploaded files lokal
 ./scripts/reset-local-db.sh --yes --with-uploads
 
-# Reset DB kosong tanpa seed
-./scripts/reset-local-db.sh --yes --empty
+# Reset DB lalu isi demo seed eksplisit
+./scripts/reset-local-db.sh --yes --seed
 
 # Reset DB tapi jangan restart Phoenix
 ./scripts/reset-local-db.sh --yes --no-restart
@@ -403,6 +403,7 @@ Media:
 Site Settings:
 
 - `/admin/site-settings` mengatur identitas website, CTA homepage, profil, social links, active theme, dan daftar featured ID opsional.
+- Data personal website seperti nama, headline homepage, bio, email, lokasi, dan link sosial hidup di tabel `site_settings`. Setelah reset kosong, buat satu record Site Settings dari admin untuk mengisi data personal kembali.
 - `active_theme` dipilih dari theme yang ada di database. Kalau belum ada theme, fallback admin menampilkan `old_web_classic`.
 - `social_links` diisi satu link per baris dengan format `Label=URL`, contoh `GitHub=https://github.com/username`.
 - `featured_project_ids` dan `featured_product_ids` bisa diisi satu UUID per baris. Untuk workflow portfolio utama, prioritas tampilan tetap lebih praktis lewat flag `featured` dan `sort_order` di resource Project/Product.

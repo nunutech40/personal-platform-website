@@ -76,7 +76,11 @@ defmodule PersonalBrand.Content do
   def list_media_by_ids(ids) when is_list(ids) do
     ids = Enum.reject(ids, &is_nil/1)
 
-    Repo.all(from m in Media, where: m.id in ^ids)
+    if ids == [] do
+      []
+    else
+      Repo.all(from m in Media, where: m.id in ^ids)
+    end
   end
 
   # ── Projects ─────────────────────────────────────────────
@@ -265,8 +269,10 @@ defmodule PersonalBrand.Content do
   end
 
   def get_active_theme do
-    settings = get_site_settings!()
-    Repo.get_by(Theme, key: settings.active_theme)
+    case get_site_settings() do
+      nil -> nil
+      settings -> Repo.get_by(Theme, key: settings.active_theme)
+    end
   end
 
   # ── Tags ──────────────────────────────────────────────────
