@@ -321,24 +321,45 @@ defmodule PersonalBrandWeb.PublicLive do
   def work_detail(assigns) do
     ~H"""
     <p class="breadcrumb"><a href="/work">Work</a> / {@project.title}</p>
-    <div class="detail-grid">
-      <article>
+    <div class="case-study-layout">
+      <article class="case-study">
         <h1>{@project.title}</h1>
         <p class="tagline">{@project.summary}</p>
-        <p>
-          <strong>Role:</strong> {@project.role}<br />
-          <strong>Ownership:</strong> {@project.ownership || "Case study contributor"}<br />
-          <strong :if={@project.company}>Company:</strong> {@project.company}<br :if={
-            @project.company
-          } />
-          <strong :if={@project.client}>Client:</strong> {@project.client}<br :if={@project.client} />
-          <strong :if={@project.team_size}>Team Size:</strong> {@project.team_size}<br :if={
-            @project.team_size
-          } />
-          <strong>Platform:</strong> {Enum.join(project_badges(@project), ", ")}<br />
-          <strong>Stack:</strong> {Enum.join(@project.tech_stack || [], ", ")}<br />
-          <strong>Period:</strong> {@project.duration || @project.year}
-        </p>
+
+        <dl class="project-facts" aria-label="Project facts">
+          <div>
+            <dt>Role</dt>
+            <dd>{@project.role || "Contributor"}</dd>
+          </div>
+          <div>
+            <dt>Ownership</dt>
+            <dd>{@project.ownership || "Case study contributor"}</dd>
+          </div>
+          <div :if={@project.company}>
+            <dt>Company</dt>
+            <dd>{@project.company}</dd>
+          </div>
+          <div :if={@project.client}>
+            <dt>Client</dt>
+            <dd>{@project.client}</dd>
+          </div>
+          <div :if={@project.team_size}>
+            <dt>Team</dt>
+            <dd>{@project.team_size}</dd>
+          </div>
+          <div>
+            <dt>Period</dt>
+            <dd>{@project.duration || @project.year || "Not specified"}</dd>
+          </div>
+          <div>
+            <dt>Focus</dt>
+            <dd>{Enum.join(project_badges(@project), ", ")}</dd>
+          </div>
+          <div>
+            <dt>Stack</dt>
+            <dd>{Enum.join(@project.tech_stack || [], ", ")}</dd>
+          </div>
+        </dl>
 
         <p :if={@project.case_study_visibility in ["limited", "private_summary"]} class="notice">
           Some implementation details are summarized to respect proprietary project boundaries.
@@ -351,13 +372,13 @@ defmodule PersonalBrandWeb.PublicLive do
         <.detail_section title="Trade-offs" body={@project.tradeoffs} />
         <section :if={list_present?(@project.technical_highlights)} class="detail-section">
           <h2>Implementation Highlights</h2>
-          <ul>
+          <ul class="evidence-list">
             <li :for={item <- list_value(@project.technical_highlights)}>{item}</li>
           </ul>
         </section>
         <section class="detail-section">
           <h2>Results</h2>
-          <ul>
+          <ul class="evidence-list">
             <li :if={@project.impact_summary}>{@project.impact_summary}</li>
             <li :for={item <- list_value(@project.result)}>{item}</li>
             <li :for={item <- list_value(@project.metrics)}>{item}</li>
@@ -372,7 +393,9 @@ defmodule PersonalBrandWeb.PublicLive do
           </ul>
         </section>
       </article>
-      <.visual_frame text={"#{@project.title} case study"} media={@cover_media} />
+      <aside class="case-study-side">
+        <.visual_frame text={"#{@project.title} case study"} media={@cover_media} />
+      </aside>
     </div>
     """
   end
