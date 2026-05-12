@@ -53,26 +53,58 @@ IO.puts("✅ #{length(themes)} themes created")
 # ── Site Settings ──────────────────────────────────────────
 Repo.insert!(%SiteSetting{
   site_name: "Nunu Nugraha",
-  headline: "A personal basecamp for work, writing, products, and things currently being built.",
+  headline:
+    "Flutter Developer building thoughtful mobile apps with clean architecture, reliable delivery, and practical product sense.",
   subheadline:
-    "One Phoenix LiveView app, one PostgreSQL-backed content source, and multiple theme renderers for the same work, writing, and products.",
+    "I focus on Flutter for remote mobile roles, with native iOS Swift and Android Kotlin experience, plus enough full-stack range to ship useful products end to end with AI-assisted workflows.",
   primary_cta_text: "View Work",
   primary_cta_url: "/work",
-  secondary_cta_text: "Read Writing",
-  secondary_cta_url: "/writing",
+  secondary_cta_text: "Contact",
+  secondary_cta_url: "/contact",
   active_theme: "old_web_classic",
   profile_name: "Nunu Nugraha",
-  profile_title: "Flutter Developer, Builder, and Tech Enthusiast",
+  profile_title: "Flutter Developer",
   profile_location: "Indonesia",
-  profile_email: "hello@nununugraha.dev",
+  profile_email: "r.fajarnuraha@gmail.com",
   profile_bio:
-    "I build cross-platform mobile apps with Flutter, care about clean design and smooth performance, and share the lessons learned while shipping small useful products.",
+    "I am a Flutter Developer focused on building mobile apps that are clear, maintainable, and useful. I also have native iOS experience with Swift, Android experience with Kotlin, and enough full-stack range to connect mobile work with backend, web, content, and product workflows.",
   social_links: %{
-    "GitHub" => "https://github.com/nununugraha",
-    "X" => "https://x.com/nununugraha",
-    "LinkedIn" => "https://linkedin.com",
-    "Email" => "mailto:hello@nununugraha.dev"
+    "GitHub" => "https://github.com/nunutech40",
+    "LinkedIn" => "https://www.linkedin.com/in/rizka-fajar-nugraha-7998688b/",
+    "Email" => "mailto:r.fajarnuraha@gmail.com"
   },
+  about_intro:
+    "I am Nunu Nugraha, a Flutter Developer focused on building mobile apps that feel clear to users and stay maintainable for engineering teams. My main direction right now is Flutter development, especially remote roles where I can contribute to production mobile products.",
+  about_focus:
+    "My strongest lane is Flutter: UI implementation, app architecture, state management, API integration, release workflows, and the product details that make an app pleasant to use. I can also work close to native mobile when needed: Swift for iOS, Kotlin for Android, and full-stack implementation with AI-assisted workflows when a product needs backend, web, CMS, or automation around the mobile app.",
+  about_tools: [
+    "Flutter",
+    "Dart",
+    "BLoC / Cubit",
+    "Go Router",
+    "REST API integration",
+    "Firebase Auth",
+    "Swift / SwiftUI",
+    "Kotlin / Android",
+    "Elixir / Phoenix LiveView",
+    "PostgreSQL",
+    "AI-assisted development workflows"
+  ],
+  about_values: [
+    "Mobile-first product thinking",
+    "Readable architecture over clever code",
+    "Small shippable progress",
+    "Clear communication with product and design",
+    "Learning deeply while still delivering",
+    "Useful work that can be shown, written, and improved in public"
+  ],
+  now_building:
+    "I am building this personal platform as a home for my Flutter/mobile portfolio, writing, notes, and small digital products. The goal is to make my work easier to inspect by recruiters, partners, and people who care about practical software.",
+  now_learning:
+    "I am going deeper on Flutter development: app architecture, state management, performance, native platform integration, testing, and release quality. I am also sharpening Swift, Kotlin, and AI-assisted full-stack workflows so I can ship complete product slices when needed.",
+  now_focus:
+    "My current focus is finding a remote Flutter Developer role while continuing to build, write, publish, and eventually sell useful technical products from this site.",
+  now_updated_at: ~D[2026-05-12],
   featured_project_ids: [],
   featured_product_ids: []
 })

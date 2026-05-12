@@ -212,7 +212,7 @@ defmodule PersonalBrandWeb.PublicLive do
           active_filter={@active_filter}
         />
       <% :work_detail -> %>
-        <.work_detail project={@project} cover_media={@cover_media} />
+        <.work_detail project={@project} cover_media={@cover_media} profile_email={@profile_email} />
       <% :writing_index -> %>
         <.writing_index posts={@posts} />
       <% :writing_detail -> %>
@@ -420,7 +420,11 @@ defmodule PersonalBrandWeb.PublicLive do
             <li :if={@project.demo_video_url}>
               <a href={@project.demo_video_url}>Video Demo</a>
             </li>
-            <li :if={@project.github_url}><a href={@project.github_url}>GitHub</a></li>
+            <li :if={@project.github_url}>
+              <a href={github_access_request_url(@profile_email, @project)}>
+                GitHub — request access
+              </a>
+            </li>
             <li :if={@project.app_store_url}><a href={@project.app_store_url}>App Store</a></li>
           </ul>
         </section>
@@ -627,10 +631,12 @@ defmodule PersonalBrandWeb.PublicLive do
   # ── Contact Page ─────────────────────────────────────────
 
   def contact_page(assigns) do
+    assigns = assign(assigns, :social_links, non_email_social_links(assigns.social_links))
+
     ~H"""
     <h1>Contact</h1>
     <p class="lead">
-      Let's connect. I'm always open to interesting conversations and collaborations.
+      I am open to remote Flutter Developer roles, mobile app work, and practical product collaborations.
     </p>
     <hr />
     <section>
@@ -662,8 +668,8 @@ defmodule PersonalBrandWeb.PublicLive do
     <section>
       <h2>Collaboration</h2>
       <p>
-        I'm interested in product collaborations, speaking opportunities, and building useful things together.
-        Feel free to reach out via email or social media.
+        Best fit: Flutter apps, mobile product engineering, iOS/Android conversations, and small useful products
+        that need someone who can move from idea to shipped implementation. Email is the best way to reach me.
       </p>
     </section>
     """
@@ -1029,6 +1035,25 @@ defmodule PersonalBrandWeb.PublicLive do
       [project.demo_url, project.demo_video_url, project.github_url, project.app_store_url],
       &present?/1
     )
+  end
+
+  defp github_access_request_url(profile_email, project)
+       when is_binary(profile_email) and profile_email != "" do
+    subject = URI.encode_query(%{subject: "GitHub access request: #{project.title}"})
+
+    body =
+      URI.encode_query(%{
+        body:
+          "Hi Nunu,\n\nI would like to request access to the GitHub repository for #{project.title}.\n\nThanks."
+      })
+
+    "mailto:#{profile_email}?#{subject}&#{body}"
+  end
+
+  defp github_access_request_url(_profile_email, _project), do: "/contact"
+
+  defp non_email_social_links(social_links) do
+    Enum.reject(social_links, fn {label, _url} -> String.downcase(to_string(label)) == "email" end)
   end
 
   defp video_media?(%{content_type: content_type, url: url}) do

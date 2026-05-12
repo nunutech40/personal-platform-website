@@ -167,6 +167,10 @@ defmodule PersonalBrandWeb.PublicLiveTest do
   end
 
   test "GET /work/:slug renders published case study detail", %{conn: conn} do
+    Repo.one!(SiteSetting)
+    |> Ecto.Changeset.change(%{profile_email: "hello@example.com"})
+    |> Repo.update!()
+
     insert_project(%{
       title: "Personal Platform Website",
       slug: "personal-platform-website",
@@ -184,6 +188,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       metrics: ["150 tests passing"],
       impact_summary: "Recruiter bisa membaca case study lebih cepat.",
       demo_video_url: "https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4",
+      github_url: "https://github.com/nunutech40/private-repo",
       tech_stack: ["Elixir", "Phoenix LiveView", "Backpex"],
       platforms: ["web"],
       disciplines: ["fullstack_engineering"]
@@ -204,6 +209,9 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "Gallery media penuh ditunda"
     assert html =~ "150 tests passing"
     assert html =~ "Video Demo"
+    assert html =~ "GitHub — request access"
+    assert html =~ "mailto:hello@example.com?subject=GitHub+access+request"
+    refute html =~ ~s(href="https://github.com/nunutech40/private-repo")
 
     assert html =~
              ~s(src="https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4")
