@@ -166,7 +166,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
 
     html = html_response(conn, 200)
     assert html =~ "Sparse Project"
-    assert html =~ "Results"
+    refute html =~ "Results"
     refute html =~ "Implementation Highlights"
   end
 

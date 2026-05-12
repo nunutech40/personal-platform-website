@@ -88,6 +88,8 @@ Jika edit melibatkan cover image atau demo link, cek README project di repo GitH
 ## Demo
 ## Video Demo
 **Demo:**
+**Live Demo:**
+**Video Demo:**
 ```
 
 Lihat detail konvensi di:
@@ -128,24 +130,27 @@ Jika user meminta ganti image:
 7. Save project.
 
 **Dari README project (GitHub raw URL):**
-1. Download gambar dari URL di README (bagian `## Screenshots` / `## Preview`).
-2. Buka `http://localhost:4000/admin/media/new`.
-3. Upload file yang sudah didownload.
-4. Isi alt text sesuai project.
-5. Save media.
-6. Kembali ke edit project, pilih media baru.
-7. Save project.
+1. Ambil gambar dari URL di README (bagian `## Screenshots` / `## Preview` / `## Cover`).
+2. Jika path masih relative terhadap repo, ubah menjadi raw GitHub URL sesuai branch project:
+   `https://raw.githubusercontent.com/<owner>/<repo>/<branch>/<path>`.
+3. Buka `http://localhost:4000/admin/media/new`.
+4. Jika raw URL publik tersedia, isi `URL`, `Filename`, `Content Type`, dan `Alt Text` tanpa download.
+5. Alternatif: download lalu upload jika raw URL tidak stabil atau asset tidak publik.
+6. Save media.
+7. Kembali ke edit project, pilih media baru.
+8. Save project.
 
 Jangan menghapus file asset user dari folder asal. Upload/copy ke storage lokal app harus lewat workflow media/admin yang tersedia.
 
-## Step 6 — Edit Demo URL
+## Step 6 — Edit Demo URL / Video Demo
 
-Jika README project menyediakan link video demo (dari tag `## Demo` / `## Video Demo` / `**Demo:**`):
+Jika README project menyediakan link demo:
 
-1. Copy link video dari README.
-2. Buka edit project di admin.
-3. Paste ke field `Link Demo / Live Site` (`demo_url`).
-4. Save.
+1. Copy live site/app demo ke field `Link Demo / Live Site` (`demo_url`).
+2. Copy video demo ke field `Link Video Demo` (`demo_video_url`).
+3. Direct `.mp4/.webm/.ogg/.mov` akan tampil inline di detail work.
+4. Google Drive, YouTube, atau GitHub release asset non-direct tetap tampil sebagai link.
+5. Save.
 
 ## Step 7 — Review Public Output
 
@@ -160,13 +165,20 @@ http://localhost:4000/work/<slug>
 Checklist review:
 
 - Homepage tetap tidak crash.
+- Homepage headline bukan placeholder/testing copy.
+- Navigation urut dan tidak membingungkan: Home, Work, Writing, Products, About, Now, Contact.
+- Primary recruiter path jelas: hero CTA dan Featured Work mengarah ke `/work`.
 - Project masih muncul/hilang sesuai `status`, `featured`, dan `sort_order`.
 - Detail page memakai copy terbaru.
+- Detail work dari atas sampai footer punya flow: breadcrumb → title/summary → facts → case study sections → evidence/results → links/media → footer.
 - Overview/problem/solution/trade-offs tidak kosong kalau seharusnya tampil.
+- Role, ownership, focus, stack, highlights, result/metrics menunjukkan pekerjaan nyata, bukan jargon.
+- Detail work tidak menampilkan section kosong seperti Results/Links tanpa isi.
 - Cover image baru tampil dan tidak merusak layout.
 - Link publik memakai slug yang benar.
 - Jika slug berubah, URL lama sudah tidak dipakai di handoff.
-- **demo_url** (video demo) muncul di bagian Links halaman detail.
+- `demo_url` muncul sebagai Live Demo jika ada.
+- `demo_video_url` muncul sebagai Video Demo; direct video file tampil inline.
 
 Kalau hasil belum sesuai, balik ke admin edit form, perbaiki, save, lalu cek ulang.
 
@@ -179,13 +191,14 @@ Edit selesai:
 - Project:
 - Slug:
 - Field yang diubah:
-- Cover image: <uploaded / unchanged / not available>
+- Cover image: <uploaded / external URL / unchanged / not available>
+- Demo live: <updated / unchanged / not available>
 - Demo video: <updated / unchanged / not available>
 - Status/featured/sort_order:
 - Public URL:
 
 Review:
-- Homepage:
+- Homepage/navigation:
 - Work list:
 - Detail:
 - Catatan/risiko:

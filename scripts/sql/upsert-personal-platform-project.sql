@@ -30,6 +30,9 @@ INSERT INTO projects (
   architecture_notes,
   tradeoffs,
   metrics,
+  demo_url,
+  demo_video_url,
+  github_url,
   case_study_visibility,
   sort_order,
   inserted_at,
@@ -81,11 +84,14 @@ INSERT INTO projects (
   'Boundary utama berada di Content context dan Ecto schema. Public LiveView membaca data published berdasarkan slug/filter, sementara Backpex resource mengelola admin CRUD melalui changeset yang sama. Media, site settings, dan themes dipisahkan sebagai resource sendiri agar content data tidak tercampur dengan presentation state.',
   'Taxonomy project memakai array field terlebih dulu agar cepat dipakai untuk job search dan filtering. Ini trade-off yang lebih praktis untuk MVP dibanding langsung membuat taxonomy table penuh. Backpex dipakai untuk mempercepat CMS, lalu UX admin dipoles bertahap dengan custom renderer dan form controls.',
   ARRAY[
-    '195 automated tests passing after reset workflow fix.',
+    '208 automated tests passing across content, admin, auth, and public rendering.',
     'Core public portfolio routes: /work and /work/personal-platform-website.',
     'Admin coverage: project CRUD plus posts, products, media, settings, and themes.',
-    'Local reset command: ./scripts/reset-local-db.sh --yes --with-uploads.'
+    'Local workflow supports reset, migration, media upload, external media URLs, and recruiter-focused project editing.'
   ],
+  NULL,
+  NULL,
+  'https://github.com/nunutech40/personal-platform-website',
   'public',
   0,
   NOW(),
@@ -114,6 +120,9 @@ ON CONFLICT (slug) DO UPDATE SET
   architecture_notes = EXCLUDED.architecture_notes,
   tradeoffs = EXCLUDED.tradeoffs,
   metrics = EXCLUDED.metrics,
+  demo_url = EXCLUDED.demo_url,
+  demo_video_url = EXCLUDED.demo_video_url,
+  github_url = EXCLUDED.github_url,
   case_study_visibility = EXCLUDED.case_study_visibility,
   sort_order = EXCLUDED.sort_order,
   updated_at = NOW();

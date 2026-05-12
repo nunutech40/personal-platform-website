@@ -13,7 +13,7 @@ defmodule PersonalBrandWeb.PublicLive do
     socket =
       assign(socket,
         site_name: settings.site_name,
-        profile_name: settings.profile_name,
+        profile_name: settings.profile_name || settings.site_name,
         profile_title: settings.profile_title,
         profile_bio: settings.profile_bio,
         profile_email: settings.profile_email,
@@ -324,7 +324,7 @@ defmodule PersonalBrandWeb.PublicLive do
     <div class="case-study-layout">
       <article class="case-study">
         <h1>{@project.title}</h1>
-        <p class="tagline">{@project.summary}</p>
+        <p :if={present?(@project.summary)} class="tagline">{@project.summary}</p>
 
         <dl class="project-facts" aria-label="Project facts">
           <div>
@@ -351,11 +351,11 @@ defmodule PersonalBrandWeb.PublicLive do
             <dt>Period</dt>
             <dd>{@project.duration || @project.year || "Not specified"}</dd>
           </div>
-          <div>
+          <div :if={project_badges(@project) != []}>
             <dt>Focus</dt>
             <dd>{Enum.join(project_badges(@project), ", ")}</dd>
           </div>
-          <div>
+          <div :if={list_present?(@project.tech_stack)}>
             <dt>Stack</dt>
             <dd>{Enum.join(@project.tech_stack || [], ", ")}</dd>
           </div>
@@ -376,7 +376,7 @@ defmodule PersonalBrandWeb.PublicLive do
             <li :for={item <- list_value(@project.technical_highlights)}>{item}</li>
           </ul>
         </section>
-        <section class="detail-section">
+        <section :if={project_results?(@project)} class="detail-section">
           <h2>Results</h2>
           <ul class="evidence-list">
             <li :if={@project.impact_summary}>{@project.impact_summary}</li>
@@ -384,7 +384,7 @@ defmodule PersonalBrandWeb.PublicLive do
             <li :for={item <- list_value(@project.metrics)}>{item}</li>
           </ul>
         </section>
-        <section class="detail-section">
+        <section :if={project_links?(@project)} class="detail-section">
           <h2>Links</h2>
           <ul>
             <li :if={@project.demo_url}><a href={@project.demo_url}>Live Demo</a></li>
@@ -872,6 +872,18 @@ defmodule PersonalBrandWeb.PublicLive do
   defp list_value(_value), do: []
 
   defp list_present?(value), do: list_value(value) != []
+
+  defp project_results?(project) do
+    present?(project.impact_summary) or list_present?(project.result) or
+      list_present?(project.metrics)
+  end
+
+  defp project_links?(project) do
+    Enum.any?(
+      [project.demo_url, project.demo_video_url, project.github_url, project.app_store_url],
+      &present?/1
+    )
+  end
 
   defp video_media?(%{content_type: content_type, url: url}) do
     (is_binary(content_type) and String.starts_with?(content_type, "video/")) or

@@ -3,8 +3,8 @@
     <header class="site-header">
       <div>
         <p class="site-title"><a href="/">{@profile_name}</a></p>
-        <p class="tagline">{@profile_title}</p>
-        <div class="social-links">
+        <p :if={present?(@profile_title)} class="tagline">{@profile_title}</p>
+        <div :if={@ordered_social_links != []} class="social-links">
           <%= for {{label, url}, index} <- Enum.with_index(@ordered_social_links) do %>
             <span :if={index > 0}>|</span>
             <a href={url}>{label}</a>
@@ -27,7 +27,7 @@
     </main>
     <footer class="footer">
       <hr />
-      <div class="footer-connect">
+      <div :if={@ordered_social_links != []} class="footer-connect">
         <strong>Let's connect:</strong>
         <div class="footer-links">
           <%= for {{label, url}, index} <- Enum.with_index(@ordered_social_links) do %>

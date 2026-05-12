@@ -172,6 +172,16 @@ Untuk detail lengkap, ikuti:
 docs/workflows/PROJECT_ARTICULATION_WORKFLOW.md
 ```
 
+### Reviewer Lens untuk Recruiter
+
+Sebelum input, pastikan draft bisa dijawab cepat oleh pembaca:
+
+- 5 detik pertama: recruiter tahu role, platform, dan seniority signal.
+- 30 detik pertama: recruiter tahu problem, ownership, architecture decision, dan impact.
+- Evidence: `technical_highlights`, `result`, `metrics`, `github_url`, `demo_url`, atau `demo_video_url` tidak dibiarkan kosong jika project punya bukti publik.
+- Jangan isi stack terlalu luas. Hanya teknologi yang benar-benar dipakai dan membantu positioning.
+- Untuk partner/customer, copy harus tetap aman: jangan expose credential, client secret, detail proprietary, atau angka internal yang tidak boleh dibuka.
+
 ## Step 4 — Input via Browser
 
 Alur manual browser:
@@ -219,6 +229,10 @@ http://localhost:4000/work/<slug>
 Checklist review:
 
 - Homepage tidak crash dan project tampil jika memang featured/published.
+- Homepage headline bukan placeholder/testing copy.
+- Navigation urut dan tidak membingungkan: Home, Work, Writing, Products, About, Now, Contact.
+- Primary path untuk recruiter jelas: header/nav, hero CTA, dan Featured Work mengarah ke `/work`.
+- Social/contact link yang tampil memang bisa diklik dan sesuai persona publik.
 - Judul dan summary enak discan.
 - Role dan ownership langsung jelas.
 - Problem tidak generik.
@@ -226,6 +240,8 @@ Checklist review:
 - Stack tidak berlebihan.
 - Highlight teknis tampil sebagai bukti, bukan jargon.
 - Result/metrics tidak mengarang.
+- Detail work tidak menampilkan section kosong seperti Results/Links tanpa isi.
+- Detail work dari atas sampai footer punya flow: breadcrumb → title/summary → facts → case study sections → evidence/results → links/media → footer.
 - Case study aman untuk publik.
 - Link preview/detail bekerja.
 - Cover image tampil jika sudah dipilih; kalau belum ada, fallback visual tidak merusak layout.

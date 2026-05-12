@@ -253,4 +253,7 @@ defmodule PersonalBrandWeb.Layouts do
       current_path -> current_path == path or String.starts_with?(current_path, path <> "/")
     end
   end
+
+  defp present?(value) when is_binary(value), do: String.trim(value) != ""
+  defp present?(value), do: not is_nil(value)
 end
