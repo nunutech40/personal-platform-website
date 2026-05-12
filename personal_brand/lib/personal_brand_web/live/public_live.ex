@@ -388,9 +388,19 @@ defmodule PersonalBrandWeb.PublicLive do
           <h2>Links</h2>
           <ul>
             <li :if={@project.demo_url}><a href={@project.demo_url}>Live Demo</a></li>
+            <li :if={@project.demo_video_url}>
+              <a href={@project.demo_video_url}>Video Demo</a>
+            </li>
             <li :if={@project.github_url}><a href={@project.github_url}>GitHub</a></li>
             <li :if={@project.app_store_url}><a href={@project.app_store_url}>App Store</a></li>
           </ul>
+        </section>
+        <section :if={direct_video_url?(@project.demo_video_url)} class="detail-section">
+          <h2>Video Demo</h2>
+          <video class="demo-video" controls preload="metadata">
+            <source src={@project.demo_video_url} />
+            <a href={@project.demo_video_url}>Open video demo</a>
+          </video>
         </section>
       </article>
       <aside class="case-study-side">
@@ -690,7 +700,14 @@ defmodule PersonalBrandWeb.PublicLive do
     ~H"""
     <figure class="media-frame">
       <%= if assigns[:media] do %>
-        <img src={@media.url} alt={@media.alt_text || @text} />
+        <%= if video_media?(@media) do %>
+          <video controls preload="metadata">
+            <source src={@media.url} type={@media.content_type} />
+            <a href={@media.url}>Open media</a>
+          </video>
+        <% else %>
+          <img src={@media.url} alt={@media.alt_text || @text} />
+        <% end %>
         <figcaption>{@text}</figcaption>
       <% else %>
         <div class="mock-visual" role="img" aria-label={@text}>
@@ -855,6 +872,26 @@ defmodule PersonalBrandWeb.PublicLive do
   defp list_value(_value), do: []
 
   defp list_present?(value), do: list_value(value) != []
+
+  defp video_media?(%{content_type: content_type, url: url}) do
+    (is_binary(content_type) and String.starts_with?(content_type, "video/")) or
+      direct_video_url?(url)
+  end
+
+  defp video_media?(_media), do: false
+
+  defp direct_video_url?(url) when is_binary(url) do
+    path =
+      url
+      |> URI.parse()
+      |> Map.get(:path)
+      |> to_string()
+      |> String.downcase()
+
+    String.ends_with?(path, [".mp4", ".webm", ".ogg", ".mov"])
+  end
+
+  defp direct_video_url?(_url), do: false
 
   defp map_value(value) when is_map(value), do: value
   defp map_value(_value), do: %{}

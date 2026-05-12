@@ -17,6 +17,7 @@ defmodule PersonalBrand.Content.ProjectTest do
     status: "draft",
     featured: false,
     demo_url: nil,
+    demo_video_url: nil,
     github_url: nil,
     app_store_url: nil,
     project_type: "personal_project",
@@ -183,6 +184,12 @@ defmodule PersonalBrand.Content.ProjectTest do
       refute changeset.valid?
     end
 
+    test "rejects demo_video_url without http scheme" do
+      attrs = %{@valid_attrs | demo_video_url: "videos/demo.mp4"}
+      changeset = Project.changeset(%Project{}, attrs)
+      refute changeset.valid?
+    end
+
     test "rejects app_store_url without http scheme" do
       attrs = %{@valid_attrs | app_store_url: "apps.apple.com/app/example"}
       changeset = Project.changeset(%Project{}, attrs)
@@ -201,6 +208,17 @@ defmodule PersonalBrand.Content.ProjectTest do
       assert changeset.valid?
     end
 
+    test "accepts demo_video_url with https" do
+      attrs = %{
+        @valid_attrs
+        | demo_video_url:
+            "https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4"
+      }
+
+      changeset = Project.changeset(%Project{}, attrs)
+      assert changeset.valid?
+    end
+
     test "accepts app_store_url with https" do
       attrs = %{@valid_attrs | app_store_url: "https://apps.apple.com/app/example"}
       changeset = Project.changeset(%Project{}, attrs)
@@ -208,10 +226,18 @@ defmodule PersonalBrand.Content.ProjectTest do
     end
 
     test "allows blank optional URLs from admin forms" do
-      attrs = %{@valid_attrs | demo_url: "", github_url: "", app_store_url: ""}
+      attrs = %{
+        @valid_attrs
+        | demo_url: "",
+          demo_video_url: "",
+          github_url: "",
+          app_store_url: ""
+      }
+
       changeset = Project.changeset(%Project{}, attrs)
       assert changeset.valid?
       assert get_field(changeset, :demo_url) == nil
+      assert get_field(changeset, :demo_video_url) == nil
       assert get_field(changeset, :github_url) == nil
       assert get_field(changeset, :app_store_url) == nil
     end

@@ -63,7 +63,7 @@ defmodule PersonalBrandWeb.Admin.MediaResource do
         max_entries: 1,
         max_file_size: 20_000_000,
         help_text:
-          "Upload maksimal 20MB. Setelah upload, lengkapi filename dan alt text agar mudah dipakai sebagai cover/media.",
+          "Upload maksimal 20MB. Link publik, filename, content type, size, dan storage path akan diisi otomatis. Untuk media dari GitHub/raw URL, kosongkan upload dan isi URL manual di Metadata.",
         put_upload_change: &put_upload_change/6,
         consume_upload: &consume_upload/4,
         remove_uploads: &remove_uploads/3,
@@ -107,8 +107,10 @@ defmodule PersonalBrandWeb.Admin.MediaResource do
       url: %{
         module: Backpex.Fields.Text,
         label: "URL",
-        placeholder: "/uploads/media/example.png",
-        help_text: "URL publik. Upload lokal memakai /uploads/media/...",
+        placeholder:
+          "https://raw.githubusercontent.com/nunutech40/repo/main/docs/assets/cover.png",
+        help_text:
+          "URL publik yang dipakai frontend. Upload lokal memakai /uploads/media/...; external image/video boleh pakai https:// dari GitHub raw, release asset, CDN, atau storage publik.",
         render: &render_file_link/1,
         index_column_class: "min-w-80",
         panel: :metadata
@@ -194,17 +196,18 @@ defmodule PersonalBrandWeb.Admin.MediaResource do
       |> assign(:url, assigns.item.url)
       |> assign(:content_type, assigns.item.content_type || "")
       |> assign(:alt_text, assigns.item.alt_text || assigns.item.filename || "Media preview")
+      |> assign(:image_media, image_media?(assigns.item))
 
     ~H"""
     <div class="h-16 w-24 overflow-hidden rounded border border-slate-200 bg-slate-50">
       <img
-        :if={String.starts_with?(@content_type, "image/") and @url}
+        :if={@image_media and @url}
         src={@url}
         alt={@alt_text}
         class="h-full w-full object-cover"
       />
       <div
-        :if={!String.starts_with?(@content_type, "image/") or !@url}
+        :if={!@image_media or !@url}
         class="flex h-full items-center justify-center px-2 text-center text-xs text-slate-500"
       >
         File
@@ -255,6 +258,25 @@ defmodule PersonalBrandWeb.Admin.MediaResource do
   defp format_size(value) when is_integer(value), do: "#{value} B"
   defp format_size(_value), do: "-"
 
+  defp image_media?(%{content_type: content_type, url: url}) do
+    (is_binary(content_type) and String.starts_with?(content_type, "image/")) or image_url?(url)
+  end
+
+  defp image_media?(_media), do: false
+
+  defp image_url?(url) when is_binary(url) do
+    path =
+      url
+      |> URI.parse()
+      |> Map.get(:path)
+      |> to_string()
+      |> String.downcase()
+
+    String.ends_with?(path, [".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif"])
+  end
+
+  defp image_url?(_url), do: false
+
   # ── Upload Callbacks ─────────────────────────────────────
 
   defp list_existing_files(%{file_path: file_path}) when is_binary(file_path) and file_path != "",
@@ -271,12 +293,18 @@ defmodule PersonalBrandWeb.Admin.MediaResource do
         :insert -> elem(uploaded_entries, 0)
       end
 
-    files = existing_files ++ Enum.map(new_entries, fn entry -> entry.client_name end)
+    files = existing_files ++ Enum.map(new_entries, &stored_file_path/1)
 
-    case files do
-      [file] -> Map.put(params, "file_path", file)
-      [_file | _other_files] -> Map.put(params, "file_path", "too_many_files")
-      [] -> Map.put(params, "file_path", "")
+    params =
+      case files do
+        [file] -> Map.put(params, "file_path", file)
+        [_file | _other_files] -> Map.put(params, "file_path", "too_many_files")
+        [] -> Map.put(params, "file_path", "")
+      end
+
+    case new_entries do
+      [entry | _entries] -> put_upload_metadata(params, entry)
+      [] -> params
     end
   end
 
@@ -292,4 +320,28 @@ defmodule PersonalBrandWeb.Admin.MediaResource do
       MediaStorage.delete(file_path)
     end
   end
+
+  defp put_upload_metadata(params, entry) do
+    filename = stored_filename(entry)
+    file_path = stored_file_path(entry)
+
+    params
+    |> Map.put_new("filename", entry.client_name)
+    |> put_blank("filename", entry.client_name)
+    |> Map.put("url", MediaStorage.public_url(filename))
+    |> Map.put("file_path", file_path)
+    |> Map.put("content_type", entry.client_type)
+    |> Map.put("size", entry.client_size)
+  end
+
+  defp put_blank(params, key, value) do
+    if Map.get(params, key) in [nil, ""] do
+      Map.put(params, key, value)
+    else
+      params
+    end
+  end
+
+  defp stored_filename(entry), do: MediaStorage.generate_filename(entry)
+  defp stored_file_path(entry), do: Path.join("uploads/media", stored_filename(entry))
 end

@@ -18,6 +18,7 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     assert html =~ "Upload"
     assert html =~ "Metadata"
     assert html =~ "Upload maksimal 20MB"
+    assert html =~ "external image/video"
     assert html =~ "Alt Text"
     assert html =~ "Storage Path"
   end
@@ -34,6 +35,22 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     assert html =~ ~s(href="/admin/media/#{media.id}/edit")
     assert html =~ ~s(href="/uploads/media/cover.png")
     assert html =~ ~s(phx-value-action-key="delete")
+  end
+
+  test "GET /admin/media previews external image URL without content type", %{conn: conn} do
+    insert_media(%{
+      filename: "github-cover.png",
+      content_type: nil,
+      url: "https://raw.githubusercontent.com/nunutech40/repo/main/docs/assets/cover.png"
+    })
+
+    {:ok, _view, html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/media")
+
+    assert html =~
+             ~s(src="https://raw.githubusercontent.com/nunutech40/repo/main/docs/assets/cover.png")
   end
 
   test "GET /admin/site-settings/new renders standardized settings form", %{conn: conn} do

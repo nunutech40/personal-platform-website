@@ -132,6 +132,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       technical_highlights: ["Auto slug", "Admin CRUD"],
       metrics: ["150 tests passing"],
       impact_summary: "Recruiter bisa membaca case study lebih cepat.",
+      demo_video_url: "https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4",
       platforms: ["web"],
       disciplines: ["fullstack_engineering"]
     })
@@ -144,6 +145,10 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "Technical Approach"
     assert html =~ "Trade-offs"
     assert html =~ "150 tests passing"
+    assert html =~ "Video Demo"
+
+    assert html =~
+             ~s(src="https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4")
   end
 
   test "GET /work/:slug handles sparse optional list fields", %{conn: conn} do
@@ -212,6 +217,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       year: "2026",
       status: "published",
       featured: false,
+      demo_video_url: nil,
       project_type: "personal_project",
       platforms: ["web"],
       disciplines: ["fullstack_engineering"],

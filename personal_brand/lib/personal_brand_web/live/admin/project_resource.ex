@@ -345,7 +345,15 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         label: "Link Demo / Live Site",
         placeholder: "https://nununugraha.dev/work/personal-platform-website",
         help_text:
-          "URL demo atau live site. Harus dimulai dengan http:// atau https://. Opsional.",
+          "URL demo/live site interaktif. Harus dimulai dengan http:// atau https://. Opsional.",
+        panel: :media_links
+      },
+      demo_video_url: %{
+        module: Backpex.Fields.Text,
+        label: "Link Video Demo",
+        placeholder: "https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4",
+        help_text:
+          "URL video demo publik. Bisa raw GitHub release/raw file, Google Drive, YouTube, atau link publik lain. Direct .mp4/.webm akan tampil sebagai video di detail project.",
         panel: :media_links
       },
       github_url: %{

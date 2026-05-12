@@ -46,6 +46,7 @@ defmodule PersonalBrand.Content.Project do
     field :status, :string, default: "draft"
     field :featured, :boolean, default: false
     field :demo_url, :string
+    field :demo_video_url, :string
     field :github_url, :string
     belongs_to :cover_image, PersonalBrand.Content.Media
     field :project_type, :string
@@ -119,6 +120,7 @@ defmodule PersonalBrand.Content.Project do
       :status,
       :featured,
       :demo_url,
+      :demo_video_url,
       :github_url,
       :cover_image_id,
       :project_type,
@@ -157,6 +159,9 @@ defmodule PersonalBrand.Content.Project do
     |> validate_format(:demo_url, ~r/^https?:\/\//,
       message: "must start with http:// or https://"
     )
+    |> validate_format(:demo_video_url, ~r/^https?:\/\//,
+      message: "must start with http:// or https://"
+    )
     |> validate_format(:github_url, ~r/^https?:\/\//,
       message: "must start with http:// or https://"
     )
@@ -177,6 +182,7 @@ defmodule PersonalBrand.Content.Project do
     |> normalize_list_textarea(:technical_highlights)
     |> normalize_list_textarea(:metrics)
     |> normalize_blank_value(:demo_url)
+    |> normalize_blank_value(:demo_video_url)
     |> normalize_blank_value(:github_url)
     |> normalize_blank_value(:app_store_url)
   end
