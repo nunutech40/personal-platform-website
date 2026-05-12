@@ -40,6 +40,48 @@ Untuk hemat token, pakai workflow:
 docs/workflows/FETCH_PROJECT_CONTEXT_WORKFLOW.md
 ```
 
+### Konvensi README Project
+
+README setiap project portfolio harus menyertakan dua bagian ini agar AI bisa otomatis mengambil cover image dan demo link:
+
+**Cover Image** — gunakan salah satu format berikut di README:
+
+```markdown
+## Screenshots
+
+![Project Name](https://raw.githubusercontent.com/nunutech40/<repo>/main/<path>/cover.png)
+```
+
+Atau:
+
+```markdown
+## Preview
+
+![Project Name](docs/assets/cover.png)
+```
+
+Tag yang dideteksi AI: `## Screenshots`, `## Preview`, atau `## Cover`
+
+**Demo / Video** — gunakan format berikut:
+
+```markdown
+## Demo
+
+**Live Demo:** https://drive.google.com/file/d/<file-id>/view
+```
+
+Atau:
+
+```markdown
+## Video Demo
+
+[Watch demo](https://drive.google.com/file/d/<file-id>/view)
+```
+
+Tag yang dideteksi AI: `## Demo`, `## Video Demo`, atau `**Demo:**`
+
+> **Catatan:** Video demo bisa diupload ke Google Drive atau sebagai release asset di GitHub. Pastikan link bisa diakses publik (viewable by anyone with the link).
+
 ## Step 2 — Artikulasi Dulu, Baru Input
 
 Buat draft isi field sebelum mengetik di browser.
@@ -71,6 +113,13 @@ case_study_visibility
 status
 featured
 sort_order
+```
+
+Field tambahan yang diisi dari README:
+
+```txt
+demo_url       → dari bagian Demo / Video Demo di README
+cover_image    → upload dari gambar di bagian Screenshots / Preview README
 ```
 
 Kalau project proprietary:
@@ -121,8 +170,15 @@ Alur manual browser:
    - `status = Published`
    - `featured = ON` untuk project prioritas
    - `sort_order` makin kecil makin atas
-9. Save.
-10. Klik preview atau buka `/work/<slug>`.
+9. **Upload cover image** (jika README menyediakan):
+   - Buka `http://localhost:4000/admin/media/new`
+   - Upload file gambar dari README (download dulu dari GitHub raw URL)
+   - Isi alt text sesuai project
+   - Save media
+   - Kembali ke form project, pilih media di field `Gambar Cover`
+10. **Isi demo_url** dari link video di README.
+11. Save.
+12. Klik preview atau buka `/work/<slug>`.
 
 ## Step 5 — Review Public Output
 
@@ -148,6 +204,7 @@ Checklist review:
 - Link preview/detail bekerja.
 - Cover image tampil jika sudah dipilih; kalau belum ada, fallback visual tidak merusak layout.
 - Jika ada data kosong, halaman tetap menampilkan empty state yang masuk akal, bukan error.
+- **demo_url** (video demo) muncul di bagian Links halaman detail.
 
 Kalau ada yang belum sesuai, AI harus kembali ke admin edit form, perbaiki field terkait, save lagi, lalu ulangi review URL di atas.
 
@@ -172,6 +229,8 @@ Input selesai:
 - Status:
 - Featured/sort_order:
 - Public URL:
+- Cover image: <uploaded / not available>
+- Demo video: <link from README / not available>
 
 Review:
 - Yang sudah bagus:

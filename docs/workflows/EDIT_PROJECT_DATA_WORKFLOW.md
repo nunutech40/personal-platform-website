@@ -70,6 +70,32 @@ Untuk copy recruiter-facing, ikuti:
 docs/workflows/PROJECT_ARTICULATION_WORKFLOW.md
 ```
 
+### Konvensi README Project (untuk referensi cover image & demo)
+
+Jika edit melibatkan cover image atau demo link, cek README project di repo GitHub masing-masing. README harus menyertakan:
+
+**Cover Image** — dideteksi dari tag:
+
+```markdown
+## Screenshots
+## Preview
+## Cover
+```
+
+**Demo / Video** — dideteksi dari tag:
+
+```markdown
+## Demo
+## Video Demo
+**Demo:**
+```
+
+Lihat detail konvensi di:
+
+```txt
+docs/workflows/INPUT_PROJECT_DATA_WORKFLOW.md
+```
+
 ## Step 4 — Edit via Admin
 
 Alur browser:
@@ -88,10 +114,11 @@ Alur browser:
 8. Untuk taxonomy, pakai checkbox `Platform` dan `Keahlian / Discipline`.
 9. Save.
 
-## Step 5 — Edit Cover Image dari Asset Lokal
+## Step 5 — Edit Cover Image dari Asset Lokal atau README
 
-Jika user meminta ganti image dari folder tertentu:
+Jika user meminta ganti image:
 
+**Dari folder lokal:**
 1. Pastikan file asset ada dan formatnya cocok untuk web (`.jpg`, `.jpeg`, `.png`, `.webp`, atau `.gif`).
 2. Buka `http://localhost:4000/admin/media/new`.
 3. Upload file tersebut atau isi metadata media sesuai form.
@@ -100,9 +127,27 @@ Jika user meminta ganti image dari folder tertentu:
 6. Pilih media baru di field cover image.
 7. Save project.
 
+**Dari README project (GitHub raw URL):**
+1. Download gambar dari URL di README (bagian `## Screenshots` / `## Preview`).
+2. Buka `http://localhost:4000/admin/media/new`.
+3. Upload file yang sudah didownload.
+4. Isi alt text sesuai project.
+5. Save media.
+6. Kembali ke edit project, pilih media baru.
+7. Save project.
+
 Jangan menghapus file asset user dari folder asal. Upload/copy ke storage lokal app harus lewat workflow media/admin yang tersedia.
 
-## Step 6 — Review Public Output
+## Step 6 — Edit Demo URL
+
+Jika README project menyediakan link video demo (dari tag `## Demo` / `## Video Demo` / `**Demo:**`):
+
+1. Copy link video dari README.
+2. Buka edit project di admin.
+3. Paste ke field `Link Demo / Live Site` (`demo_url`).
+4. Save.
+
+## Step 7 — Review Public Output
 
 Setelah save, wajib cek:
 
@@ -121,10 +166,11 @@ Checklist review:
 - Cover image baru tampil dan tidak merusak layout.
 - Link publik memakai slug yang benar.
 - Jika slug berubah, URL lama sudah tidak dipakai di handoff.
+- **demo_url** (video demo) muncul di bagian Links halaman detail.
 
 Kalau hasil belum sesuai, balik ke admin edit form, perbaiki, save, lalu cek ulang.
 
-## Step 7 — Handoff Note
+## Step 8 — Handoff Note
 
 Setelah edit selesai, lapor:
 
@@ -133,7 +179,8 @@ Edit selesai:
 - Project:
 - Slug:
 - Field yang diubah:
-- Cover image:
+- Cover image: <uploaded / unchanged / not available>
+- Demo video: <updated / unchanged / not available>
 - Status/featured/sort_order:
 - Public URL:
 
