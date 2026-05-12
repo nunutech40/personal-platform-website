@@ -126,7 +126,11 @@ Alur browser:
    - `metrics`
    Untuk `tech_stack`, pastikan teknologi/library penting benar-benar terisi karena detail work menampilkannya sebagai section `Tech & Libraries`.
 8. Untuk taxonomy, pakai checkbox `Platform` dan `Keahlian / Discipline`.
-9. Save.
+9. Jika perlu mengatur urutan berdasarkan tahun-bulan, isi `Tanggal Sortir` (`sort_date`) dengan format `YYYY-MM-DD`. Teks publik tetap ambil dari `duration` atau `year`.
+10. Untuk field panjang seperti Technical Approach, Architecture Notes, dan Trade-offs, pakai blank line untuk paragraf baru atau numbering `1.`, `2.`, `3.` untuk daftar keputusan. Jangan satukan banyak ide menjadi satu paragraf raksasa.
+11. Save.
+
+Catatan form: `tech_stack`, `result`, `technical_highlights`, dan `metrics` disimpan sebagai array dari textarea satu-item-per-baris. Workflow normal tidak perlu SQL workaround.
 
 ## Step 5 — Edit Cover Image dari Asset Lokal atau README
 

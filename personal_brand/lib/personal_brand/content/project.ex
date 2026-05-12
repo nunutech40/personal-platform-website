@@ -65,6 +65,7 @@ defmodule PersonalBrand.Content.Project do
     field :app_store_url, :string
     field :case_study_visibility, :string, default: "public"
     field :sort_order, :integer, default: 0
+    field :sort_date, :date
 
     many_to_many :tags, PersonalBrand.Content.Tag,
       join_through: "project_tags",
@@ -138,7 +139,8 @@ defmodule PersonalBrand.Content.Project do
       :metrics,
       :app_store_url,
       :case_study_visibility,
-      :sort_order
+      :sort_order,
+      :sort_date
     ])
     |> validate_required([:title, :slug, :status, :year])
     |> validate_length(:title, min: 2, max: 200)

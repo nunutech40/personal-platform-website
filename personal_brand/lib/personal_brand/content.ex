@@ -86,7 +86,7 @@ defmodule PersonalBrand.Content do
   # ── Projects ─────────────────────────────────────────────
 
   def list_projects do
-    Repo.all(from p in Project, order_by: [asc: p.sort_order, desc: p.year, desc: p.inserted_at])
+    Repo.all(from p in Project, order_by: ^project_order())
   end
 
   def list_project_field_values(field)
@@ -138,7 +138,7 @@ defmodule PersonalBrand.Content do
     Repo.all(
       from p in Project,
         where: p.status == "published",
-        order_by: [asc: p.sort_order, desc: p.year, desc: p.inserted_at]
+        order_by: ^project_order()
     )
     |> filter_projects_by(:discipline, discipline)
     |> filter_projects_by(:platform, platform)
@@ -148,7 +148,7 @@ defmodule PersonalBrand.Content do
     Repo.all(
       from p in Project,
         where: p.featured == true and p.status == "published",
-        order_by: [asc: p.sort_order, desc: p.year, desc: p.inserted_at]
+        order_by: ^project_order()
     )
   end
 
@@ -164,6 +164,15 @@ defmodule PersonalBrand.Content do
     project
     |> Project.changeset(attrs)
     |> Repo.update()
+  end
+
+  defp project_order do
+    [
+      asc: :sort_order,
+      desc_nulls_last: :sort_date,
+      desc: :year,
+      desc: :inserted_at
+    ]
   end
 
   def get_project_by_slug!(slug) do

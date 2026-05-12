@@ -33,13 +33,66 @@ defmodule PersonalBrand.ContentTest do
       project
     end
 
-    test "list_projects/0 returns all projects ordered by year desc" do
-      p1 = project_fixture(%{slug: "project-a", year: "2024", title: "Alpha", sort_order: 3})
-      p2 = project_fixture(%{slug: "project-b", year: "2026", title: "Beta", sort_order: 1})
-      p3 = project_fixture(%{slug: "project-c", year: "2025", title: "Gamma", sort_order: 2})
+    test "list_projects/0 returns all projects ordered by manual order then year/month" do
+      p1 =
+        project_fixture(%{
+          slug: "project-a",
+          year: "2024",
+          title: "Alpha",
+          sort_order: 3,
+          sort_date: ~D[2024-06-01]
+        })
+
+      p2 =
+        project_fixture(%{
+          slug: "project-b",
+          year: "2026",
+          title: "Beta",
+          sort_order: 1,
+          sort_date: ~D[2026-01-01]
+        })
+
+      p3 =
+        project_fixture(%{
+          slug: "project-c",
+          year: "2025",
+          title: "Gamma",
+          sort_order: 2,
+          sort_date: ~D[2025-04-01]
+        })
 
       projects = Content.list_projects()
       assert Enum.map(projects, & &1.id) == [p2.id, p3.id, p1.id]
+    end
+
+    test "list_published_projects/0 sorts same order projects by sort_date desc" do
+      older =
+        project_fixture(%{
+          slug: "older-project",
+          status: "published",
+          sort_order: 0,
+          sort_date: ~D[2024-01-01]
+        })
+
+      newer =
+        project_fixture(%{
+          slug: "newer-project",
+          status: "published",
+          sort_order: 0,
+          sort_date: ~D[2025-03-01]
+        })
+
+      no_month =
+        project_fixture(%{
+          slug: "no-month-project",
+          status: "published",
+          sort_order: 0,
+          year: "2026",
+          sort_date: nil
+        })
+
+      projects = Content.list_published_projects()
+      assert Enum.map(projects, & &1.id) == [newer.id, older.id, no_month.id]
     end
 
     test "list_published_projects/0 returns only published projects" do

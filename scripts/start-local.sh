@@ -8,9 +8,11 @@ set -e
 
 echo "=== Starting Personal Brand Platform ==="
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 POSTGRES_BIN="/opt/homebrew/opt/postgresql@16/bin"
 POSTGRES_DATA="/opt/homebrew/var/postgresql@16"
-APP_DIR="personal_brand"
+APP_DIR="$ROOT_DIR/personal_brand"
 PID_FILE="$APP_DIR/tmp/local-server.pid"
 LOG_FILE="$APP_DIR/tmp/local-server.log"
 DAEMON=false
@@ -49,7 +51,7 @@ fi
 
 echo "PostgreSQL: ✅ Running"
 
-PHX_PID=$(lsof -ti :4000 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
+PHX_PID=$(lsof -tiTCP:4000 -sTCP:LISTEN 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
 
 if [ -n "$PHX_PID" ]; then
   HTTP_CODE=$(curl --max-time 3 -s -o /dev/null -w "%{http_code}" http://localhost:4000 2>/dev/null || true)
@@ -63,7 +65,7 @@ if [ -n "$PHX_PID" ]; then
   kill $PHX_PID 2>/dev/null || true
   sleep 2
 
-  PHX_PID=$(lsof -ti :4000 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
+  PHX_PID=$(lsof -tiTCP:4000 -sTCP:LISTEN 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
 
   if [ -n "$PHX_PID" ]; then
     kill -9 $PHX_PID 2>/dev/null || true
@@ -103,17 +105,17 @@ echo ""
 
 if [ "$DAEMON" = true ]; then
   echo "Starting Phoenix detached from this shell..."
-  echo "Started detached Phoenix at $(date)" > "../$LOG_FILE"
+  echo "Started detached Phoenix at $(date)" > "$LOG_FILE"
   elixir --erl "-detached" -S mix phx.server
 
   for _ in $(seq 1 30); do
     HTTP_CODE=$(curl --max-time 3 -s -o /dev/null -w "%{http_code}" http://localhost:4000 2>/dev/null || true)
 
     if [ "$HTTP_CODE" = "200" ]; then
-      SERVER_PID=$(lsof -ti :4000 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
-      echo "$SERVER_PID" > "../$PID_FILE"
+      SERVER_PID=$(lsof -tiTCP:4000 -sTCP:LISTEN 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
+      echo "$SERVER_PID" > "$PID_FILE"
       echo "Phoenix: ✅ Running in background (PID: $SERVER_PID)"
-      echo "Log: $LOG_FILE"
+      echo "Log: personal_brand/tmp/local-server.log"
       exit 0
     fi
 
@@ -122,7 +124,7 @@ if [ "$DAEMON" = true ]; then
 
   echo "Phoenix: ❌ Failed to respond at http://localhost:4000"
   echo "Last log lines:"
-  tail -n 80 "../$LOG_FILE" || true
+  tail -n 80 "$LOG_FILE" || true
   exit 1
 fi
 

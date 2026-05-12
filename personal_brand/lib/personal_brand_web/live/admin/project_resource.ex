@@ -248,6 +248,14 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         help_text: "Durasi atau periode pengerjaan yang lebih spesifik dari tahun. Opsional.",
         panel: :identity
       },
+      sort_date: %{
+        module: Backpex.Fields.Date,
+        label: "Tanggal Sortir",
+        help_text:
+          "Tanggal untuk urutan tahun-bulan di Work. Isi awal project atau tanggal publish portfolio. Tidak tampil ke publik.",
+        except: [:index],
+        panel: :identity
+      },
       company: %{
         module: Backpex.Fields.Text,
         label: "Perusahaan",

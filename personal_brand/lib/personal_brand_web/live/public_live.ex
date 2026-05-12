@@ -330,7 +330,12 @@ defmodule PersonalBrandWeb.PublicLive do
       <div class="tag-list">
         <span :for={badge <- project_badges(@project)} class="tag">{badge}</span>
       </div>
-      <p class="meta">{Enum.join(@project.tech_stack || [], ", ")}</p>
+      <div :if={list_present?(@project.tech_stack)} class="stack-preview">
+        <span :for={tech <- stack_preview(@project.tech_stack)}>{tech}</span>
+        <span :if={stack_overflow_count(@project.tech_stack) > 0}>
+          +{stack_overflow_count(@project.tech_stack)} more
+        </span>
+      </div>
     </article>
     """
   end
@@ -776,10 +781,17 @@ defmodule PersonalBrandWeb.PublicLive do
   end
 
   def detail_section(assigns) do
+    assigns = assign(assigns, :blocks, detail_blocks(assigns[:body]))
+
     ~H"""
-    <section :if={present?(@body)} class="detail-section">
+    <section :if={@blocks != []} class="detail-section">
       <h2>{@title}</h2>
-      <p>{@body}</p>
+      <%= for block <- @blocks do %>
+        <p :if={block.type == :paragraph}>{block.text}</p>
+        <ol :if={block.type == :ordered_list} class="detail-ordered-list">
+          <li :for={item <- block.items}>{item}</li>
+        </ol>
+      <% end %>
     </section>
     """
   end
@@ -929,6 +941,83 @@ defmodule PersonalBrandWeb.PublicLive do
   defp list_value(_value), do: []
 
   defp list_present?(value), do: list_value(value) != []
+
+  defp stack_preview(value), do: value |> list_value() |> Enum.take(8)
+
+  defp stack_overflow_count(value) do
+    count = value |> list_value() |> length()
+    max(count - 8, 0)
+  end
+
+  defp detail_blocks(value) when is_binary(value) do
+    value
+    |> String.split(~r/\n{2,}/, trim: true)
+    |> Enum.flat_map(&detail_paragraph_blocks/1)
+  end
+
+  defp detail_blocks(_value), do: []
+
+  defp detail_paragraph_blocks(value) do
+    value = String.trim(value)
+
+    cond do
+      value == "" ->
+        []
+
+      Regex.match?(~r/(^|\s)\d+\.\s+/, value) ->
+        numbered_blocks(value)
+
+      String.length(value) > 420 ->
+        value
+        |> sentence_chunks()
+        |> Enum.map(&%{type: :paragraph, text: &1})
+
+      true ->
+        [%{type: :paragraph, text: value}]
+    end
+  end
+
+  defp numbered_blocks(value) do
+    parts = Regex.split(~r/\s+(?=\d+\.\s+)/, value, trim: true)
+
+    {intro, numbered_parts} =
+      case parts do
+        [first | rest] ->
+          if Regex.match?(~r/^\d+\.\s+/, first), do: {nil, parts}, else: {first, rest}
+
+        [] ->
+          {nil, []}
+      end
+
+    items =
+      numbered_parts
+      |> Enum.map(&String.replace(&1, ~r/^\d+\.\s+/, ""))
+      |> Enum.map(&String.trim/1)
+      |> Enum.reject(&(&1 == ""))
+
+    []
+    |> maybe_add_intro(intro)
+    |> maybe_add_ordered_list(items)
+  end
+
+  defp maybe_add_intro(blocks, intro) when is_binary(intro) and intro != "" do
+    blocks ++ [%{type: :paragraph, text: intro}]
+  end
+
+  defp maybe_add_intro(blocks, _intro), do: blocks
+
+  defp maybe_add_ordered_list(blocks, items) when items != [] do
+    blocks ++ [%{type: :ordered_list, items: items}]
+  end
+
+  defp maybe_add_ordered_list(blocks, _items), do: blocks
+
+  defp sentence_chunks(value) do
+    value
+    |> String.split(~r/(?<=[.!?])\s+/, trim: true)
+    |> Enum.chunk_every(2)
+    |> Enum.map(&Enum.join(&1, " "))
+  end
 
   defp project_results?(project) do
     present?(project.impact_summary) or list_present?(project.result) or

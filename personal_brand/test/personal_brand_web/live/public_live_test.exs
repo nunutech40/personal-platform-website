@@ -175,8 +175,10 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       description: "Platform personal untuk menampilkan work, writing, dan products.",
       problem: "Portfolio perlu mudah dikelola dari admin.",
       solution: "Menggunakan Phoenix LiveView, PostgreSQL, dan Backpex.",
-      architecture_notes: "Context layer menjaga query dan visibility rules.",
-      tradeoffs: "Taxonomy memakai array field untuk fase urgent.",
+      architecture_notes:
+        "Keputusan arsitektur kunci: 1. Content context menjaga query dan visibility rules. 2. Public LiveView membaca data published by slug.",
+      tradeoffs:
+        "Trade-off utama: 1. Taxonomy memakai array field untuk fase urgent. 2. Gallery media penuh ditunda.",
       ownership: "Solo full-stack builder",
       technical_highlights: ["Auto slug", "Admin CRUD"],
       metrics: ["150 tests passing"],
@@ -197,11 +199,46 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "Phoenix LiveView"
     assert html =~ "Backpex"
     assert html =~ "Trade-offs"
+    assert html =~ "<ol"
+    assert html =~ "Content context menjaga query"
+    assert html =~ "Gallery media penuh ditunda"
     assert html =~ "150 tests passing"
     assert html =~ "Video Demo"
 
     assert html =~
              ~s(src="https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4")
+  end
+
+  test "GET /work keeps stack preview compact on list", %{conn: conn} do
+    insert_project(%{
+      title: "Internak App",
+      slug: "internak-app",
+      status: "published",
+      summary: "Flutter app for livestock monitoring.",
+      tech_stack: [
+        "Flutter",
+        "Dart",
+        "Flutter BLoC",
+        "Go Router",
+        "Get It",
+        "REST API",
+        "Firebase Auth",
+        "OpenStreetMap",
+        "Google Maps",
+        "Geolocator"
+      ],
+      platforms: ["flutter"],
+      disciplines: ["flutter_development"]
+    })
+
+    html =
+      conn
+      |> get(~p"/work")
+      |> html_response(200)
+
+    assert html =~ "stack-preview"
+    assert html =~ "+2 more"
+    refute html =~ "Geolocator</span>"
   end
 
   test "GET /work/:slug handles sparse optional list fields", %{conn: conn} do

@@ -6,7 +6,9 @@
 
 echo "=== Stopping Personal Brand Platform ==="
 
-PID_FILE="personal_brand/tmp/local-server.pid"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PID_FILE="$ROOT_DIR/personal_brand/tmp/local-server.pid"
 STOP_POSTGRES=false
 
 if [ "${1:-}" = "--with-postgres" ]; then
@@ -16,7 +18,7 @@ elif [ "${1:-}" != "" ]; then
   exit 1
 fi
 
-PHX_PID=$(lsof -ti :4000 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
+PHX_PID=$(lsof -tiTCP:4000 -sTCP:LISTEN 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
 
 if [ -z "$PHX_PID" ] && [ -f "$PID_FILE" ]; then
   FILE_PID=$(cat "$PID_FILE" 2>/dev/null || true)
@@ -32,7 +34,7 @@ if [ -n "$PHX_PID" ]; then
   sleep 2
 
   # Force kill if still running
-  PHX_PID=$(lsof -ti :4000 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
+  PHX_PID=$(lsof -tiTCP:4000 -sTCP:LISTEN 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
 
   if [ -n "$PHX_PID" ]; then
     kill -9 $PHX_PID 2>/dev/null || true

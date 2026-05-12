@@ -10,8 +10,10 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 POSTGRES_BIN="/opt/homebrew/opt/postgresql@16/bin"
-APP_DIR="personal_brand"
+APP_DIR="$ROOT_DIR/personal_brand"
 DB_NAME="personal_brand_dev"
 RESET_UPLOADS=false
 SEED=false
@@ -76,7 +78,7 @@ if [ "$CONFIRMED" != true ]; then
 fi
 
 if [ ! -d "$APP_DIR" ]; then
-  echo "Error: run this script from the repository root."
+  echo "Error: Phoenix project not found. Run setup first."
   exit 1
 fi
 
@@ -104,12 +106,12 @@ if ! "$POSTGRES_BIN/pg_isready" -h localhost -p 5432 > /dev/null 2>&1; then
 fi
 
 PHX_WAS_RUNNING=false
-PHX_PID=$(lsof -ti :4000 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
+PHX_PID=$(lsof -tiTCP:4000 -sTCP:LISTEN 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
 
 if [ -n "$PHX_PID" ]; then
   PHX_WAS_RUNNING=true
   echo "Stopping Phoenix before dropping database (PID: $PHX_PID)..."
-  ./scripts/stop-local.sh
+  "$SCRIPT_DIR/stop-local.sh"
 fi
 
 cd "$APP_DIR"
@@ -131,9 +133,9 @@ if [ "$RESET_UPLOADS" = true ]; then
   mkdir -p priv/static/uploads
 
   while IFS= read -r file; do
-    repo_file="$APP_DIR/$file"
+    repo_file="personal_brand/$file"
 
-    if git -C .. ls-files --error-unmatch "$repo_file" > /dev/null 2>&1; then
+    if git -C "$ROOT_DIR" ls-files --error-unmatch "$repo_file" > /dev/null 2>&1; then
       echo "Keeping tracked upload: $repo_file"
     else
       rm -f "$file"
@@ -144,11 +146,11 @@ if [ "$RESET_UPLOADS" = true ]; then
   mkdir -p priv/static/uploads
 fi
 
-cd ..
+cd "$ROOT_DIR"
 
 if [ "$RESTART" = true ] && [ "$PHX_WAS_RUNNING" = true ]; then
   echo "Restarting Phoenix in daemon mode..."
-  ./scripts/start-local.sh --daemon
+  "$SCRIPT_DIR/start-local.sh" --daemon
 elif [ "$RESTART" = true ]; then
   echo "Phoenix was not running before reset, leaving it stopped."
 else

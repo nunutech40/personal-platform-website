@@ -321,6 +321,24 @@ li + li {
   color: var(--page);
 }
 
+.stack-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 7px;
+  max-width: 68ch;
+  margin-top: 10px;
+}
+
+.stack-preview span {
+  border: 1px solid #aaa39a;
+  background: var(--paper);
+  color: var(--muted);
+  padding: 1px 6px;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .breadcrumb {
   margin: 8px 0 18px;
 }
@@ -363,6 +381,20 @@ li + li {
   max-width: 72ch;
   font-size: 18px;
   line-height: 1.62;
+}
+
+.case-study .detail-section p + p {
+  margin-top: 14px;
+}
+
+.detail-ordered-list {
+  max-width: 72ch;
+  margin-top: 10px;
+  padding-left: 1.4em;
+}
+
+.detail-ordered-list li + li {
+  margin-top: 8px;
 }
 
 .project-facts {

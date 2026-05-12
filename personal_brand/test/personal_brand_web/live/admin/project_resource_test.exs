@@ -18,6 +18,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert html =~ "Pitch untuk Recruiter"
     assert html =~ "Isi Judul Project dulu"
     assert html =~ "Gambar Cover"
+    assert html =~ "Tanggal Sortir"
     assert html =~ "Pilih platform yang dipakai"
     assert html =~ ~s(name="change[platforms][]")
     assert html =~ ~s(value="web")
@@ -111,6 +112,8 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
 
     project = Repo.get_by!(Project, slug: "admin-crud-project")
     assert project.title == "Admin CRUD Project"
+    assert project.tech_stack == ["Elixir", "Phoenix LiveView"]
+    assert project.result == ["Result"]
     assert project.platforms == ["web"]
     assert project.disciplines == ["fullstack_engineering"]
   end
@@ -134,7 +137,12 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
         "slug" => "project-before-edit",
         "summary" => "Updated from admin edit form.",
         "status" => "published",
-        "featured" => "true"
+        "featured" => "true",
+        "tech_stack" => "Elixir\nPhoenix LiveView\nBackpex",
+        "result" => "Result A\nResult B",
+        "technical_highlights" => "Highlight A\nHighlight B",
+        "metrics" => "Metric A\nMetric B",
+        "sort_date" => "2025-03-01"
       })
 
     view
@@ -148,6 +156,11 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert updated.summary == "Updated from admin edit form."
     assert updated.status == "published"
     assert updated.featured
+    assert updated.tech_stack == ["Elixir", "Phoenix LiveView", "Backpex"]
+    assert updated.result == ["Result A", "Result B"]
+    assert updated.technical_highlights == ["Highlight A", "Highlight B"]
+    assert updated.metrics == ["Metric A", "Metric B"]
+    assert updated.sort_date == ~D[2025-03-01]
   end
 
   test "admin project index exposes delete action for projects", %{conn: conn} do

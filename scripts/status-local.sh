@@ -4,9 +4,11 @@
 
 echo "=== Personal Brand Platform Status ==="
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 POSTGRES_BIN="/opt/homebrew/opt/postgresql@16/bin"
-PID_FILE="personal_brand/tmp/local-server.pid"
-LOG_FILE="personal_brand/tmp/local-server.log"
+PID_FILE="$ROOT_DIR/personal_brand/tmp/local-server.pid"
+LOG_FILE="$ROOT_DIR/personal_brand/tmp/local-server.log"
 
 # Check PostgreSQL
 if $POSTGRES_BIN/pg_isready -h localhost -p 5432 > /dev/null 2>&1; then
@@ -15,17 +17,17 @@ else
   echo "PostgreSQL: ❌ Not running"
 fi
 
-# Check Phoenix server (by port 4000)
-PHX_PID=$(lsof -ti :4000 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
+# Check Phoenix server (by port 4000 listener only)
+PHX_PID=$(lsof -tiTCP:4000 -sTCP:LISTEN 2>/dev/null | tr '\n' ' ' | sed 's/[[:space:]]*$//' || true)
 if [ -n "$PHX_PID" ]; then
   echo "Phoenix:    ✅ Running (PID: $PHX_PID)"
 
   if [ -f "$PID_FILE" ]; then
-    echo "PID file:   $PID_FILE"
+    echo "PID file:   personal_brand/tmp/local-server.pid"
   fi
 
   if [ -f "$LOG_FILE" ]; then
-    echo "Log file:   $LOG_FILE"
+    echo "Log file:   personal_brand/tmp/local-server.log"
   fi
 
   # Check if responding

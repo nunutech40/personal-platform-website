@@ -194,6 +194,23 @@ Sebelum input, pastikan draft bisa dijawab cepat oleh pembaca:
 - Jangan isi stack terlalu luas. Hanya teknologi/library yang benar-benar dipakai atau disentuh dan membantu positioning.
 - Untuk partner/customer, copy harus tetap aman: jangan expose credential, client secret, detail proprietary, atau angka internal yang tidak boleh dibuka.
 
+### ⚠️ Aturan Intepretasi Disciplines dari README
+
+**Jangan asal menebak disciplines dari tech stack.** Disciplines harus diisi berdasarkan **jenis project yang sebenarnya**, bukan dari teknologi yang disebut di README.
+
+Aturan:
+
+| Jenis Project | Disciplines yang Tepat | Contoh Salah |
+|---|---|---|
+| Flutter mobile app (Android/iOS) | `flutter_development` saja | ❌ Jangan tambah `backend_engineering` hanya karena README menyebut REST API |
+| Phoenix LiveView web app | `full_stack_engineering`, `backend_engineering`, `frontend_engineering` | ❌ Jangan tambah `flutter_development` |
+| Backend API service | `backend_engineering`, `architecture` | ❌ Jangan tambah `frontend_engineering` |
+| iOS native app | `ios_development`, `mobile_lead` | ❌ Jangan tambah `android_development` |
+
+**Penyebab umum kesalahan:** README Flutter app sering menyebut "REST API", "backend", "Firebase" — ini adalah **integrasi/konsumsi**, bukan berarti project-nya backend engineering. Disciplines mencerminkan **peran kamu di project**, bukan daftar teknologi.
+
+> **Kasus real:** Internak App adalah Flutter mobile app. README menyebut REST API dan Firebase Auth. AI salah mengisi `backend_engineering` sebagai discipline karena mengintepretasi "REST API" sebagai backend. Padahal ini murni Flutter development — REST API hanya dikonsumsi, bukan dibangun.
+
 ## Step 4 — Input via Browser
 
 Alur manual browser:
@@ -214,6 +231,7 @@ Alur manual browser:
    - `status = Published`
    - `featured = ON` untuk project prioritas
    - `sort_order` makin kecil makin atas
+   - `sort_date` untuk urutan tahun-bulan, format `YYYY-MM-DD`. Pakai tanggal awal project, publish date, atau bulan dari GitHub evidence. Field ini tidak tampil publik; `duration` tetap dipakai untuk teks seperti `2024 - 2025`.
 9. **Input cover image** (jika README menyediakan):
    - Buka `http://localhost:4000/admin/media/new`
    - Untuk asset GitHub, tidak perlu download jika raw URL publik tersedia.
@@ -228,6 +246,31 @@ Alur manual browser:
    - `demo_video_url` untuk video demo dari README/GitHub/Drive/YouTube.
 11. Save.
 12. Klik preview atau buka `/work/<slug>`.
+
+Catatan form: `tech_stack`, `result`, `technical_highlights`, dan `metrics` disimpan sebagai array dari textarea satu-item-per-baris. Jangan ubah ke SQL workaround kecuali sedang repair data lama atau bulk import.
+
+### Penulisan Case Study yang Readable
+
+Field panjang seperti `description`, `problem`, `solution`, `architecture_notes`, dan `tradeoffs` boleh lebih dari satu paragraf.
+
+Gunakan pola ini:
+
+```txt
+Paragraf pertama menjelaskan konteks.
+
+Paragraf kedua menjelaskan keputusan atau detail teknis.
+```
+
+Untuk daftar keputusan, tulis dengan numbering eksplisit:
+
+```txt
+Keputusan arsitektur kunci:
+1. Pisahkan state UI ke ViewModel.
+2. Buat service layer stateless.
+3. Pakai NSTextView untuk payload besar.
+```
+
+Public detail akan merender blank line sebagai paragraf baru dan numbering sebagai ordered list. Hindari memasukkan 5 keputusan berbeda ke satu paragraf panjang.
 
 ## Step 5 — Review Public Output
 

@@ -346,9 +346,10 @@ Field project saat ini:
 | `tech_stack` | Teknologi/library per baris | Bisa diisi satu teknologi per baris di admin. Detail work menampilkannya sebagai `Tech & Libraries` supaya recruiter cepat melihat exposure stack. |
 | `year` | Tahun / periode | Contoh: `2025`, `2021-2024`. |
 | `duration` | Durasi/periode tampil | Lebih fleksibel dari `year`, contoh: `2021-2026`, `Contract project`. |
+| `sort_date` | Tanggal sortir internal | Format `YYYY-MM-DD`; dipakai untuk urutan tahun-bulan, tidak tampil publik. |
 | `status` | `draft`, `published`, `archived` | Hanya published yang ditampilkan publik. |
 | `featured` | Prioritas tampil | Untuk project penting di home/work. |
-| `sort_order` | Urutan manual | Angka lebih kecil tampil lebih dulu. |
+| `sort_order` | Urutan manual | Angka lebih kecil tampil lebih dulu; jika sama, `sort_date` paling baru tampil lebih atas. |
 | `impact_summary` | Ringkasan impact | Dipakai di card `/work` dan detail result. |
 | `technical_highlights` | Highlight teknis per baris | Dipakai untuk menunjukkan seniority. |
 | `metrics` | Metric/outcome per baris | Isi angka jika ada; boleh qualitative jika project proprietary. |
