@@ -5,7 +5,7 @@ defmodule PersonalBrand.Content.Project do
   @statuses ~w(draft published archived)
   @project_types ~w(professional_work client_work open_source personal_project architecture_demo internal_tool case_study)
   @platforms ~w(ios android flutter macos web backend cross_platform)
-  @disciplines ~w(mobile_developer flutter_developer ios_developer swift kotlin flutter android_developer backend_developer frontend_developer fullstack_developer)
+  @disciplines ~w(mobile_developer flutter_developer ios_developer swift kotlin flutter android_developer backend_developer frontend_developer fullstack_developer ai_automation cli_tooling)
   @case_study_visibilities ~w(public limited private_summary)
   @labels %{
     "ios" => "iOS",
@@ -21,6 +21,8 @@ defmodule PersonalBrand.Content.Project do
     "backend_developer" => "Backend Developer",
     "frontend_developer" => "Frontend Developer",
     "fullstack_developer" => "Full-Stack Developer",
+    "ai_automation" => "AI Automation",
+    "cli_tooling" => "CLI & Tooling",
     "professional_work" => "Professional Work",
     "client_work" => "Client Work",
     "open_source" => "Open Source",

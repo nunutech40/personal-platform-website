@@ -1003,6 +1003,16 @@ defmodule PersonalBrandWeb.PublicLive do
         key: {:discipline, "fullstack_developer"},
         label: "Full-Stack",
         href: "/work?discipline=fullstack_developer"
+      },
+      %{
+        key: {:discipline, "ai_automation"},
+        label: "AI Automation",
+        href: "/work?discipline=ai_automation"
+      },
+      %{
+        key: {:discipline, "cli_tooling"},
+        label: "CLI & Tooling",
+        href: "/work?discipline=cli_tooling"
       }
     ]
   end
