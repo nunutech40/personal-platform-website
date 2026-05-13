@@ -203,17 +203,45 @@ Aturan:
 
 | Jenis Project | Disciplines yang Tepat | Contoh Salah |
 |---|---|---|
-| Flutter mobile app (Android/iOS) | `flutter_developer` saja | ❌ Jangan tambah `backend_developer` hanya karena README menyebut REST API |
+| Flutter mobile app (Android/iOS) | `flutter_developer` + `mobile_developer` | ❌ Jangan tambah `backend_developer` hanya karena README menyebut REST API |
 | Phoenix LiveView web app | `fullstack_developer`, `backend_developer`, `frontend_developer` | ❌ Jangan tambah `flutter_developer` |
 | Backend API service | `backend_developer` | ❌ Jangan tambah `frontend_developer` |
-| iOS native app | `ios_developer`, `swift` | ❌ Jangan tambah `android_developer` |
-| macOS native app | `swift` | ❌ Jangan tambah `ios_developer` kecuali memang ada iOS target |
+| iOS native app | `ios_developer`, `swift`, `mobile_developer` | ❌ Jangan tambah `android_developer` |
+| macOS native app | `swift` | ❌ Jangan tambah `ios_developer` atau `mobile_developer` — macOS bukan mobile |
 | AI bot / automated workflow (pakai LLM) | `ai_automation` + `backend_developer` | ❌ Jangan tambah `frontend_developer` |
 | CLI tool / shell script / DevOps utility | `cli_tooling` | ❌ Jangan tambah `mobile_developer` hanya karena tool-nya untuk mobile workflow |
 
 **Penyebab umum kesalahan:** README Flutter app sering menyebut "REST API", "backend", "Firebase" — ini adalah **integrasi/konsumsi**, bukan berarti project-nya backend engineering. Disciplines mencerminkan **peran kamu di project**, bukan daftar teknologi.
 
 > **Kasus real:** Internak App adalah Flutter mobile app. README menyebut REST API dan Firebase Auth. AI salah mengisi `backend_developer` sebagai discipline karena mengintepretasi "REST API" sebagai backend. Padahal ini murni Flutter development — REST API hanya dikonsumsi, bukan dibangun.
+
+### Aturan Kategorisasi `mobile_developer` dan `swift`
+
+`mobile_developer` adalah umbrella discipline untuk semua project yang target platform-nya mobile (iOS/Android). Aturan assign:
+
+```txt
+SEMUA project Flutter, iOS native, atau Android native → wajib punya `mobile_developer`
+KECUALI macOS-only (Postie, PingChekker) → JANGAN kasih `mobile_developer`
+```
+
+`swift` hanya untuk project yang **benar-benar menulis kode Swift**:
+
+```txt
+iOS native app (UIKit/SwiftUI)         → `swift` ✅
+macOS native app (AppKit/SwiftUI)      → `swift` ✅
+Flutter app yang pakai platform channel Swift → `swift` ✅
+Flutter app yang HANYA deploy ke iOS tanpa kode Swift custom → `swift` ❌
+```
+
+Contoh penerapan:
+
+| Project | `mobile_developer` | `swift` | Alasan |
+|---|---|---|---|
+| RajaOngkir iOS (native Swift) | ✅ | ✅ | iOS native, tulis Swift |
+| Internak App (Flutter) | ✅ | ❌ | Flutter-based, tidak nulis Swift |
+| AuraApp (Flutter + Swift platform channel) | ✅ | ✅ | Ada kode Swift untuk Apple Vision |
+| Postie (macOS native) | ❌ | ✅ | macOS bukan mobile |
+| RunEmulator (Bash CLI) | ❌ | ❌ | CLI tool, bukan mobile/Swift |
 
 ## Step 4 — Input via Browser
 

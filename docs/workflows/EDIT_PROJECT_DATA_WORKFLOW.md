@@ -125,7 +125,19 @@ Alur browser:
    - `technical_highlights`
    - `metrics`
    Untuk `tech_stack`, pastikan teknologi/library penting benar-benar terisi karena detail work menampilkannya sebagai section `Tech & Libraries`.
-8. Untuk taxonomy, pakai checkbox `Platform` dan `Keahlian / Discipline`.
+8. Untuk taxonomy, pakai checkbox `Platform` dan `Keahlian / Discipline`. Ikuti aturan kategorisasi berikut:
+
+   **`mobile_developer`** — wajib untuk SEMUA project Flutter, iOS native, atau Android native. JANGAN kasih ke macOS-only (Postie, PingChekker).
+
+   **`swift`** — hanya untuk project yang benar-benar menulis kode Swift:
+   - iOS/macOS native app → ✅
+   - Flutter + Swift platform channel → ✅
+   - Flutter yang hanya deploy ke iOS tanpa kode Swift custom → ❌
+
+   **`ai_automation`** — untuk bot/agent/automated workflow yang pakai LLM. Biasanya juga punya `backend_developer`.
+
+   **`cli_tooling`** — untuk shell scripts, CLI tools, DevOps utilities. JANGAN kasih `mobile_developer` hanya karena tool-nya untuk mobile workflow (contoh: RunEmulator).
+
 9. Jika perlu mengatur urutan berdasarkan tahun-bulan, isi `Tanggal Sortir` (`sort_date`) dengan format `YYYY-MM-DD`. Teks publik tetap ambil dari `duration` atau `year`.
 10. Untuk field panjang seperti Technical Approach, Architecture Notes, dan Trade-offs, pakai blank line untuk paragraf baru atau numbering `1.`, `2.`, `3.` untuk daftar keputusan. Jangan satukan banyak ide menjadi satu paragraf raksasa.
 11. Save.
