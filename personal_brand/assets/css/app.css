@@ -1016,6 +1016,55 @@ textarea {
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.04);
 }
 
+/* Delete confirmation modal */
+.admin-shell .modal-box {
+  max-width: 28rem;
+}
+
+.admin-shell .modal-box h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.admin-shell .modal-box .px-5.py-3 {
+  font-size: 0.925rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.admin-shell .modal-box form [type="submit"] {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-shell .modal-box form [type="submit"]:hover {
+  background: #b91c1c;
+}
+
+.admin-shell .modal-box form button:not([type="submit"]) {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-shell .modal-box form button:not([type="submit"]):hover {
+  background: #e2e8f0;
+}
+
 .admin-shell :where(.input, .textarea, .select) {
   width: 100% !important;
   max-width: none;

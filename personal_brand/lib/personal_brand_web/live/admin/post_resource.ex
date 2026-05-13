@@ -32,8 +32,14 @@ defmodule PersonalBrandWeb.Admin.PostResource do
   end
 
   @impl true
-  def item_actions(default_actions),
-    do: ResourceUI.item_actions_without_bulk_delete(default_actions)
+  def item_actions(default_actions) do
+    default_actions
+    |> ResourceUI.item_actions_without_bulk_delete()
+    |> Keyword.put(:delete, %{
+      module: PersonalBrandWeb.Admin.ItemActions.DeleteItem,
+      only: [:show]
+    })
+  end
 
   @impl true
   def layout(_assigns) do

@@ -48,7 +48,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       only: [:show]
     })
     |> Keyword.put(:delete, %{
-      module: Backpex.ItemActions.Delete,
+      module: PersonalBrandWeb.Admin.ItemActions.DeleteItem,
       only: [:show]
     })
   end
