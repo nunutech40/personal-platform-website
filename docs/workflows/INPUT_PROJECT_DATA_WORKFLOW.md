@@ -203,14 +203,15 @@ Aturan:
 
 | Jenis Project | Disciplines yang Tepat | Contoh Salah |
 |---|---|---|
-| Flutter mobile app (Android/iOS) | `flutter_development` saja | ❌ Jangan tambah `backend_engineering` hanya karena README menyebut REST API |
-| Phoenix LiveView web app | `full_stack_engineering`, `backend_engineering`, `frontend_engineering` | ❌ Jangan tambah `flutter_development` |
-| Backend API service | `backend_engineering`, `architecture` | ❌ Jangan tambah `frontend_engineering` |
-| iOS native app | `ios_development`, `mobile_lead` | ❌ Jangan tambah `android_development` |
+| Flutter mobile app (Android/iOS) | `flutter_developer` saja | ❌ Jangan tambah `backend_developer` hanya karena README menyebut REST API |
+| Phoenix LiveView web app | `fullstack_developer`, `backend_developer`, `frontend_developer` | ❌ Jangan tambah `flutter_developer` |
+| Backend API service | `backend_developer` | ❌ Jangan tambah `frontend_developer` |
+| iOS native app | `ios_developer`, `swift` | ❌ Jangan tambah `android_developer` |
+| macOS native app | `swift` | ❌ Jangan tambah `ios_developer` kecuali memang ada iOS target |
 
 **Penyebab umum kesalahan:** README Flutter app sering menyebut "REST API", "backend", "Firebase" — ini adalah **integrasi/konsumsi**, bukan berarti project-nya backend engineering. Disciplines mencerminkan **peran kamu di project**, bukan daftar teknologi.
 
-> **Kasus real:** Internak App adalah Flutter mobile app. README menyebut REST API dan Firebase Auth. AI salah mengisi `backend_engineering` sebagai discipline karena mengintepretasi "REST API" sebagai backend. Padahal ini murni Flutter development — REST API hanya dikonsumsi, bukan dibangun.
+> **Kasus real:** Internak App adalah Flutter mobile app. README menyebut REST API dan Firebase Auth. AI salah mengisi `backend_developer` sebagai discipline karena mengintepretasi "REST API" sebagai backend. Padahal ini murni Flutter development — REST API hanya dikonsumsi, bukan dibangun.
 
 ## Step 4 — Input via Browser
 

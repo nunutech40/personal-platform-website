@@ -342,7 +342,7 @@ Field project saat ini:
 | `ownership` | Scope tanggung jawab | Bisa ketik manual; form memberi suggestion dari DB + scope umum seperti `Feature owner`, `Solo builder`, `Technical lead`. |
 | `project_type` | Tipe project | Controlled value: `professional_work`, `client_work`, `open_source`, `personal_project`, `architecture_demo`, `internal_tool`, `case_study`. |
 | `platforms` | Checkbox taxonomy di admin | Controlled value: `ios`, `android`, `flutter`, `macos`, `web`, `backend`, `cross_platform`. |
-| `disciplines` | Checkbox taxonomy di admin | Controlled value: `ios_development`, `mobile_engineering_lead`, `mobile_devops`, `flutter_development`, `backend_engineering`, `frontend_engineering`, `fullstack_engineering`, `macos_development`, `architecture`, `performance_optimization`. |
+| `disciplines` | Checkbox taxonomy di admin | Controlled value: `mobile_developer`, `flutter_developer`, `ios_developer`, `swift`, `kotlin`, `flutter`, `android_developer`, `backend_developer`, `frontend_developer`, `fullstack_developer`. |
 | `tech_stack` | Teknologi/library per baris | Bisa diisi satu teknologi per baris di admin. Detail work menampilkannya sebagai `Tech & Libraries` supaya recruiter cepat melihat exposure stack. |
 | `year` | Tahun / periode | Contoh: `2025`, `2021-2024`. |
 | `duration` | Durasi/periode tampil | Lebih fleksibel dari `year`, contoh: `2021-2026`, `Contract project`. |

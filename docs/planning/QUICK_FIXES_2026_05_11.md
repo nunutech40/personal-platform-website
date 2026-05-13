@@ -105,7 +105,7 @@ Admin paham convention sort order tanpa perlu trial-error.
 - [ ] Navigate to `/work` (no projects)
 - [ ] Verify empty state shows "Portfolio coming soon"
 - [ ] Create and publish 1 project
-- [ ] Navigate to `/work?discipline=backend_engineering` (no match)
+- [ ] Navigate to `/work?discipline=backend_developer` (no match)
 - [ ] Verify filtered empty state shows with back link
 - [ ] Open published project detail
 - [ ] View page source and verify meta tags present:

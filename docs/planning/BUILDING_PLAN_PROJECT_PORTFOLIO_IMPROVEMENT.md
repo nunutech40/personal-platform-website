@@ -76,18 +76,33 @@ Setiap project idealnya menjawab pertanyaan berikut:
 
 ### Disciplines
 
-Gunakan taxonomy terkontrol supaya portfolio bisa difilter dan tidak kacau:
+Taxonomy terkontrol untuk filter portfolio di `/work`. Diperbarui per 2026-05-13 — disederhanakan dari 10 value menjadi 10 value yang lebih role-focused dan recruiter-friendly:
 
-- `ios_development`
-- `mobile_engineering_lead`
-- `mobile_devops`
-- `flutter_development`
-- `backend_engineering`
-- `frontend_engineering`
-- `fullstack_engineering`
-- `macos_development`
-- `architecture`
-- `performance_optimization`
+- `mobile_developer` — Mobile Developer (umbrella untuk native mobile tanpa spesifik platform)
+- `flutter_developer` — Flutter Developer
+- `ios_developer` — iOS Developer
+- `swift` — Swift (termasuk macOS development)
+- `kotlin` — Kotlin
+- `flutter` — Flutter (sebagai teknologi/bahasa, bukan role)
+- `android_developer` — Android Developer
+- `backend_developer` — Backend Developer
+- `frontend_developer` — Frontend Developer
+- `fullstack_developer` — Full-Stack Developer
+
+Perubahan dari versi sebelumnya:
+
+| Lama | Baru | Alasan |
+|---|---|---|
+| `ios_development` | `ios_developer` | Lebih role-focused |
+| `mobile_engineering_lead` | `mobile_developer` | Lead bukan discipline, masuk ke field `role` |
+| `mobile_devops` | `mobile_developer` | DevOps bukan discipline terpisah untuk portfolio |
+| `flutter_development` | `flutter_developer` | Konsisten dengan format lain |
+| `backend_engineering` | `backend_developer` | Lebih role-focused |
+| `frontend_engineering` | `frontend_developer` | Lebih role-focused |
+| `fullstack_engineering` | `fullstack_developer` | Lebih role-focused |
+| `macos_development` | `swift` | macOS = Swift, cukup satu label |
+| `architecture` | dropped | Bukan discipline, masuk ke `technical_highlights` |
+| `performance_optimization` | dropped | Bukan discipline, masuk ke `technical_highlights` |
 
 ### Platforms
 
