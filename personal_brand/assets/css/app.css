@@ -1035,40 +1035,48 @@ textarea {
 
 /* Modal header: give title room for close button */
 .admin-shell .modal-box .border-b {
-  padding-right: 3rem;
+  position: relative;
+  padding-right: 3.5rem;
 }
 
-/* Modal close button: make icon visible */
-.admin-shell .modal-box .btn-circle {
+/* Modal close button: fix position and make icon visible */
+.admin-shell .modal-box .border-b .btn-circle {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 2rem;
   height: 2rem;
+  min-height: 2rem;
   border-radius: 50%;
   background: #f1f5f9;
   border: 1px solid #e2e8f0;
-  color: #475569;
-  font-size: 1.25rem;
-  line-height: 1;
+  color: #64748b;
+  padding: 0;
+  font-size: 0;
   transition: background 0.15s;
 }
 
-.admin-shell .modal-box .btn-circle:hover {
+.admin-shell .modal-box .border-b .btn-circle:hover {
   background: #e2e8f0;
   color: #1e293b;
 }
 
-/* Ensure the X icon inside close button is visible */
-.admin-shell .modal-box .btn-circle svg {
-  width: 1rem;
-  height: 1rem;
+/* Force show × character since hero-x-mark icon doesn't render */
+.admin-shell .modal-box .border-b .btn-circle::after {
+  content: "\2715";
+  font-size: 1.1rem;
+  line-height: 1;
+  color: inherit;
 }
 
-/* Fallback: if icon doesn't render, show × text */
-.admin-shell .modal-box .btn-circle:empty::after {
-  content: "\00d7";
-  font-size: 1.25rem;
+/* Hide the broken SVG icon span */
+.admin-shell .modal-box .border-b .btn-circle span,
+.admin-shell .modal-box .border-b .btn-circle svg {
+  display: none;
 }
 
 .admin-shell .modal-box form [type="submit"] {
