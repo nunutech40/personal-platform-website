@@ -14,7 +14,35 @@ const AdminMarkdownEditor = {
   mounted() {
     this.textarea = this.el.querySelector("textarea")
     if (!this.textarea) return
+    this._initEditor()
+  },
 
+  updated() {
+    // LiveView re-rendered the DOM — check if EasyMDE is still alive
+    const textarea = this.el.querySelector("textarea")
+    if (!textarea) return
+
+    // If the editor wrapper (.EasyMDEContainer) is gone, re-init
+    if (!this.el.querySelector(".EasyMDEContainer")) {
+      this.textarea = textarea
+      this._initEditor()
+    } else if (this.editor) {
+      // Editor exists but textarea value may have changed from server
+      const serverValue = textarea.value
+      if (this.editor.value() !== serverValue) {
+        this.editor.value(serverValue)
+      }
+    }
+  },
+
+  destroyed() {
+    if (this.editor) {
+      this.editor.toTextArea()
+      this.editor = null
+    }
+  },
+
+  _initEditor() {
     this.editor = new EasyMDE({
       element: this.textarea,
       autoDownloadFontAwesome: false,
@@ -47,16 +75,12 @@ const AdminMarkdownEditor = {
       ]
     })
 
+    // Sync editor changes back to textarea for LiveView form
     this.editor.codemirror.on("change", () => {
       this.textarea.value = this.editor.value()
+      // Dispatch input event so LiveView picks up the change
+      this.textarea.dispatchEvent(new Event("input", { bubbles: true }))
     })
-  },
-
-  destroyed() {
-    if (this.editor) {
-      this.editor.toTextArea()
-      this.editor = null
-    }
   }
 }
 
