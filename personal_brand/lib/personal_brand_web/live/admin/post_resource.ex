@@ -100,6 +100,7 @@ defmodule PersonalBrandWeb.Admin.PostResource do
           "Satu tag per baris atau pisahkan dengan koma. Saran tag dari post existing ditampilkan di bawah field jika ada.",
         render: &render_badges/1,
         render_form: &render_tags_textarea/1,
+        index_column_class: "w-48 max-w-48",
         panel: :content
       },
       status: %{
@@ -276,12 +277,17 @@ defmodule PersonalBrandWeb.Admin.PostResource do
   end
 
   defp render_badges(assigns) do
-    assigns = assign(assigns, :values, list_value(assigns[:value]))
+    assigns = assign_limited_values(assigns, assigns[:value], 3, & &1)
 
     ~H"""
-    <div class="flex max-w-80 flex-wrap gap-1">
-      <span :for={value <- @values} class="badge badge-outline badge-sm">{value}</span>
-      <span :if={@values == []}>-</span>
+    <div class="admin-index-chips" title={@full_value}>
+      <span :for={value <- @visible_values} class="badge badge-outline badge-sm">
+        {value}
+      </span>
+      <span :if={@remaining_count > 0} class="badge badge-ghost badge-sm">
+        +{@remaining_count}
+      </span>
+      <span :if={@visible_values == []}>-</span>
     </div>
     """
   end
@@ -362,6 +368,20 @@ defmodule PersonalBrandWeb.Admin.PostResource do
        ["Elixir", "Phoenix LiveView", "Flutter", "iOS", "Architecture"])
     |> Enum.uniq()
     |> Enum.sort()
+  end
+
+  defp assign_limited_values(assigns, value, limit, label_fun) do
+    values =
+      value
+      |> list_value()
+      |> Enum.reject(&(is_nil(&1) or &1 == ""))
+
+    labels = Enum.map(values, label_fun)
+
+    assigns
+    |> assign(:visible_values, Enum.take(labels, limit))
+    |> assign(:remaining_count, max(length(labels) - limit, 0))
+    |> assign(:full_value, Enum.join(labels, ", "))
   end
 
   defp textarea_value(value) when is_list(value), do: Enum.join(value, "\n")
