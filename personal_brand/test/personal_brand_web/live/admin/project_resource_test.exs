@@ -94,7 +94,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert html =~ "Lihat Publik"
     assert html =~ ~s(href="/work/rajaongkir-ios-app")
     assert html =~ "Terakhir Diubah"
-    refute html =~ "Select all items"
+    assert html =~ "Select all items"
   end
 
   test "admin project form creates a project without manual slug", %{conn: conn} do

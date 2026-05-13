@@ -37,7 +37,7 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
     |> ResourceUI.item_actions_without_bulk_delete()
     |> Keyword.put(:delete, %{
       module: PersonalBrandWeb.Admin.ItemActions.DeleteItem,
-      only: [:show]
+      only: [:index, :show]
     })
   end
 

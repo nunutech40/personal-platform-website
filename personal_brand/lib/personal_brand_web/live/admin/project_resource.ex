@@ -49,7 +49,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
     })
     |> Keyword.put(:delete, %{
       module: PersonalBrandWeb.Admin.ItemActions.DeleteItem,
-      only: [:show]
+      only: [:index, :show]
     })
   end
 
