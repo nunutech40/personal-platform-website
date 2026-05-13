@@ -22,7 +22,7 @@ defmodule PersonalBrand.Content.ProjectTest do
     app_store_url: nil,
     project_type: "personal_project",
     platforms: ["web"],
-    disciplines: ["fullstack_engineering"],
+    disciplines: ["fullstack_developer"],
     ownership: "Solo builder",
     duration: "2026",
     impact_summary: "Recruiter-ready case study",
@@ -96,7 +96,7 @@ defmodule PersonalBrand.Content.ProjectTest do
         | result: "Result A\nResult B",
           tech_stack: "Elixir\nPhoenix LiveView\nPostgreSQL",
           platforms: "ios\nmacos",
-          disciplines: "ios_development\narchitecture",
+          disciplines: "ios_developer\nswift",
           technical_highlights: "SPM modularization\nCoordinator routing",
           metrics: "Reduced UI hangs\nImproved maintainability"
       }
@@ -106,7 +106,7 @@ defmodule PersonalBrand.Content.ProjectTest do
       assert get_field(changeset, :result) == ["Result A", "Result B"]
       assert get_field(changeset, :tech_stack) == ["Elixir", "Phoenix LiveView", "PostgreSQL"]
       assert get_field(changeset, :platforms) == ["ios", "macos"]
-      assert get_field(changeset, :disciplines) == ["ios_development", "architecture"]
+      assert get_field(changeset, :disciplines) == ["ios_developer", "swift"]
 
       assert get_field(changeset, :technical_highlights) == [
                "SPM modularization",
@@ -148,7 +148,7 @@ defmodule PersonalBrand.Content.ProjectTest do
         @valid_attrs
         | project_type: "random",
           platforms: ["ios", "desktop"],
-          disciplines: ["ios_development", "random"],
+          disciplines: ["ios_developer", "random"],
           case_study_visibility: "secret"
       }
 

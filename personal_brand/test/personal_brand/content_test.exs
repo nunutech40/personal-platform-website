@@ -20,7 +20,7 @@ defmodule PersonalBrand.ContentTest do
       featured: false,
       project_type: "personal_project",
       platforms: ["web"],
-      disciplines: ["fullstack_engineering"],
+      disciplines: ["fullstack_developer"],
       case_study_visibility: "public"
     }
 
@@ -110,18 +110,18 @@ defmodule PersonalBrand.ContentTest do
         slug: "ios-project",
         status: "published",
         platforms: ["ios"],
-        disciplines: ["ios_development"]
+        disciplines: ["ios_developer"]
       })
 
       project_fixture(%{
         slug: "backend-project",
         status: "published",
         platforms: ["backend"],
-        disciplines: ["backend_engineering"]
+        disciplines: ["backend_developer"]
       })
 
       assert [%{slug: "ios-project"}] =
-               Content.list_published_projects(discipline: "ios_development")
+               Content.list_published_projects(discipline: "ios_developer")
 
       assert [%{slug: "backend-project"}] = Content.list_published_projects(platform: "backend")
     end

@@ -136,7 +136,7 @@ projects = [
     project_type: "professional_work",
     company: "Komerce",
     platforms: ["ios"],
-    disciplines: ["ios_development", "mobile_engineering_lead", "architecture"],
+    disciplines: ["ios_developer", "mobile_developer"],
     ownership:
       "Lead mobile engineer untuk standar engineering, review, dan delivery aplikasi iOS.",
     team_size: "Mobile division",
@@ -181,7 +181,7 @@ projects = [
     featured: true,
     project_type: "architecture_demo",
     platforms: ["ios"],
-    disciplines: ["ios_development", "architecture"],
+    disciplines: ["ios_developer"],
     ownership: "Solo builder untuk eksplorasi dan dokumentasi architecture pattern.",
     duration: "2025",
     impact_summary:
@@ -224,7 +224,7 @@ projects = [
     github_url: "https://github.com/nunutech40/Postie/tree/main",
     project_type: "open_source",
     platforms: ["macos"],
-    disciplines: ["macos_development", "performance_optimization"],
+    disciplines: ["swift"],
     ownership: "Solo builder dari konsep, implementation, sampai repository publik.",
     duration: "2025",
     impact_summary:
@@ -268,7 +268,7 @@ projects = [
     project_type: "client_work",
     company: "Prodia",
     platforms: ["ios"],
-    disciplines: ["ios_development", "performance_optimization"],
+    disciplines: ["ios_developer"],
     ownership: "Contributor iOS untuk investigasi dan perbaikan flow booking.",
     duration: "Contract project",
     impact_summary:
@@ -316,7 +316,7 @@ projects = [
     featured: true,
     project_type: "personal_project",
     platforms: ["web", "backend"],
-    disciplines: ["fullstack_engineering", "backend_engineering", "frontend_engineering"],
+    disciplines: ["fullstack_developer", "backend_developer", "frontend_developer"],
     ownership:
       "Solo full-stack builder untuk product, backend, admin, public UI, dan dokumentasi.",
     duration: "2026",

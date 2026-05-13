@@ -960,31 +960,49 @@ defmodule PersonalBrandWeb.PublicLive do
     [
       %{key: :all, label: "All", href: "/work"},
       %{
-        key: {:discipline, "ios_development"},
+        key: {:discipline, "mobile_developer"},
+        label: "Mobile",
+        href: "/work?discipline=mobile_developer"
+      },
+      %{
+        key: {:discipline, "flutter_developer"},
+        label: "Flutter",
+        href: "/work?discipline=flutter_developer"
+      },
+      %{
+        key: {:discipline, "ios_developer"},
         label: "iOS",
-        href: "/work?discipline=ios_development"
+        href: "/work?discipline=ios_developer"
       },
       %{
-        key: {:discipline, "mobile_engineering_lead"},
-        label: "Mobile Lead",
-        href: "/work?discipline=mobile_engineering_lead"
+        key: {:discipline, "swift"},
+        label: "Swift",
+        href: "/work?discipline=swift"
       },
-      %{key: {:platform, "macos"}, label: "macOS", href: "/work?platform=macos"},
       %{
-        key: {:discipline, "backend_engineering"},
+        key: {:discipline, "kotlin"},
+        label: "Kotlin",
+        href: "/work?discipline=kotlin"
+      },
+      %{
+        key: {:discipline, "android_developer"},
+        label: "Android",
+        href: "/work?discipline=android_developer"
+      },
+      %{
+        key: {:discipline, "backend_developer"},
         label: "Backend",
-        href: "/work?discipline=backend_engineering"
+        href: "/work?discipline=backend_developer"
       },
       %{
-        key: {:discipline, "frontend_engineering"},
+        key: {:discipline, "frontend_developer"},
         label: "Frontend",
-        href: "/work?discipline=frontend_engineering"
+        href: "/work?discipline=frontend_developer"
       },
-      %{key: {:platform, "flutter"}, label: "Flutter", href: "/work?platform=flutter"},
       %{
-        key: {:discipline, "fullstack_engineering"},
-        label: "Full-stack",
-        href: "/work?discipline=fullstack_engineering"
+        key: {:discipline, "fullstack_developer"},
+        label: "Full-Stack",
+        href: "/work?discipline=fullstack_developer"
       }
     ]
   end

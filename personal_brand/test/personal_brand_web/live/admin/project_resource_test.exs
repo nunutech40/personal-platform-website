@@ -116,7 +116,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert project.tech_stack == ["Elixir", "Phoenix LiveView"]
     assert project.result == ["Result"]
     assert project.platforms == ["web"]
-    assert project.disciplines == ["fullstack_engineering"]
+    assert project.disciplines == ["fullstack_developer"]
   end
 
   test "admin project form updates an existing project", %{conn: conn} do
@@ -203,7 +203,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
         "featured" => "false",
         "project_type" => "personal_project",
         "platforms" => ["web"],
-        "disciplines" => ["fullstack_engineering"],
+        "disciplines" => ["fullstack_developer"],
         "case_study_visibility" => "public",
         "sort_order" => "0"
       },
@@ -227,7 +227,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
       featured: false,
       project_type: "personal_project",
       platforms: ["web"],
-      disciplines: ["fullstack_engineering"],
+      disciplines: ["fullstack_developer"],
       case_study_visibility: "public"
     }
 

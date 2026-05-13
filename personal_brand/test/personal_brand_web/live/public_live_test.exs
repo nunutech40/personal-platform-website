@@ -24,7 +24,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       summary: "Aplikasi iOS untuk cek ongkir dan tracking.",
       role: "Mobile Engineering Lead",
       platforms: ["ios"],
-      disciplines: ["ios_development", "mobile_engineering_lead"],
+      disciplines: ["ios_developer", "mobile_developer"],
       impact_summary: "Menyatukan kebutuhan shipping ke dalam workflow mobile yang cepat.",
       featured: true
     })
@@ -35,7 +35,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       status: "published",
       summary: "Native macOS API client untuk testing request.",
       platforms: ["macos"],
-      disciplines: ["macos_development"]
+      disciplines: ["swift"]
     })
 
     insert_project(%{
@@ -124,7 +124,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       slug: "postie",
       status: "published",
       platforms: ["macos"],
-      disciplines: ["macos_development"]
+      disciplines: ["swift"]
     })
 
     insert_project(%{
@@ -132,7 +132,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       slug: "personal-platform-website",
       status: "published",
       platforms: ["web"],
-      disciplines: ["fullstack_engineering"]
+      disciplines: ["fullstack_developer"]
     })
 
     conn = get(conn, ~p"/work?platform=macos")
@@ -148,7 +148,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       slug: "postie",
       status: "published",
       platforms: ["macos"],
-      disciplines: ["macos_development"]
+      disciplines: ["swift"]
     })
 
     insert_project(%{
@@ -156,10 +156,10 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       slug: "personal-platform-website",
       status: "published",
       platforms: ["web"],
-      disciplines: ["fullstack_engineering"]
+      disciplines: ["fullstack_developer"]
     })
 
-    conn = get(conn, ~p"/work?discipline=fullstack_engineering")
+    conn = get(conn, ~p"/work?discipline=fullstack_developer")
 
     html = html_response(conn, 200)
     assert html =~ "Personal Platform Website"
@@ -200,7 +200,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       certificate_media_id: certificate.id,
       tech_stack: ["Elixir", "Phoenix LiveView", "Backpex"],
       platforms: ["web"],
-      disciplines: ["fullstack_engineering"],
+      disciplines: ["fullstack_developer"],
       case_study_visibility: "limited"
     })
 
@@ -267,7 +267,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
         "Geolocator"
       ],
       platforms: ["flutter"],
-      disciplines: ["flutter_development"]
+      disciplines: ["flutter_developer"]
     })
 
     html =
@@ -405,7 +405,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       demo_video_url: nil,
       project_type: "personal_project",
       platforms: ["web"],
-      disciplines: ["fullstack_engineering"],
+      disciplines: ["fullstack_developer"],
       case_study_visibility: "public"
     }
 

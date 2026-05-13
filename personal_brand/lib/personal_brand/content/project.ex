@@ -5,21 +5,22 @@ defmodule PersonalBrand.Content.Project do
   @statuses ~w(draft published archived)
   @project_types ~w(professional_work client_work open_source personal_project architecture_demo internal_tool case_study)
   @platforms ~w(ios android flutter macos web backend cross_platform)
-  @disciplines ~w(ios_development mobile_engineering_lead mobile_devops flutter_development backend_engineering frontend_engineering fullstack_engineering macos_development architecture performance_optimization)
+  @disciplines ~w(mobile_developer flutter_developer ios_developer swift kotlin flutter android_developer backend_developer frontend_developer fullstack_developer)
   @case_study_visibilities ~w(public limited private_summary)
   @labels %{
     "ios" => "iOS",
     "macos" => "macOS",
     "cross_platform" => "Cross-platform",
-    "ios_development" => "iOS Development",
-    "mobile_engineering_lead" => "Mobile Engineering Lead",
-    "mobile_devops" => "Mobile DevOps",
-    "flutter_development" => "Flutter Development",
-    "backend_engineering" => "Backend Engineering",
-    "frontend_engineering" => "Frontend Engineering",
-    "fullstack_engineering" => "Full-stack Engineering",
-    "macos_development" => "macOS Development",
-    "performance_optimization" => "Performance Optimization",
+    "mobile_developer" => "Mobile Developer",
+    "flutter_developer" => "Flutter Developer",
+    "ios_developer" => "iOS Developer",
+    "swift" => "Swift",
+    "kotlin" => "Kotlin",
+    "flutter" => "Flutter",
+    "android_developer" => "Android Developer",
+    "backend_developer" => "Backend Developer",
+    "frontend_developer" => "Frontend Developer",
+    "fullstack_developer" => "Full-Stack Developer",
     "professional_work" => "Professional Work",
     "client_work" => "Client Work",
     "open_source" => "Open Source",
