@@ -667,9 +667,14 @@ id
 title
 slug
 excerpt
-content
-cover_image_url
+content_markdown
+content_html
+editor_type
+editor_json
+cover_image_id
+og_image_id
 status
+featured
 reading_time
 published_at
 seo_title
@@ -677,6 +682,17 @@ seo_description
 created_at
 updated_at
 ```
+
+Post editor/content notes:
+
+- Canonical writing format for the near term is Markdown, not a WordPress/Gutenberg-style block model.
+- Admin post editor should use EasyMDE on top of the existing Backpex textarea contract, so form submit remains simple and content stays portable.
+- `content_markdown` is the source of truth for writing drafts and edits.
+- `content_html` is the rendered/sanitized HTML cache used by public `/writing/:slug`.
+- `editor_type` remains `markdown` for the current implementation. `rich_text` can be reserved for a future editor.
+- `editor_json` is optional future storage if the site later adopts a block editor. Do not make it required for the Markdown-first phase.
+- `cover_image_id` is the main article image and fallback social preview image.
+- `og_image_id` is optional and overrides cover image for social sharing cards.
 
 Status values:
 
@@ -1344,6 +1360,10 @@ Must support:
 - publish post
 - manage tags
 - SEO fields
+- write Markdown with a proper editor toolbar
+- preview Markdown before publish
+- attach cover image
+- attach Open Graph image
 ```
 
 Fields:
@@ -1353,7 +1373,8 @@ title
 slug
 excerpt
 content
-cover_image_url
+cover_image_id
+og_image_id
 status
 reading_time
 published_at
@@ -1361,6 +1382,43 @@ seo_title
 seo_description
 tags
 ```
+
+Admin post editor UX target:
+
+- Use EasyMDE as the first proper editor layer because it is complete enough without introducing a block editor.
+- Toolbar should expose bold, italic, heading, quote, code, unordered list, ordered list, link, image, table, preview, split view, and fullscreen.
+- The editor must still submit through the existing textarea so Backpex and LiveView changesets stay simple.
+- Disable external spellchecker/font downloads in the editor runtime; vendor assets locally.
+- Keep the writing layout comfortable: large editor height, readable monospace editing, clear status bar, and an obvious preview/split mode.
+- Do not build a WordPress-like block editor in this phase.
+
+Admin post form target layout:
+
+- Main writing column: title, generated slug/permalink, large Markdown editor, excerpt, and tags/categories.
+- Publishing sidebar or clearly separated publishing panel: status, published date, featured flag, reading time, cover image, Open Graph image, and public preview link.
+- SEO panel: SEO title with 70-character guidance/counter, SEO description with 160-character guidance/counter, canonical URL override if needed later, and a social preview card.
+- SEO fallback rules must be visible in admin copy: SEO title falls back to title, SEO description falls back to excerpt, and Open Graph image falls back to cover image.
+- Future monetization panel: access type, paid excerpt, paywall CTA, price/currency, tip amount options, and checkout provider/link. Provider direction remains Midtrans/manual link, not Xendit.
+
+Markdown image behavior requirements:
+
+- The editor must allow more than one image in one article.
+- Images must be insertable anywhere in the article body by Markdown syntax: `![alt text](image-url)`.
+- Image URLs can point to internal Media records, for example `/uploads/media/<file>`, or external `https://` image URLs.
+- The first implementation may insert image links manually. A later polish slice should add a Media picker/insert button that writes the selected media URL into the Markdown at the cursor position.
+- Public rendering must preserve inline image position relative to the surrounding text.
+- Public rendering must sanitize generated HTML before display and should not trust arbitrary raw HTML from the editor.
+
+Admin post gaps to close before treating Writing as production-ready:
+
+- Render Markdown server-side into sanitized `content_html` instead of rendering raw Markdown on public pages.
+- Use `seo_title` and `seo_description` as public metadata fallbacks before title/excerpt.
+- Add canonical URL support to the root layout.
+- Use `og_image_id || cover_image_id` for Open Graph/Twitter image.
+- Add SEO character counters and social preview UI in the admin form.
+- Add a slug-change warning for already published posts.
+- Add auto reading-time calculation or a clear manual override workflow.
+- Future monetization fields belong in a later slice: `access_type`, `price`, `currency`, `tip_amount_options`, `paid_excerpt`, `paywall_cta`, `payment_provider`, and `checkout_url`.
 
 ---
 
@@ -1670,6 +1728,15 @@ AdminConfirmDelete
 - sitemap.xml
 - robots.txt
 - RSS feed for writing
+```
+
+Writing detail SEO fallback rules:
+
+```txt
+page title       = post.seo_title || post.title
+meta description = post.seo_description || post.excerpt
+og image         = post.og_image || post.cover_image
+canonical URL    = /writing/:slug
 ```
 
 ## 11.2 Pages That Need SEO

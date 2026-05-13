@@ -1,6 +1,7 @@
 defmodule PersonalBrand.Content.Post do
   use Ecto.Schema
   import Ecto.Changeset
+  alias PersonalBrand.Content.Markdown
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -19,8 +20,8 @@ defmodule PersonalBrand.Content.Post do
     field :reading_time, :integer
     field :seo_title, :string
     field :seo_description, :string
-    field :cover_image_id, :binary_id
-    field :og_image_id, :binary_id
+    belongs_to :cover_image, PersonalBrand.Content.Media
+    belongs_to :og_image, PersonalBrand.Content.Media
 
     many_to_many :tag_relations, PersonalBrand.Content.Tag,
       join_through: "post_tags",
@@ -34,6 +35,7 @@ defmodule PersonalBrand.Content.Post do
       attrs
       |> normalize_list_inputs()
       |> put_generated_slug()
+      |> put_rendered_content_html()
 
     post
     |> cast(attrs, [
@@ -77,6 +79,10 @@ defmodule PersonalBrand.Content.Post do
   end
 
   def slugify(_value), do: ""
+
+  def render_content(%__MODULE__{} = post) do
+    post.content_html || Markdown.to_html(post.content_markdown) || ""
+  end
 
   defp normalize_list_inputs(attrs) when is_map(attrs), do: normalize_list_input(attrs, :tags)
   defp normalize_list_inputs(attrs), do: attrs
@@ -129,12 +135,27 @@ defmodule PersonalBrand.Content.Post do
 
   defp put_generated_slug(attrs), do: attrs
 
+  defp put_rendered_content_html(attrs) when is_map(attrs) do
+    case get_attr(attrs, :content_markdown) do
+      value when is_binary(value) ->
+        put_attr(attrs, :content_html, Markdown.to_html(value))
+
+      _value ->
+        attrs
+    end
+  end
+
+  defp put_rendered_content_html(attrs), do: attrs
+
   defp get_attr(attrs, field), do: Map.get(attrs, field) || Map.get(attrs, Atom.to_string(field))
 
   defp put_attr(attrs, field, value) do
+    string_key = Atom.to_string(field)
+
     cond do
       Map.has_key?(attrs, field) -> Map.put(attrs, field, value)
-      Map.has_key?(attrs, Atom.to_string(field)) -> Map.put(attrs, Atom.to_string(field), value)
+      Map.has_key?(attrs, string_key) -> Map.put(attrs, string_key, value)
+      Enum.any?(Map.keys(attrs), &is_binary/1) -> Map.put(attrs, string_key, value)
       true -> Map.put(attrs, field, value)
     end
   end

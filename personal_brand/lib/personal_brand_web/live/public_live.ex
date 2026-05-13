@@ -2,6 +2,7 @@ defmodule PersonalBrandWeb.PublicLive do
   use PersonalBrandWeb, :live_view
 
   alias PersonalBrand.Content
+  alias PersonalBrand.Content.Post
   alias PersonalBrand.Content.Project
 
   # ── Mount ────────────────────────────────────────────────
@@ -103,12 +104,18 @@ defmodule PersonalBrandWeb.PublicLive do
             {:noreply, assign(socket, page: :not_found, page_title: "Not Found")}
 
           post ->
+            cover_media = Content.get_media(post.cover_image_id)
+            og_media = Content.get_media(post.og_image_id) || cover_media
+
             {:noreply,
              assign(socket,
                page: :writing_detail,
                post: post,
-               page_title: post.title,
-               meta_description: post.excerpt,
+               post_content_html: Post.render_content(post),
+               cover_media: cover_media,
+               page_title: post.seo_title || post.title,
+               meta_description: post.seo_description || post.excerpt,
+               og_image: og_media && og_media.url,
                og_type: "article"
              )}
         end
@@ -223,7 +230,7 @@ defmodule PersonalBrandWeb.PublicLive do
       <% :writing_index -> %>
         <.writing_index posts={@posts} />
       <% :writing_detail -> %>
-        <.writing_detail post={@post} />
+        <.writing_detail post={@post} post_content_html={@post_content_html} />
       <% :products_index -> %>
         <.products_index products={@products} />
       <% :product_detail -> %>
@@ -489,7 +496,7 @@ defmodule PersonalBrandWeb.PublicLive do
       <p class="lead">{@post.excerpt}</p>
       <hr />
       <div class="article-body">
-        {Phoenix.HTML.raw(@post.content_html || @post.content_markdown || "")}
+        {Phoenix.HTML.raw(@post_content_html)}
       </div>
       <hr />
       <p><a href="/writing">Back to writing</a> | <a href="/work">See related work</a></p>

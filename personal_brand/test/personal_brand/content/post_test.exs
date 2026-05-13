@@ -25,6 +25,41 @@ defmodule PersonalBrand.Content.PostTest do
       assert changeset.valid?
     end
 
+    test "renders markdown to sanitized content_html" do
+      attrs = %{
+        @valid_attrs
+        | content_markdown:
+            "## Intro\n\n![Diagram](/uploads/media/diagram.png)\n\n<script>alert('x')</script>"
+      }
+
+      changeset = Post.changeset(%Post{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :content_html) =~ "<h2>Intro</h2>"
+
+      assert get_field(changeset, :content_html) =~
+               ~s(<img src="/uploads/media/diagram.png" alt="Diagram">)
+
+      refute get_field(changeset, :content_html) =~ "<script>"
+    end
+
+    test "supports multiple positional markdown images" do
+      attrs = %{
+        @valid_attrs
+        | content_markdown:
+            "Before\n\n![One](/uploads/media/one.png)\n\nMiddle\n\n![Two](https://example.com/two.png)\n\nAfter"
+      }
+
+      changeset = Post.changeset(%Post{}, attrs)
+      html = get_field(changeset, :content_html)
+
+      assert html =~ "Before"
+      assert html =~ ~s(src="/uploads/media/one.png")
+      assert html =~ "Middle"
+      assert html =~ ~s(src="https://example.com/two.png")
+      assert html =~ "After"
+    end
+
     test "rejects missing title" do
       attrs = Map.delete(@valid_attrs, :title)
       changeset = Post.changeset(%Post{}, attrs)

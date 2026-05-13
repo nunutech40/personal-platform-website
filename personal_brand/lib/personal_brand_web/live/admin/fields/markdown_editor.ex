@@ -27,7 +27,7 @@ defmodule PersonalBrandWeb.Admin.Fields.MarkdownEditor do
   Markdown editor field for admin post content.
 
   It keeps the same Backpex field contract as `Backpex.Fields.Textarea`, then adds
-  an admin-only toolbar and live preview via the `AdminMarkdownEditor` hook.
+  an EasyMDE-powered admin editor via the `AdminMarkdownEditor` hook.
   """
   use Backpex.Field, config_schema: @config_schema
 
@@ -57,22 +57,6 @@ defmodule PersonalBrandWeb.Admin.Fields.MarkdownEditor do
           class="admin-markdown-editor"
           phx-hook="AdminMarkdownEditor"
         >
-          <div class="admin-markdown-toolbar" aria-label="Markdown formatting tools">
-            <button type="button" class="admin-markdown-tool" data-md-action="heading">H2</button>
-            <button type="button" class="admin-markdown-tool" data-md-action="bold">B</button>
-            <button type="button" class="admin-markdown-tool" data-md-action="italic">I</button>
-            <button type="button" class="admin-markdown-tool" data-md-action="link">Link</button>
-            <button type="button" class="admin-markdown-tool" data-md-action="list">List</button>
-            <button type="button" class="admin-markdown-tool" data-md-action="code">Code</button>
-            <button type="button" class="admin-markdown-tool" data-md-action="image">Image</button>
-            <button
-              type="button"
-              class="admin-markdown-tool admin-markdown-preview-toggle"
-              data-md-action="preview"
-            >
-              Preview
-            </button>
-          </div>
           <BackpexForm.input
             type="textarea"
             field={@form[@name]}
@@ -87,7 +71,6 @@ defmodule PersonalBrandWeb.Admin.Fields.MarkdownEditor do
             disabled={@readonly}
             aria-labelledby={Map.get(assigns, :aria_labelledby)}
           />
-          <div class="admin-markdown-preview hidden" data-md-preview aria-live="polite"></div>
         </div>
       </Layout.field_container>
     </div>

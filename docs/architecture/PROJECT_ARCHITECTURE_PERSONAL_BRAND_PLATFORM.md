@@ -830,13 +830,38 @@ CRUD fields:
 title
 slug
 excerpt
-content
+content_markdown
+content_html
+editor_type
+editor_json
 cover_image_id
+og_image_id
 status
 tags
 published_at
 seo_title
 seo_description
+```
+
+Current editor direction:
+
+- Admin Writing uses a Markdown-first editor powered by EasyMDE.
+- `content_markdown` remains the canonical editable source.
+- `content_html` should be generated from Markdown and sanitized before public rendering.
+- `editor_json` is reserved for a future block editor and should not be required while the product is still Markdown-first.
+- `cover_image_id` feeds article cards and fallback social image.
+- `og_image_id` overrides cover image for social sharing when present.
+- Body images are stored as Markdown image references inside `content_markdown`, not as a separate gallery table in the first phase.
+- Body image URLs may reference local Media records by URL or external `https://` images. Multiple images can appear anywhere in the text because Markdown image syntax is positional.
+- A future Media insert control should write the selected Media URL into the editor at the cursor position.
+
+Post detail SEO contract:
+
+```txt
+title tag        -> seo_title || title
+meta description -> seo_description || excerpt
+og:image         -> og_image_id || cover_image_id
+canonical        -> /writing/:slug
 ```
 
 ### Admin products

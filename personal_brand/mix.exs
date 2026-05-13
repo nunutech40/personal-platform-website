@@ -62,7 +62,8 @@ defmodule PersonalBrand.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
-      {:backpex, "~> 0.10"}
+      {:backpex, "~> 0.10"},
+      {:mdex, "~> 0.12.2"}
     ]
   end
 

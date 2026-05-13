@@ -17,6 +17,8 @@ Target:
 Saat ini:
 
 - `posts` mendukung title, slug, excerpt, markdown/html content, tags, status, SEO, dan cover image.
+- Writing editor direction is Markdown-first with EasyMDE in admin. Keep `content_markdown` as source of truth and use rendered/sanitized `content_html` for public reading.
+- `posts.og_image_id` should optionally override `posts.cover_image_id` for social preview cards.
 - `products` mendukung price, currency, product type, delivery type, checkout URL, status, included, FAQ, dan cover image.
 - `site_settings` menyimpan identity site, profile, email, social links, featured IDs, dan active theme.
 - Product checkout MVP memakai `products.checkout_url` untuk external payment link.
@@ -83,6 +85,19 @@ paid_excerpt         text nullable
 paywall_cta          text nullable
 payment_provider     string nullable
 checkout_url         string nullable
+```
+
+Existing post fields that monetization must preserve:
+
+```txt
+content_markdown     text
+content_html         text nullable
+editor_type          string default 'markdown'
+editor_json          map nullable
+cover_image_id       uuid nullable
+og_image_id          uuid nullable
+seo_title            string nullable
+seo_description      text nullable
 ```
 
 Controlled values:

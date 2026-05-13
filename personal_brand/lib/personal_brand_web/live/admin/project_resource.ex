@@ -208,7 +208,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
           "Platform yang kamu kerjakan di project ini (iOS, Android, Web, Backend, dll). Recruiter pakai ini untuk filter project di halaman Work. Bisa pilih lebih dari satu.",
         render: &render_badges/1,
         render_form: &render_taxonomy_checkbox_group/1,
-        index_column_class: "min-w-40",
+        index_column_class: "w-48 max-w-48",
         panel: :classification
       },
       disciplines: %{
@@ -220,7 +220,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
           "Keahlian atau peran engineering yang kamu tunjukkan di project ini (iOS Development, Backend Engineering, dll). Muncul sebagai filter di halaman Work. Bisa pilih lebih dari satu.",
         render: &render_badges/1,
         render_form: &render_taxonomy_checkbox_group/1,
-        index_column_class: "min-w-48",
+        index_column_class: "w-64 max-w-64",
         panel: :classification
       },
       tech_stack: %{
@@ -230,8 +230,9 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         placeholder: "Elixir\nPhoenix LiveView\nPostgreSQL\nBackpex",
         help_text:
           "Teknologi yang dipakai. Satu teknologi per baris, tekan Enter untuk baris baru.",
-        render: &render_list/1,
+        render: &render_stack_preview/1,
         render_form: &render_textarea/1,
+        index_column_class: "w-80 max-w-80",
         panel: :evidence
       },
       year: %{
@@ -485,14 +486,17 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   end
 
   defp render_badges(assigns) do
-    assigns = assign(assigns, :values, list_value(assigns[:value]))
+    assigns = assign_limited_values(assigns, assigns[:value], 3, &display_label/1)
 
     ~H"""
-    <div class="flex max-w-80 flex-wrap gap-1">
-      <span :for={value <- @values} class="badge badge-outline badge-sm">
-        {display_label(value)}
+    <div class="admin-index-chips" title={@full_value}>
+      <span :for={value <- @visible_values} class="badge badge-outline badge-sm">
+        {value}
       </span>
-      <span :if={@values == []}>-</span>
+      <span :if={@remaining_count > 0} class="badge badge-ghost badge-sm">
+        +{@remaining_count}
+      </span>
+      <span :if={@visible_values == []}>-</span>
     </div>
     """
   end
@@ -757,6 +761,22 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
     """
   end
 
+  defp render_stack_preview(assigns) do
+    assigns = assign_limited_values(assigns, assigns[:value], 5, & &1)
+
+    ~H"""
+    <div class="admin-index-chips admin-index-chips-tech" title={@full_value}>
+      <span :for={value <- @visible_values} class="badge badge-outline badge-sm">
+        {value}
+      </span>
+      <span :if={@remaining_count > 0} class="badge badge-ghost badge-sm">
+        +{@remaining_count}
+      </span>
+      <span :if={@visible_values == []}>-</span>
+    </div>
+    """
+  end
+
   defp render_textarea(assigns) do
     assigns =
       assign(assigns, :textarea_value, textarea_value(assigns[:value]))
@@ -787,6 +807,20 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
   defp list_value(value) when is_list(value), do: value
   defp list_value(value) when is_binary(value) and value != "", do: [value]
   defp list_value(_value), do: []
+
+  defp assign_limited_values(assigns, value, limit, label_fun) do
+    values =
+      value
+      |> list_value()
+      |> Enum.reject(&(is_nil(&1) or &1 == ""))
+
+    labels = Enum.map(values, label_fun)
+
+    assigns
+    |> assign(:visible_values, Enum.take(labels, limit))
+    |> assign(:remaining_count, max(length(labels) - limit, 0))
+    |> assign(:full_value, Enum.join(labels, ", "))
+  end
 
   defp display_label(value) when is_binary(value), do: Project.label_for(value)
   defp display_label(_value), do: "-"

@@ -26,6 +26,7 @@ defmodule PersonalBrandWeb.Admin.PostResource do
       identity: "Info Dasar",
       content: "Konten",
       publishing: "Publishing",
+      media: "Media",
       seo: "SEO"
     ]
   end
@@ -128,6 +129,30 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         placeholder: "5",
         help_text: "Angka 1-120 menit.",
         panel: :publishing
+      },
+      cover_image: %{
+        module: Backpex.Fields.BelongsTo,
+        label: "Cover Image",
+        display_field: :filename,
+        display_field_form: :filename,
+        live_resource: PersonalBrandWeb.Admin.MediaResource,
+        prompt: "Pilih cover image",
+        help_text:
+          "Gambar utama tulisan untuk list Writing dan fallback social preview. Upload dulu di Admin > Media.",
+        except: [:index],
+        panel: :media
+      },
+      og_image: %{
+        module: Backpex.Fields.BelongsTo,
+        label: "Open Graph Image",
+        display_field: :filename,
+        display_field_form: :filename,
+        live_resource: PersonalBrandWeb.Admin.MediaResource,
+        prompt: "Pilih OG image",
+        help_text:
+          "Opsional. Pakai gambar khusus social sharing. Jika kosong, sistem memakai Cover Image.",
+        except: [:index],
+        panel: :media
       },
       seo_title: %{
         module: Backpex.Fields.Text,

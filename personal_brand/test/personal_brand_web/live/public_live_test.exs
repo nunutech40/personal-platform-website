@@ -1,7 +1,7 @@
 defmodule PersonalBrandWeb.PublicLiveTest do
   use PersonalBrandWeb.ConnCase
 
-  alias PersonalBrand.Content.{Media, Product, Project}
+  alias PersonalBrand.Content.{Media, Post, Product, Project}
   alias PersonalBrand.Content.SiteSetting
   alias PersonalBrand.Repo
 
@@ -260,6 +260,35 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     refute html =~ "Geolocator</span>"
   end
 
+  test "GET /writing/:slug uses post SEO fields and social image fallback", %{conn: conn} do
+    media =
+      Repo.insert!(%Media{
+        filename: "post-og.png",
+        content_type: "image/png",
+        url: "/uploads/media/post-og.png",
+        alt_text: "Post social preview"
+      })
+
+    insert_post(%{
+      title: "Visible Post Title",
+      slug: "visible-post-title",
+      excerpt: "Fallback excerpt",
+      seo_title: "SEO Post Title",
+      seo_description: "SEO description for sharing.",
+      og_image_id: media.id
+    })
+
+    html =
+      conn
+      |> get(~p"/writing/visible-post-title")
+      |> html_response(200)
+
+    assert html =~ "SEO Post Title"
+    assert html =~ ~s(<meta name="description" content="SEO description for sharing.")
+    assert html =~ ~s(<meta property="og:image" content="/uploads/media/post-og.png")
+    assert html =~ "Visible Post Title"
+  end
+
   test "GET /work/:slug handles sparse optional list fields", %{conn: conn} do
     Repo.insert!(%Project{
       title: "Sparse Project",
@@ -350,6 +379,22 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     }
 
     struct(Product, Map.merge(defaults, attrs))
+    |> Repo.insert!()
+  end
+
+  defp insert_post(attrs) do
+    defaults = %{
+      title: "Post",
+      slug: "post",
+      excerpt: "Excerpt",
+      content_markdown: "# Post",
+      tags: ["Elixir"],
+      status: "published",
+      reading_time: 5
+    }
+
+    %Post{}
+    |> Post.changeset(Map.merge(defaults, attrs))
     |> Repo.insert!()
   end
 end
