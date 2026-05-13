@@ -17,7 +17,7 @@ What is implemented in the Phoenix app:
 - PostgreSQL/Ecto schemas for projects, posts, products, media, site_settings, themes
 - Content context APIs for public data reads and admin dashboard summary
 - seed data for public content and admin validation
-- public LiveView routes for home, work, writing, products, about, now
+- public LiveView routes for home, work, writing, products, about, now, contact, search
 - public detail routes by slug for work/writing/products
 - old_web_classic public theme with placeholder future theme classes
 - active_theme stored in site_settings
@@ -1013,6 +1013,7 @@ returned
 /about
 /now
 /contact
+/search
 ```
 
 ---

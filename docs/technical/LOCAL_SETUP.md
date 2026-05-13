@@ -239,6 +239,7 @@ personal_brand/
 | `/about` | About page | ✅ LiveView |
 | `/now` | Now page | ✅ LiveView |
 | `/contact` | Contact page | ✅ LiveView |
+| `/search` | Unified search | ✅ LiveView |
 
 ### Admin Routes
 

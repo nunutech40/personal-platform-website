@@ -426,6 +426,7 @@ scope "/", PersonalBrandWeb do
   live "/about", Public.AboutLive, :index
   live "/now", Public.NowLive, :index
   live "/contact", Public.ContactLive, :index
+  live "/search", Public.SearchLive, :index
 end
 ```
 

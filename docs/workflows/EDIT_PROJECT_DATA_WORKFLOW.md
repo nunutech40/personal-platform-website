@@ -228,7 +228,7 @@ Checklist review:
 
 - Homepage tetap tidak crash.
 - Homepage headline bukan placeholder/testing copy.
-- Navigation urut dan tidak membingungkan: Home, Work, Writing, Products, About, Now, Contact.
+- Navigation urut dan tidak membingungkan: Home, Work, Writing, Products, About, Now, Contact, Search.
 - Primary recruiter path jelas: hero CTA dan Featured Work mengarah ke `/work`.
 - About, Now, dan Contact tetap mengambil data dari Site Settings.
 - Support links di Contact hanya tampil jika Saweria atau Buy Me Coffee sudah terisi.

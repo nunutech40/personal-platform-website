@@ -341,7 +341,7 @@ Checklist review:
 
 - Homepage tidak crash dan project tampil jika memang featured/published.
 - Homepage headline bukan placeholder/testing copy.
-- Navigation urut dan tidak membingungkan: Home, Work, Writing, Products, About, Now, Contact.
+- Navigation urut dan tidak membingungkan: Home, Work, Writing, Products, About, Now, Contact, Search.
 - Primary path untuk recruiter jelas: header/nav, hero CTA, dan Featured Work mengarah ke `/work`.
 - Social/contact link yang tampil memang bisa diklik dan sesuai persona publik.
 - About, Now, dan Contact mengambil data dari Site Settings, bukan copy hardcoded.
