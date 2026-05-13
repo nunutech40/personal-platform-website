@@ -9,9 +9,12 @@
   </label>
 
   <aside class="admin-sidebar fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col overflow-y-auto bg-slate-950 px-4 py-6 text-slate-300 transition-transform duration-200 peer-checked:translate-x-0 md:translate-x-0">
-    <.link navigate={~p"/admin"} class="mb-8 block px-3 no-underline">
-      <span class="block text-2xl font-bold tracking-normal text-white">Nunu Admin</span>
-      <span class="mt-1 block text-sm font-medium text-slate-400">Personal Brand CMS</span>
+    <.link navigate={~p"/admin"} class="mb-8 flex items-center gap-3 px-3 no-underline">
+      <img src="/icon-192.png" alt="Logo" class="size-9 rounded-lg" />
+      <div>
+        <span class="block text-2xl font-bold tracking-normal text-white">Nunu Admin</span>
+        <span class="mt-1 block text-sm font-medium text-slate-400">Personal Brand CMS</span>
+      </div>
     </.link>
 
     <nav aria-label="Admin navigation" class="flex-1">
