@@ -12,7 +12,8 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
       repo: PersonalBrand.Repo,
       create_changeset: &__MODULE__.create_changeset/3,
       update_changeset: &__MODULE__.update_changeset/3
-    ]
+    ],
+    init_order: %{by: :updated_at, direction: :desc}
 
   @impl true
   def singular_name, do: "Product"
