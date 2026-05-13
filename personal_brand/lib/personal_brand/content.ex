@@ -131,17 +131,49 @@ defmodule PersonalBrand.Content do
     |> clean_distinct_values()
   end
 
+  @projects_per_page 9
+
+  def projects_per_page, do: @projects_per_page
+
   def list_published_projects(opts \\ []) do
     discipline = Keyword.get(opts, :discipline)
     platform = Keyword.get(opts, :platform)
+    limit = Keyword.get(opts, :limit, @projects_per_page)
+    offset = Keyword.get(opts, :offset, 0)
 
-    Repo.all(
-      from p in Project,
-        where: p.status == "published",
-        order_by: ^project_order()
+    from(p in Project,
+      where: p.status == "published",
+      order_by: ^project_order(),
+      limit: ^limit,
+      offset: ^offset
     )
-    |> filter_projects_by(:discipline, discipline)
-    |> filter_projects_by(:platform, platform)
+    |> maybe_filter_discipline(discipline)
+    |> maybe_filter_platform(platform)
+    |> Repo.all()
+  end
+
+  def count_published_projects(opts \\ []) do
+    discipline = Keyword.get(opts, :discipline)
+    platform = Keyword.get(opts, :platform)
+
+    from(p in Project, where: p.status == "published")
+    |> maybe_filter_discipline(discipline)
+    |> maybe_filter_platform(platform)
+    |> Repo.aggregate(:count, :id)
+  end
+
+  defp maybe_filter_discipline(query, nil), do: query
+  defp maybe_filter_discipline(query, ""), do: query
+
+  defp maybe_filter_discipline(query, discipline) do
+    from p in query, where: ^discipline in p.disciplines
+  end
+
+  defp maybe_filter_platform(query, nil), do: query
+  defp maybe_filter_platform(query, ""), do: query
+
+  defp maybe_filter_platform(query, platform) do
+    from p in query, where: ^platform in p.platforms
   end
 
   def list_featured_projects do
@@ -335,17 +367,6 @@ defmodule PersonalBrand.Content do
         order_by: [asc: p.title],
         preload: [:tags]
     )
-  end
-
-  defp filter_projects_by(projects, _field, nil), do: projects
-  defp filter_projects_by(projects, _field, ""), do: projects
-
-  defp filter_projects_by(projects, :discipline, discipline) do
-    Enum.filter(projects, &(discipline in (&1.disciplines || [])))
-  end
-
-  defp filter_projects_by(projects, :platform, platform) do
-    Enum.filter(projects, &(platform in (&1.platforms || [])))
   end
 
   defp resolve_unique_project_slug(attrs) do

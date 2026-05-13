@@ -78,6 +78,16 @@ button:active,
   top: 0;
 }
 
+.load-more {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.load-more button {
+  padding: 8px 24px;
+  font-size: 0.95rem;
+}
+
 .skip-link:focus {
   left: 12px;
   z-index: 5;

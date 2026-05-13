@@ -27,7 +27,9 @@ defmodule PersonalBrandWeb.PublicLive do
         theme_class: theme_class,
         page_title: settings.site_name,
         settings: settings,
-        page: :home
+        page: :home,
+        has_more: false,
+        work_page: 1
       )
 
     {:ok, socket, layout: {PersonalBrandWeb.Layouts, :public}}
@@ -165,7 +167,9 @@ defmodule PersonalBrandWeb.PublicLive do
 
         :work_index ->
           active_filter = work_filter_from_params(params)
-          projects = Content.list_published_projects(active_filter_query(active_filter))
+          filter_opts = active_filter_query(active_filter)
+          projects = Content.list_published_projects(filter_opts)
+          total = Content.count_published_projects(filter_opts)
 
           assign(socket,
             page: :work_index,
@@ -173,7 +177,9 @@ defmodule PersonalBrandWeb.PublicLive do
             projects: projects,
             work_filters: work_filters(),
             active_filter: active_filter,
-            project_media: media_by_id(projects)
+            project_media: media_by_id(projects),
+            work_page: 1,
+            has_more: total > length(projects)
           )
 
         :writing_index ->
@@ -200,6 +206,33 @@ defmodule PersonalBrandWeb.PublicLive do
     {:noreply, socket}
   end
 
+  # ── Load More (Work Index) ──────────────────────────────
+
+  def handle_event("load_more", _params, socket) do
+    next_page = socket.assigns.work_page + 1
+    per_page = Content.projects_per_page()
+    offset = (next_page - 1) * per_page
+
+    filter_opts =
+      active_filter_query(socket.assigns.active_filter) ++
+        [limit: per_page, offset: offset]
+
+    more_projects = Content.list_published_projects(filter_opts)
+    all_projects = socket.assigns.projects ++ more_projects
+    new_media = media_by_id(more_projects)
+    all_media = Map.merge(socket.assigns.project_media, new_media)
+
+    total = Content.count_published_projects(active_filter_query(socket.assigns.active_filter))
+
+    {:noreply,
+     assign(socket,
+       projects: all_projects,
+       project_media: all_media,
+       work_page: next_page,
+       has_more: total > length(all_projects)
+     )}
+  end
+
   # ── Render ───────────────────────────────────────────────
 
   def render(assigns) do
@@ -219,6 +252,7 @@ defmodule PersonalBrandWeb.PublicLive do
           project_media={@project_media}
           filters={@work_filters}
           active_filter={@active_filter}
+          has_more={@has_more}
         />
       <% :work_detail -> %>
         <.work_detail
@@ -324,6 +358,11 @@ defmodule PersonalBrandWeb.PublicLive do
           <h2>{if @featured_projects == [], do: "Projects", else: "Other Projects"}</h2>
           <.work_project_item :for={project <- @regular_projects} project={project} />
         <% end %>
+        <div :if={@has_more} class="load-more">
+          <button phx-click="load_more" phx-disable-with="Loading...">
+            Load more projects
+          </button>
+        </div>
       </section>
       <.visual_frame
         text="Project screenshots live here."
