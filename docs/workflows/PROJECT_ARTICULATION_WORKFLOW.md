@@ -55,7 +55,7 @@ Isi field admin dengan pola berikut:
 | `team_size` | Solo, small team, cross-functional team, contractor, atau komposisi tim. |
 | `project_type` | `professional_work`, `client_work`, `open_source`, `personal_project`, `architecture_demo`, `internal_tool`, atau `case_study`. |
 | `platforms` | Platform yang dikerjakan: `ios`, `android`, `flutter`, `macos`, `web`, `backend`, `cross_platform`. |
-| `disciplines` | Keahlian yang ditunjukkan: `mobile_developer`, `flutter_developer`, `ios_developer`, `swift`, `kotlin`, `flutter`, `android_developer`, `backend_developer`, `frontend_developer`, `fullstack_developer`. |
+| `disciplines` | Keahlian yang ditunjukkan: `mobile_developer`, `flutter_developer`, `ios_developer`, `swift`, `kotlin`, `flutter`, `android_developer`, `backend_developer`, `frontend_developer`, `fullstack_developer`, `ai_automation`, `cli_tooling`. |
 | `tech_stack` | Satu teknologi per baris. Jangan campur dengan buzzword yang tidak dipakai nyata. |
 | `architecture_notes` | Boundary, module, dependency direction, data flow, atau reasoning arsitektur. |
 | `tradeoffs` | Keputusan yang sengaja diambil beserta alasannya. |

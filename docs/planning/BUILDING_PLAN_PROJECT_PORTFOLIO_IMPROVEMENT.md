@@ -76,7 +76,7 @@ Setiap project idealnya menjawab pertanyaan berikut:
 
 ### Disciplines
 
-Taxonomy terkontrol untuk filter portfolio di `/work`. Diperbarui per 2026-05-13 — disederhanakan dari 10 value menjadi 10 value yang lebih role-focused dan recruiter-friendly:
+Taxonomy terkontrol untuk filter portfolio di `/work`. Diperbarui per 2026-05-13 — disederhanakan dan ditambah kategori automation/tooling:
 
 - `mobile_developer` — Mobile Developer (umbrella untuk native mobile tanpa spesifik platform)
 - `flutter_developer` — Flutter Developer
@@ -88,6 +88,8 @@ Taxonomy terkontrol untuk filter portfolio di `/work`. Diperbarui per 2026-05-13
 - `backend_developer` — Backend Developer
 - `frontend_developer` — Frontend Developer
 - `fullstack_developer` — Full-Stack Developer
+- `ai_automation` — AI Automation (bot, agent, automated workflow yang pakai LLM)
+- `cli_tooling` — CLI & Tooling (shell scripts, CLI tools, DevOps utilities)
 
 Perubahan dari versi sebelumnya:
 
@@ -275,6 +277,8 @@ Tampilan harus membantu recruiter scanning cepat:
   - Backend
   - Frontend
   - Full-Stack
+  - AI Automation
+  - CLI & Tooling
 - Setiap item menampilkan:
   - title
   - one-line summary

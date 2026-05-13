@@ -208,6 +208,8 @@ Aturan:
 | Backend API service | `backend_developer` | ❌ Jangan tambah `frontend_developer` |
 | iOS native app | `ios_developer`, `swift` | ❌ Jangan tambah `android_developer` |
 | macOS native app | `swift` | ❌ Jangan tambah `ios_developer` kecuali memang ada iOS target |
+| AI bot / automated workflow (pakai LLM) | `ai_automation` + `backend_developer` | ❌ Jangan tambah `frontend_developer` |
+| CLI tool / shell script / DevOps utility | `cli_tooling` | ❌ Jangan tambah `mobile_developer` hanya karena tool-nya untuk mobile workflow |
 
 **Penyebab umum kesalahan:** README Flutter app sering menyebut "REST API", "backend", "Firebase" — ini adalah **integrasi/konsumsi**, bukan berarti project-nya backend engineering. Disciplines mencerminkan **peran kamu di project**, bukan daftar teknologi.
 
