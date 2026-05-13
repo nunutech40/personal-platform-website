@@ -179,6 +179,12 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
         render_form: &render_included_textarea/1,
         except: [:index],
         panel: :content
+      },
+      updated_at: %{
+        module: Backpex.Fields.DateTime,
+        label: "Terakhir Diubah",
+        except: [:new, :edit],
+        orderable: true
       }
     ]
   end

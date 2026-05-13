@@ -13,7 +13,7 @@ defmodule PersonalBrandWeb.Admin.PostResource do
       create_changeset: &__MODULE__.create_changeset/3,
       update_changeset: &__MODULE__.update_changeset/3
     ],
-    init_order: %{by: :published_at, direction: :desc}
+    init_order: %{by: :updated_at, direction: :desc}
 
   @impl true
   def singular_name, do: "Post"
@@ -129,6 +129,7 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         module: Backpex.Fields.DateTime,
         label: "Tanggal Publish",
         help_text: "Isi saat post siap tampil sebagai published.",
+        orderable: true,
         panel: :publishing
       },
       reading_time: %{
@@ -180,6 +181,12 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         help_text: "Opsional. Maksimal 160 karakter.",
         except: [:index],
         panel: :seo
+      },
+      updated_at: %{
+        module: Backpex.Fields.DateTime,
+        label: "Terakhir Diubah",
+        except: [:new, :edit],
+        orderable: true
       }
     ]
   end
