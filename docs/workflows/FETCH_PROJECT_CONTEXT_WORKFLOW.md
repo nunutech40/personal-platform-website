@@ -27,10 +27,12 @@ rg --files -g 'README*' -g 'docs/**/*.md' -g 'personal_brand/lib/**/*.ex' -g 'pe
 Baca dokumen ini lebih dulu:
 
 ```txt
+docs/README.md
 docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md
 docs/technical/LOCAL_SETUP.md
 docs/planning/BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md
 docs/planning/BUILDING_PLAN_PROJECT_PORTFOLIO_IMPROVEMENT.md
+docs/planning/BUILDING_PLAN_UNIFIED_SEARCH.md
 docs/standards/CODING_AND_TESTING_STANDARDS.md
 ```
 
@@ -61,6 +63,25 @@ personal_brand/priv/repo/seeds.exs
 personal_brand/test/personal_brand/content/project_test.exs
 personal_brand/test/personal_brand_web/live/admin/project_resource_test.exs
 personal_brand/test/personal_brand_web/live/public_live_test.exs
+```
+
+Untuk task search, file yang relevan:
+
+```txt
+personal_brand/lib/personal_brand/content.ex (search/1, search_projects, search_posts, search_products)
+personal_brand/lib/personal_brand_web/live/public_live.ex (handle_event "live_search", search_page component)
+personal_brand/assets/css/app.css (search-page, search-loading styles)
+docs/planning/BUILDING_PLAN_UNIFIED_SEARCH.md
+```
+
+Untuk task disciplines/taxonomy, file yang relevan:
+
+```txt
+personal_brand/lib/personal_brand/content/project.ex (@disciplines, @labels, label_for/1)
+personal_brand/lib/personal_brand_web/live/public_live.ex (work_filters, work_filter_counts)
+personal_brand/lib/personal_brand_web/live/admin/project_resource.ex (checkbox taxonomy)
+docs/planning/BUILDING_PLAN_PROJECT_PORTFOLIO_IMPROVEMENT.md (taxonomy section)
+docs/workflows/INPUT_PROJECT_DATA_WORKFLOW.md (categorization rules)
 ```
 
 ## Step 3 — Baca Secara Bertingkat
@@ -119,3 +140,8 @@ mix test
 - Jangan stop server setelah push kecuali user minta.
 - Jangan reset database kecuali user eksplisit minta.
 - Kalau user minta push, ikuti `docs/workflows/PUSH_WORKFLOW.md`.
+- PRD/TRD .docx mungkin outdated — gunakan planning docs .md sebagai source of truth.
+- Disciplines taxonomy: 12 values (`mobile_developer`, `flutter_developer`, `ios_developer`, `swift`, `kotlin`, `flutter`, `android_developer`, `backend_developer`, `frontend_developer`, `fullstack_developer`, `ai_automation`, `cli_tooling`). Lihat aturan kategorisasi di `docs/workflows/INPUT_PROJECT_DATA_WORKFLOW.md`.
+- Public pages pakai load more (9 per page) untuk `/work`, `/writing`, `/products`.
+- `/search` adalah unified search across projects, posts, products via PostgreSQL ILIKE.
+- Navigation: Home, Work, Writing, Products, About, Now, Contact, Search.
