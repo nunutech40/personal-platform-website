@@ -1033,6 +1033,44 @@ textarea {
   line-height: 1.5;
 }
 
+/* Modal header: give title room for close button */
+.admin-shell .modal-box .border-b {
+  padding-right: 3rem;
+}
+
+/* Modal close button: make icon visible */
+.admin-shell .modal-box .btn-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.admin-shell .modal-box .btn-circle:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Ensure the X icon inside close button is visible */
+.admin-shell .modal-box .btn-circle svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Fallback: if icon doesn't render, show × text */
+.admin-shell .modal-box .btn-circle:empty::after {
+  content: "\00d7";
+  font-size: 1.25rem;
+}
+
 .admin-shell .modal-box form [type="submit"] {
   background: #dc2626;
   color: #fff;
