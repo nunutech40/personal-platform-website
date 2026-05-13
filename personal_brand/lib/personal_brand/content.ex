@@ -295,6 +295,96 @@ defmodule PersonalBrand.Content do
     Repo.aggregate(from(p in Product, where: p.status == "active"), :count, :id)
   end
 
+  # ── Search ───────────────────────────────────────────────
+
+  def search(query) when is_binary(query) do
+    query = String.trim(query)
+
+    if String.length(query) < 2 do
+      %{projects: [], posts: [], products: []}
+    else
+      terms =
+        query
+        |> String.downcase()
+        |> String.split(~r/\s+/, trim: true)
+        |> Enum.take(5)
+
+      %{
+        projects: search_projects(terms),
+        posts: search_posts(terms),
+        products: search_products(terms)
+      }
+    end
+  end
+
+  def search(_query), do: %{projects: [], posts: [], products: []}
+
+  defp search_projects(terms) do
+    base =
+      from(p in Project,
+        where: p.status == "published",
+        limit: 5,
+        order_by: [desc: p.updated_at]
+      )
+
+    terms
+    |> Enum.reduce(base, fn term, q ->
+      pattern = "%#{term}%"
+
+      from p in q,
+        where:
+          ilike(p.title, ^pattern) or
+            ilike(p.summary, ^pattern) or
+            ilike(p.description, ^pattern) or
+            ilike(p.problem, ^pattern) or
+            ilike(p.solution, ^pattern) or
+            ilike(p.role, ^pattern)
+    end)
+    |> Repo.all()
+  end
+
+  defp search_posts(terms) do
+    base =
+      from(p in Post,
+        where: p.status == "published",
+        limit: 5,
+        order_by: [desc: p.published_at]
+      )
+
+    terms
+    |> Enum.reduce(base, fn term, q ->
+      pattern = "%#{term}%"
+
+      from p in q,
+        where:
+          ilike(p.title, ^pattern) or
+            ilike(p.excerpt, ^pattern) or
+            ilike(p.content_markdown, ^pattern)
+    end)
+    |> Repo.all()
+  end
+
+  defp search_products(terms) do
+    base =
+      from(p in Product,
+        where: p.status == "active",
+        limit: 5,
+        order_by: [desc: p.updated_at]
+      )
+
+    terms
+    |> Enum.reduce(base, fn term, q ->
+      pattern = "%#{term}%"
+
+      from p in q,
+        where:
+          ilike(p.title, ^pattern) or
+            ilike(p.summary, ^pattern) or
+            ilike(p.description, ^pattern)
+    end)
+    |> Repo.all()
+  end
+
   def list_featured_products do
     Repo.all(
       from p in Product,

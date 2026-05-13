@@ -35,7 +35,10 @@ defmodule PersonalBrandWeb.PublicLive do
         work_total: 0,
         filter_counts: %{},
         writing_page: 1,
-        products_page: 1
+        products_page: 1,
+        search_query: "",
+        search_results: nil,
+        search_loading: false
       )
 
     {:ok, socket, layout: {PersonalBrandWeb.Layouts, :public}}
@@ -224,6 +227,22 @@ defmodule PersonalBrandWeb.PublicLive do
         :contact_page ->
           assign(socket, page: :contact_page, page_title: "Contact")
 
+        :search ->
+          query = Map.get(params, "q", "")
+
+          results =
+            if String.length(String.trim(query)) >= 2,
+              do: Content.search(query),
+              else: nil
+
+          assign(socket,
+            page: :search,
+            page_title: "Search",
+            search_query: query,
+            search_results: results,
+            search_loading: false
+          )
+
         _ ->
           assign(socket, page: :not_found, page_title: "Not Found")
       end
@@ -296,6 +315,22 @@ defmodule PersonalBrandWeb.PublicLive do
      )}
   end
 
+  # ── Search ──────────────────────────────────────────────
+
+  def handle_event("live_search", %{"q" => query}, socket) do
+    results =
+      if String.length(String.trim(query)) >= 2,
+        do: Content.search(query),
+        else: nil
+
+    {:noreply,
+     assign(socket,
+       search_query: query,
+       search_results: results,
+       search_loading: false
+     )}
+  end
+
   # ── Render ───────────────────────────────────────────────
 
   def render(assigns) do
@@ -349,6 +384,12 @@ defmodule PersonalBrandWeb.PublicLive do
           profile_email={@profile_email}
           social_links={@ordered_social_links}
           support_links={@support_links}
+        />
+      <% :search -> %>
+        <.search_page
+          query={@search_query}
+          results={@search_results}
+          loading={@search_loading}
         />
       <% _ -> %>
         <.not_found />
@@ -838,6 +879,90 @@ defmodule PersonalBrandWeb.PublicLive do
     """
   end
 
+  # ── Search Page ───────────────────────────────────────────
+
+  def search_page(assigns) do
+    assigns =
+      assigns
+      |> assign(:has_results, has_search_results?(assigns.results))
+      |> assign(:total_count, search_total_count(assigns.results))
+
+    ~H"""
+    <section class="search-page">
+      <h1>Search</h1>
+      <p>Cari project, tulisan, atau produk di seluruh website.</p>
+      <form phx-change="live_search" phx-submit="live_search" class="search-form">
+        <input
+          type="text"
+          name="q"
+          value={@query}
+          placeholder="Ketik minimal 2 karakter..."
+          phx-debounce="300"
+          autocomplete="off"
+          class="search-input"
+          autofocus
+        />
+      </form>
+
+      <div :if={@loading} class="search-loading" aria-label="Searching">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+
+      <%= if @results && @has_results do %>
+        <p class="meta search-meta">{@total_count} hasil ditemukan</p>
+
+        <section :if={@results.projects != []} class="search-group">
+          <h2>Projects ({length(@results.projects)})</h2>
+          <article :for={project <- @results.projects} class="item">
+            <div class="item-title"><a href={"/work/#{project.slug}"}>{project.title}</a></div>
+            <p>{project.summary}</p>
+            <p class="meta">{project.role} · {project.duration || project.year}</p>
+          </article>
+        </section>
+
+        <section :if={@results.posts != []} class="search-group">
+          <h2>Writing ({length(@results.posts)})</h2>
+          <article :for={post <- @results.posts} class="item">
+            <div class="item-title"><a href={"/writing/#{post.slug}"}>{post.title}</a></div>
+            <p>{post.excerpt}</p>
+            <p class="meta">{format_date(post.published_at)} · {post.reading_time} min read</p>
+          </article>
+        </section>
+
+        <section :if={@results.products != []} class="search-group">
+          <h2>Products ({length(@results.products)})</h2>
+          <article :for={product <- @results.products} class="item">
+            <div class="item-title"><a href={"/products/#{product.slug}"}>{product.title}</a></div>
+            <p>{product.summary}</p>
+          </article>
+        </section>
+      <% end %>
+
+      <div :if={@results && !@has_results} class="empty-state">
+        <p><strong>Tidak ada hasil untuk "{@query}"</strong></p>
+        <p>
+          Coba kata kunci lain atau lihat <a href="/work">Work</a>
+          · <a href="/writing">Writing</a>
+          · <a href="/products">Products</a>
+        </p>
+      </div>
+
+      <div :if={!@results && @query == ""} class="search-suggestions">
+        <p>Coba cari:</p>
+        <div class="tag-list">
+          <a href="/search?q=Flutter" class="tag">Flutter</a>
+          <a href="/search?q=iOS" class="tag">iOS</a>
+          <a href="/search?q=Phoenix" class="tag">Phoenix</a>
+          <a href="/search?q=Architecture" class="tag">Architecture</a>
+          <a href="/search?q=API" class="tag">API</a>
+        </div>
+      </div>
+    </section>
+    """
+  end
+
   # ── Not Found ────────────────────────────────────────────
 
   def not_found(assigns) do
@@ -1157,6 +1282,18 @@ defmodule PersonalBrandWeb.PublicLive do
 
   defp present?(value) when is_binary(value), do: String.trim(value) != ""
   defp present?(value), do: not is_nil(value)
+
+  defp has_search_results?(nil), do: false
+
+  defp has_search_results?(results) do
+    results.projects != [] or results.posts != [] or results.products != []
+  end
+
+  defp search_total_count(nil), do: 0
+
+  defp search_total_count(results) do
+    length(results.projects) + length(results.posts) + length(results.products)
+  end
 
   defp list_value(value) when is_list(value), do: value
   defp list_value(_value), do: []

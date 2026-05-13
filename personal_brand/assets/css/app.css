@@ -593,6 +593,97 @@ li + li {
   padding: 14px 16px;
 }
 
+/* ── Search Page ─────────────────────────────────────────── */
+
+.search-page {
+  max-width: 72ch;
+}
+
+.search-form {
+  margin: 18px 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 20px;
+  font-family: Georgia, "Times New Roman", serif;
+  border: 2px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.search-input:focus {
+  outline: 3px solid rgba(0, 0, 238, 0.2);
+  outline-offset: 1px;
+}
+
+.search-input::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.search-meta {
+  margin: 18px 0 8px;
+  font-size: 15px;
+}
+
+.search-group {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 20px;
+}
+
+.search-group h2 {
+  font-size: 22px;
+  margin: 0 0 12px;
+}
+
+.search-suggestions {
+  margin-top: 24px;
+}
+
+.search-suggestions p {
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+/* Loading animation — 3 bouncing dots */
+.search-loading {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.search-loading .dot {
+  width: 10px;
+  height: 10px;
+  background: var(--muted);
+  border-radius: 50%;
+  animation: search-bounce 1.4s infinite ease-in-out both;
+}
+
+.search-loading .dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.search-loading .dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes search-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.4);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .post-support h2 {
   margin-top: 0;
 }
