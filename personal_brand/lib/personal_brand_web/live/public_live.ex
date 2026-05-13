@@ -32,6 +32,8 @@ defmodule PersonalBrandWeb.PublicLive do
         has_more_posts: false,
         has_more_products: false,
         work_page: 1,
+        work_total: 0,
+        filter_counts: %{},
         writing_page: 1,
         products_page: 1
       )
@@ -174,15 +176,18 @@ defmodule PersonalBrandWeb.PublicLive do
           filter_opts = active_filter_query(active_filter)
           projects = Content.list_published_projects(filter_opts)
           total = Content.count_published_projects(filter_opts)
+          filter_counts = work_filter_counts()
 
           assign(socket,
             page: :work_index,
             page_title: "Work",
             projects: projects,
             work_filters: work_filters(),
+            filter_counts: filter_counts,
             active_filter: active_filter,
             project_media: media_by_id(projects),
             work_page: 1,
+            work_total: total,
             has_more: total > length(projects)
           )
 
@@ -309,8 +314,10 @@ defmodule PersonalBrandWeb.PublicLive do
           projects={@projects}
           project_media={@project_media}
           filters={@work_filters}
+          filter_counts={@filter_counts}
           active_filter={@active_filter}
           has_more={@has_more}
+          total={@work_total}
         />
       <% :work_detail -> %>
         <.work_detail
@@ -385,6 +392,7 @@ defmodule PersonalBrandWeb.PublicLive do
       |> assign(:featured_projects, featured_projects(assigns.projects))
       |> assign(:regular_projects, regular_projects(assigns.projects))
       |> assign(:is_filtered, assigns.active_filter.key != :all)
+      |> assign(:showing_count, length(assigns.projects))
 
     ~H"""
     <h1>Work</h1>
@@ -395,7 +403,7 @@ defmodule PersonalBrandWeb.PublicLive do
         href={filter.href}
         class={if filter.key == @active_filter.key, do: "tag active", else: "tag"}
       >
-        {filter.label}
+        {filter.label} ({Map.get(@filter_counts, filter.key, 0)})
       </a>
     </nav>
     <hr />
@@ -416,6 +424,9 @@ defmodule PersonalBrandWeb.PublicLive do
           <h2>{if @featured_projects == [], do: "Projects", else: "Other Projects"}</h2>
           <.work_project_item :for={project <- @regular_projects} project={project} />
         <% end %>
+        <p :if={@showing_count > 0} class="meta">
+          Menampilkan {@showing_count} dari {@total} project
+        </p>
         <div :if={@has_more} class="load-more">
           <button phx-click="load_more" phx-disable-with="Loading...">
             Load more projects
@@ -1087,6 +1098,26 @@ defmodule PersonalBrandWeb.PublicLive do
         href: "/work?discipline=cli_tooling"
       }
     ]
+  end
+
+  defp work_filter_counts do
+    all = Content.count_published_projects([])
+
+    counts =
+      work_filters()
+      |> Enum.map(fn filter ->
+        count =
+          case filter.key do
+            :all -> all
+            {:discipline, d} -> Content.count_published_projects(discipline: d)
+            {:platform, p} -> Content.count_published_projects(platform: p)
+          end
+
+        {filter.key, count}
+      end)
+      |> Map.new()
+
+    counts
   end
 
   defp work_filter_from_params(%{"discipline" => discipline}) when is_binary(discipline) do
