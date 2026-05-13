@@ -200,7 +200,8 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       certificate_media_id: certificate.id,
       tech_stack: ["Elixir", "Phoenix LiveView", "Backpex"],
       platforms: ["web"],
-      disciplines: ["fullstack_engineering"]
+      disciplines: ["fullstack_engineering"],
+      case_study_visibility: "limited"
     })
 
     conn = get(conn, ~p"/work/personal-platform-website")
@@ -226,6 +227,25 @@ defmodule PersonalBrandWeb.PublicLiveTest do
 
     assert html =~
              ~s(src="https://raw.githubusercontent.com/nunutech40/repo/main/docs/demo/demo.mp4")
+  end
+
+  test "GET /work/:slug links directly to public GitHub repositories", %{conn: conn} do
+    insert_project(%{
+      title: "Open Source Tool",
+      slug: "open-source-tool",
+      status: "published",
+      github_url: "https://github.com/nunutech40/open-source-tool",
+      case_study_visibility: "public"
+    })
+
+    html =
+      conn
+      |> get(~p"/work/open-source-tool")
+      |> html_response(200)
+
+    assert html =~ "GitHub Repository"
+    assert html =~ ~s(href="https://github.com/nunutech40/open-source-tool")
+    refute html =~ "GitHub — request access"
   end
 
   test "GET /work keeps stack preview compact on list", %{conn: conn} do
@@ -287,6 +307,33 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ ~s(<meta name="description" content="SEO description for sharing.")
     assert html =~ ~s(<meta property="og:image" content="/uploads/media/post-og.png")
     assert html =~ "Visible Post Title"
+  end
+
+  test "GET /writing/:slug renders configured support CTA", %{conn: conn} do
+    Repo.one!(SiteSetting)
+    |> Ecto.Changeset.change(%{
+      saweria_url: "https://saweria.co/nunu",
+      buy_me_coffee_url: "https://www.buymeacoffee.com/nunu",
+      tips_cta_title: "Kalau tulisan ini ngebantu, traktir kopi virtual boleh.",
+      tips_cta_body: "Support kecil bikin eksperimen dan tulisan teknis ini tetap jalan."
+    })
+    |> Repo.update!()
+
+    insert_post(%{
+      title: "Flutter Skills",
+      slug: "flutter-skills",
+      excerpt: "Catatan tentang Flutter Skills."
+    })
+
+    html =
+      conn
+      |> get(~p"/writing/flutter-skills")
+      |> html_response(200)
+
+    assert html =~ "Kalau tulisan ini ngebantu, traktir kopi virtual boleh."
+    assert html =~ "Support kecil bikin eksperimen"
+    assert html =~ ~s(href="https://saweria.co/nunu")
+    assert html =~ ~s(href="https://www.buymeacoffee.com/nunu")
   end
 
   test "GET /work/:slug handles sparse optional list fields", %{conn: conn} do

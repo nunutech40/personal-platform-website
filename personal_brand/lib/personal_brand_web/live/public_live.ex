@@ -230,7 +230,13 @@ defmodule PersonalBrandWeb.PublicLive do
       <% :writing_index -> %>
         <.writing_index posts={@posts} />
       <% :writing_detail -> %>
-        <.writing_detail post={@post} post_content_html={@post_content_html} />
+        <.writing_detail
+          post={@post}
+          post_content_html={@post_content_html}
+          support_links={@support_links}
+          tips_cta_title={@settings.tips_cta_title}
+          tips_cta_body={@settings.tips_cta_body}
+        />
       <% :products_index -> %>
         <.products_index products={@products} />
       <% :product_detail -> %>
@@ -434,7 +440,12 @@ defmodule PersonalBrandWeb.PublicLive do
             <li :if={@project.demo_video_url}>
               <a href={@project.demo_video_url}>Video Demo</a>
             </li>
-            <li :if={@project.github_url}>
+            <li :if={public_github_link?(@project)}>
+              <a href={@project.github_url} target="_blank" rel="noopener noreferrer">
+                GitHub Repository
+              </a>
+            </li>
+            <li :if={private_github_link?(@project)}>
               <a href={github_access_request_url(@profile_email, @project)}>
                 GitHub — request access
               </a>
@@ -498,6 +509,21 @@ defmodule PersonalBrandWeb.PublicLive do
       <div class="article-body">
         {Phoenix.HTML.raw(@post_content_html)}
       </div>
+      <section :if={@support_links != []} class="post-support">
+        <h2>{@tips_cta_title || "Support this writing"}</h2>
+        <p :if={present?(@tips_cta_body)}>{@tips_cta_body}</p>
+        <p class="cta-row">
+          <a
+            :for={{label, url} <- @support_links}
+            href={url}
+            class="button-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {label}
+          </a>
+        </p>
+      </section>
       <hr />
       <p><a href="/writing">Back to writing</a> | <a href="/work">See related work</a></p>
     </article>
@@ -1061,6 +1087,12 @@ defmodule PersonalBrandWeb.PublicLive do
       &present?/1
     )
   end
+
+  defp public_github_link?(project),
+    do: present?(project.github_url) and project.case_study_visibility == "public"
+
+  defp private_github_link?(project),
+    do: present?(project.github_url) and project.case_study_visibility != "public"
 
   defp github_access_request_url(profile_email, project)
        when is_binary(profile_email) and profile_email != "" do

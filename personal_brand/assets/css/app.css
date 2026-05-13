@@ -508,6 +508,18 @@ li + li {
   margin-bottom: 14px;
 }
 
+.post-support {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--soft);
+  margin: 28px 0;
+  padding: 14px 16px;
+}
+
+.post-support h2 {
+  margin-top: 0;
+}
+
 .footer {
   margin-top: 32px;
 }
