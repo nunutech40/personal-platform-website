@@ -206,7 +206,6 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         phx-click="item-action"
         phx-value-action-key="delete"
         phx-value-item-id={@primary_key}
-        data-confirm={"Yakin hapus tulisan \"#{@item.title}\"? Data yang dihapus tidak bisa dikembalikan."}
         class="rounded border border-red-200 px-2 py-1 text-xs font-semibold text-red-700 transition hover:border-red-300 hover:bg-red-50"
       >
         Hapus
