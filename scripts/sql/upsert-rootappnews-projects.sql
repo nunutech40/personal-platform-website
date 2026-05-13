@@ -9,7 +9,7 @@
 -- MVVM + Provider + TDD, yang satu lagi dipakai untuk latihan Clean Architecture
 -- berlapis lengkap (BLoC + Cubit + GoRouter + Firebase OTP + Google Sign-In +
 -- compute() isolate untuk image processing). Karena keduanya Flutter development
--- (bukan backend engineering), disciplines hanya flutter_development.
+-- (bukan backend engineering), disciplines hanya flutter_developer.
 --
 -- Usage from repository root:
 --   /opt/homebrew/opt/postgresql@16/bin/psql -h localhost -U "$(whoami)" -d personal_brand_dev -f scripts/sql/upsert-rootappnews-projects.sql
@@ -85,7 +85,7 @@ Dokumentasi API ditulis lewat Swagger, migrasi dipegang sebagai file SQL berurut
   TRUE,
   'personal_project',
   ARRAY['backend'],
-  ARRAY['backend_engineering', 'architecture'],
+  ARRAY['backend_developer'],
   'Solo builder: desain skema, handler, service, SQL migrations, auth flow, Swagger doc, Makefile, deploy ke VPS, serta maintain endpoint berdasarkan kebutuhan dua Flutter client.',
   'Solo project',
   '2026',
@@ -222,7 +222,7 @@ Disiplin TDD dipakai pada ViewModel dan Repository: siklus red-green-refactor di
   FALSE,
   'personal_project',
   ARRAY['flutter'],
-  ARRAY['flutter_development'],
+  ARRAY['flutter_developer'],
   'Solo builder: arsitektur MVVM + Provider, Repository layer, integrasi ke free-api-news, TDD ViewModel dan Repository, plus routing dan DI.',
   'Solo learning project',
   '2026',
@@ -370,7 +370,7 @@ Auth stack mendalam: login email/password ke backend, Google Sign-In lewat offic
   TRUE,
   'personal_project',
   ARRAY['flutter'],
-  ARRAY['flutter_development'],
+  ARRAY['flutter_developer'],
   'Solo builder: arsitektur Clean Architecture berlapis lengkap, integrasi Firebase OTP, Google Sign-In, Dio AuthInterceptor dengan refresh lock, image processing di Isolate, plus modul News Feed, Explore, Search, Bookmark, Article Detail, dan Profile.',
   'Solo learning project',
   '2026',

@@ -53,7 +53,7 @@ Masalah utama:
 
 - Slug masih diketik manual sehingga rawan typo, redundant, dan tidak konsisten.
 - Role, platform, discipline, dan tech stack masih free text.
-- Admin belum membedakan project iOS, Mobile Lead, Flutter, Backend, Frontend, macOS, dan Full-stack secara rapi.
+- Admin belum membedakan project iOS, Flutter, Swift, Kotlin, Android, Backend, Frontend, dan Full-Stack secara rapi.
 - Public `/work` belum punya grouping/filter yang membantu recruiter menemukan project relevan.
 - Detail page belum cukup kuat sebagai case study senior engineer.
 - Cover image masih input UUID manual, belum media picker.
@@ -266,13 +266,15 @@ Tampilan harus membantu recruiter scanning cepat:
 - Featured projects di atas.
 - Filter/tab:
   - All
+  - Mobile
+  - Flutter
   - iOS
-  - Mobile Lead
-  - macOS
+  - Swift
+  - Kotlin
+  - Android
   - Backend
   - Frontend
-  - Flutter
-  - Full-stack
+  - Full-Stack
 - Setiap item menampilkan:
   - title
   - one-line summary
@@ -382,7 +384,7 @@ Output:
 
 Acceptance:
 
-- project can be categorized as iOS, Mobile Lead, Backend, Frontend, Flutter, macOS, or Full-stack
+- project can be categorized as Mobile, Flutter, iOS, Swift, Kotlin, Android, Backend, Frontend, or Full-Stack
 - public data reads include taxonomy fields
 
 ### Slice 3 - Admin Project Form
@@ -413,7 +415,7 @@ Output:
 
 Acceptance:
 
-- `/work` clearly separates iOS, Mobile Lead, Flutter, Backend, Frontend, macOS, Full-stack
+- `/work` clearly separates Mobile, Flutter, iOS, Swift, Kotlin, Android, Backend, Frontend, Full-Stack
 - cards/list show role, impact, stack, and year
 - empty states remain clean
 

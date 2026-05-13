@@ -363,7 +363,7 @@ Field project saat ini:
 Untuk portfolio yang ditujukan ke recruiter, project detail perlu menjawab:
 
 - Role dan ownership kamu.
-- Platform/discipline: iOS, Mobile Lead, Flutter, Backend, Frontend, macOS, atau Full-stack.
+- Platform/discipline: Mobile, Flutter, iOS, Swift, Kotlin, Android, Backend, Frontend, atau Full-Stack.
 - Problem bisnis/produk yang diselesaikan.
 - Architecture/technical decision yang menunjukkan seniority.
 - Trade-off atau constraint penting.

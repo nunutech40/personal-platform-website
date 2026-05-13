@@ -68,7 +68,7 @@ INSERT INTO projects (
   TRUE,
   'personal_project',
   ARRAY['web', 'backend'],
-  ARRAY['fullstack_engineering', 'backend_engineering', 'frontend_engineering', 'architecture'],
+  ARRAY['fullstack_developer', 'backend_developer', 'frontend_developer'],
   'Solo builder end-to-end: product direction, schema design, admin CMS, public UI, tests, seed data, reset workflow, dan dokumentasi.',
   'Solo project with AI-assisted implementation review',
   '2026',
