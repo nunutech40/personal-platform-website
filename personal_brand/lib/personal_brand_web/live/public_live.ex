@@ -29,7 +29,11 @@ defmodule PersonalBrandWeb.PublicLive do
         settings: settings,
         page: :home,
         has_more: false,
-        work_page: 1
+        has_more_posts: false,
+        has_more_products: false,
+        work_page: 1,
+        writing_page: 1,
+        products_page: 1
       )
 
     {:ok, socket, layout: {PersonalBrandWeb.Layouts, :public}}
@@ -184,11 +188,27 @@ defmodule PersonalBrandWeb.PublicLive do
 
         :writing_index ->
           posts = Content.list_posts()
-          assign(socket, page: :writing_index, page_title: "Writing", posts: posts)
+          total_posts = Content.count_published_posts()
+
+          assign(socket,
+            page: :writing_index,
+            page_title: "Writing",
+            posts: posts,
+            writing_page: 1,
+            has_more_posts: total_posts > length(posts)
+          )
 
         :products_index ->
           products = Content.list_products()
-          assign(socket, page: :products_index, page_title: "Products", products: products)
+          total_products = Content.count_published_products()
+
+          assign(socket,
+            page: :products_index,
+            page_title: "Products",
+            products: products,
+            products_page: 1,
+            has_more_products: total_products > length(products)
+          )
 
         :about_page ->
           assign(socket, page: :about_page, page_title: "About")
@@ -233,6 +253,44 @@ defmodule PersonalBrandWeb.PublicLive do
      )}
   end
 
+  # ── Load More (Writing Index) ───────────────────────────
+
+  def handle_event("load_more_posts", _params, socket) do
+    next_page = socket.assigns.writing_page + 1
+    per_page = Content.posts_per_page()
+    offset = (next_page - 1) * per_page
+
+    more_posts = Content.list_posts(limit: per_page, offset: offset)
+    all_posts = socket.assigns.posts ++ more_posts
+    total = Content.count_published_posts()
+
+    {:noreply,
+     assign(socket,
+       posts: all_posts,
+       writing_page: next_page,
+       has_more_posts: total > length(all_posts)
+     )}
+  end
+
+  # ── Load More (Products Index) ──────────────────────────
+
+  def handle_event("load_more_products", _params, socket) do
+    next_page = socket.assigns.products_page + 1
+    per_page = Content.products_per_page()
+    offset = (next_page - 1) * per_page
+
+    more_products = Content.list_products(limit: per_page, offset: offset)
+    all_products = socket.assigns.products ++ more_products
+    total = Content.count_published_products()
+
+    {:noreply,
+     assign(socket,
+       products: all_products,
+       products_page: next_page,
+       has_more_products: total > length(all_products)
+     )}
+  end
+
   # ── Render ───────────────────────────────────────────────
 
   def render(assigns) do
@@ -262,7 +320,7 @@ defmodule PersonalBrandWeb.PublicLive do
           profile_email={@profile_email}
         />
       <% :writing_index -> %>
-        <.writing_index posts={@posts} />
+        <.writing_index posts={@posts} has_more={@has_more_posts} />
       <% :writing_detail -> %>
         <.writing_detail
           post={@post}
@@ -272,7 +330,7 @@ defmodule PersonalBrandWeb.PublicLive do
           tips_cta_body={@settings.tips_cta_body}
         />
       <% :products_index -> %>
-        <.products_index products={@products} />
+        <.products_index products={@products} has_more={@has_more_products} />
       <% :product_detail -> %>
         <.product_detail product={@product} />
       <% :about_page -> %>
@@ -532,6 +590,11 @@ defmodule PersonalBrandWeb.PublicLive do
         </div>
       </article>
     <% end %>
+    <div :if={@has_more} class="load-more">
+      <button phx-click="load_more_posts" phx-disable-with="Loading...">
+        Load more writing
+      </button>
+    </div>
     """
   end
 
@@ -589,6 +652,11 @@ defmodule PersonalBrandWeb.PublicLive do
         <p class="meta">{product.product_type} · {format_money(product)} · {product.stock_status}</p>
       </article>
     <% end %>
+    <div :if={@has_more} class="load-more">
+      <button phx-click="load_more_products" phx-disable-with="Loading...">
+        Load more products
+      </button>
+    </div>
     """
   end
 

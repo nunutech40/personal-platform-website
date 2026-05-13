@@ -229,12 +229,25 @@ defmodule PersonalBrand.Content do
 
   # ── Posts ────────────────────────────────────────────────
 
-  def list_posts do
+  @posts_per_page 9
+
+  def posts_per_page, do: @posts_per_page
+
+  def list_posts(opts \\ []) do
+    limit = Keyword.get(opts, :limit, @posts_per_page)
+    offset = Keyword.get(opts, :offset, 0)
+
     Repo.all(
       from p in Post,
         where: p.status == "published",
-        order_by: [desc: p.published_at]
+        order_by: [desc: p.published_at],
+        limit: ^limit,
+        offset: ^offset
     )
+  end
+
+  def count_published_posts do
+    Repo.aggregate(from(p in Post, where: p.status == "published"), :count, :id)
   end
 
   def list_featured_posts do
@@ -261,16 +274,25 @@ defmodule PersonalBrand.Content do
 
   # ── Products ─────────────────────────────────────────────
 
-  def list_products do
-    Repo.all(from p in Product, order_by: [asc: p.title])
-  end
+  @products_per_page 9
 
-  def list_active_products do
+  def products_per_page, do: @products_per_page
+
+  def list_products(opts \\ []) do
+    limit = Keyword.get(opts, :limit, @products_per_page)
+    offset = Keyword.get(opts, :offset, 0)
+
     Repo.all(
       from p in Product,
         where: p.status == "active",
-        order_by: [asc: p.title]
+        order_by: [asc: p.title],
+        limit: ^limit,
+        offset: ^offset
     )
+  end
+
+  def count_published_products do
+    Repo.aggregate(from(p in Product, where: p.status == "active"), :count, :id)
   end
 
   def list_featured_products do
