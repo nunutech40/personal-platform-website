@@ -874,6 +874,10 @@ defmodule PersonalBrandWeb.PublicLive do
         <% else %>
           <li :for={post <- @posts}>
             <a href={"/writing/#{post.slug}"}>{post.title}</a>
+            <p>{post.excerpt}</p>
+            <p class="meta">
+              {format_date(post.published_at)} · {post.reading_time} min read
+            </p>
           </li>
         <% end %>
       </ul>
