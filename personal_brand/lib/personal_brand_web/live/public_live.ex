@@ -155,7 +155,7 @@ defmodule PersonalBrandWeb.PublicLive do
       case path do
         :index ->
           projects = Content.list_featured_projects()
-          posts = Content.list_featured_posts()
+          posts = Content.list_posts(limit: 3)
           products = Content.list_featured_products()
           project_media = media_by_id(projects)
 
