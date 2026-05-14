@@ -48,6 +48,7 @@ defmodule PersonalBrand.Content.Project do
     field :year, :string
     field :status, :string, default: "draft"
     field :featured, :boolean, default: false
+    field :best_three, :boolean, default: false
     field :demo_url, :string
     field :demo_video_url, :string
     field :github_url, :string
@@ -124,6 +125,7 @@ defmodule PersonalBrand.Content.Project do
       :year,
       :status,
       :featured,
+      :best_three,
       :demo_url,
       :demo_video_url,
       :github_url,

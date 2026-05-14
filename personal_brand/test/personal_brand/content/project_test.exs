@@ -82,6 +82,11 @@ defmodule PersonalBrand.Content.ProjectTest do
       assert get_field(changeset, :featured) == false
     end
 
+    test "sets default best_three to false" do
+      changeset = Project.changeset(%Project{}, @valid_attrs)
+      assert get_field(changeset, :best_three) == false
+    end
+
     test "accepts array fields" do
       attrs = %{@valid_attrs | result: ["A", "B"], tech_stack: ["Elixir", "Phoenix"]}
       changeset = Project.changeset(%Project{}, attrs)

@@ -19,17 +19,22 @@ Saat ini:
 - `posts` mendukung title, slug, excerpt, markdown/html content, tags, status, SEO, dan cover image.
 - Writing editor direction is Markdown-first with EasyMDE in admin. Keep `content_markdown` as source of truth and use rendered/sanitized `content_html` for public reading.
 - `posts.og_image_id` should optionally override `posts.cover_image_id` for social preview cards.
+- `posts` mendukung monetization access: `free`, `tips`, dan `paid`.
+- `tips` dan `paid` post dikunci sampai order paid/access token valid; bedanya `tips` memakai pilihan nominal dari `tip_amount_options`, sementara `paid` memakai satu `price`.
+- `posts.clap_count` menyimpan jumlah clap; list Writing mengurutkan post published dari clap terbanyak lalu tanggal publish.
 - `products` mendukung price, currency, product type, delivery type, checkout URL, status, included, FAQ, dan cover image.
+- `products` mendukung fulfillment foundation: `fulfillment_type`, `download_media_id`, `requires_shipping`, `payment_provider`, dan `checkout_mode`.
+- `orders` dan `access_grants` sudah tersedia untuk post access/tips/product purchase.
+- Midtrans Snap redirect dan webhook `/webhooks/midtrans` tersedia. Secret Midtrans dibaca dari env/runtime config.
 - `site_settings` menyimpan identity site, profile, email, social links, featured IDs, dan active theme.
 - Product checkout MVP memakai `products.checkout_url` untuk external payment link.
 
 Gap:
 
-- Belum ada field global untuk Saweria / Buy Me Coffee.
-- Belum ada access model untuk post gratis/tips/paid.
-- Belum ada payment/order table.
-- Belum ada webhook endpoint.
-- Belum ada unlock/access token untuk paid post atau digital product.
+- Belum ada email delivery otomatis untuk access link.
+- Belum ada halaman download file otomatis untuk product digital.
+- Belum ada shipping/courier automation untuk product fisik.
+- Belum ada receipt email untuk buyer.
 
 ## 2. Payment Provider Position
 
@@ -116,10 +121,10 @@ payment_provider:
 Rules:
 
 - `free`: content full terbuka. End-of-post support CTA injected otomatis.
-- `tips`: content bisa terbuka penuh atau sebagian; CTA tips dibuat lebih kuat. Default amount options `10000`, `15000`, `20000`.
+- `tips`: content dikunci seperti paid post, tetapi buyer memilih nominal dari `tip_amount_options`. Default amount options `10000`, `15000`, `20000`.
 - `paid`: content dikunci setelah excerpt/paywall preview sampai payment valid.
 - `paid` wajib punya `price > 0`.
-- `tips` boleh punya amount options, tidak harus fixed price.
+- `tips` wajib memakai salah satu amount option yang dikonfigurasi admin.
 - `free` tidak perlu price.
 
 ## 5. Paid Post Without User Login
@@ -179,6 +184,8 @@ orders
 - product_id uuid nullable
 - metadata map
 - paid_at utc_datetime nullable
+- fulfillment_status string       # unfulfilled, fulfilled, not_required
+- fulfilled_at utc_datetime nullable
 - inserted_at / updated_at
 
 access_grants
@@ -254,14 +261,14 @@ Support future writing via Saweria or Buy Me Coffee.
 
 ### Tips post
 
-Top or mid article CTA:
+Paywall preview:
 
 ```txt
-This writing is open, but tips help support more deep dives.
+This writing continues after support.
 Choose: Rp10.000 / Rp15.000 / Rp20.000
 ```
 
-For urgent MVP, tips can link out to Saweria/Buy Me Coffee with suggested amount in copy. Proper amount-specific flow comes later.
+Tips post creates an order with `kind = tip`, then unlocks via the same access-token flow as paid posts.
 
 ### Paid post
 
@@ -325,15 +332,18 @@ Monetization
 
 ### Products
 
-Add panel later:
+Panel:
 
 ```txt
 Fulfillment
 - Fulfillment type
 - Download media
 - Requires shipping
-- Manual fulfillment notes
+- Payment provider
+- Checkout mode
 ```
+
+Orders are visible at `/admin/orders`; admin can distinguish paid/unfulfilled/fulfilled.
 
 ## 10. Implementation Slices
 
@@ -362,7 +372,7 @@ Output:
 Acceptance:
 
 - Free post stays open.
-- Tips post renders tip CTA with amount options.
+- Tips post renders a locked preview/paywall with configured amount options.
 - Paid post renders preview/paywall instead of full content.
 
 ### Slice 3 - Manual Paid Link MVP
@@ -391,7 +401,8 @@ Output:
 Acceptance:
 
 - Payment success unlocks paid post via token.
-- Digital product can generate access/download token after payment.
+- Tips post payment unlocks via token using a selected configured amount.
+- Digital product can generate access token after payment.
 - Failed/expired payment does not unlock content.
 
 ### Slice 5 - Product Fulfillment
@@ -422,13 +433,11 @@ Do first:
 1. Site settings tip links.
 2. Free post support CTA.
 3. Post `access_type`.
-4. Tips post CTA with fixed options.
+4. Tips post paywall with configured amount options.
 5. Paid post preview/paywall with manual checkout URL.
 
 Do later:
 
-1. Orders.
-2. Midtrans Snap/API.
-3. Midtrans webhook.
-4. Access tokens.
-5. Digital downloads and physical fulfillment.
+1. Email delivery for access links.
+2. Product download page/file delivery.
+3. Physical shipping automation.

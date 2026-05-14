@@ -184,6 +184,15 @@ defmodule PersonalBrand.Content do
     )
   end
 
+  def list_best_three_projects do
+    Repo.all(
+      from p in Project,
+        where: p.best_three == true and p.status == "published",
+        order_by: ^project_order(),
+        limit: 3
+    )
+  end
+
   def create_project(attrs) do
     attrs = put_unique_project_slug(attrs)
 
@@ -240,7 +249,7 @@ defmodule PersonalBrand.Content do
     Repo.all(
       from p in Post,
         where: p.status == "published",
-        order_by: [desc: p.published_at],
+        order_by: [desc: p.clap_count, desc: p.published_at],
         limit: ^limit,
         offset: ^offset
     )
@@ -254,7 +263,7 @@ defmodule PersonalBrand.Content do
     Repo.all(
       from p in Post,
         where: p.featured == true and p.status == "published",
-        order_by: [desc: p.published_at]
+        order_by: [desc: p.clap_count, desc: p.published_at]
     )
   end
 
@@ -264,6 +273,14 @@ defmodule PersonalBrand.Content do
 
   def get_post_by_slug(slug) do
     Repo.get_by(Post, slug: slug)
+  end
+
+  def clap_post(%Post{} = post) do
+    {1, _result} =
+      from(p in Post, where: p.id == ^post.id)
+      |> Repo.update_all(inc: [clap_count: 1])
+
+    Repo.get!(Post, post.id)
   end
 
   def unique_post_slug(attrs) when is_map(attrs), do: resolve_unique_slug(attrs, Post)

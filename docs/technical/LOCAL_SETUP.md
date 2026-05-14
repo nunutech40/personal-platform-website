@@ -391,10 +391,33 @@ Posts dan Products memakai standar admin yang sama dengan Projects untuk CRUD ha
 - Array-like field (`post.tags`, `product.included`) bisa diisi satu item per baris; post tags juga menerima koma.
 - Form punya placeholder dan help text untuk mengurangi input yang ambigu.
 - Product `checkout_url` boleh kosong; jika diisi harus diawali `http://` atau `https://`.
-- Post monetization is planned but not implemented yet. Planned access modes: `free`, `tips`, and `paid`.
-- Free posts will use global Saweria / Buy Me Coffee links from Site Settings.
-- Tips and paid posts should use Midtrans when proper payment gating is implemented. Do not add Xendit fields unless a Xendit account exists.
-- Paid/tips unlock should avoid customer login at first: use email + order + access token.
+- Post monetization supports `free`, `tips`, and `paid`.
+- Free posts use global Saweria / Buy Me Coffee links from Site Settings.
+- Tips posts are locked like paid posts, but the buyer picks one configured amount from `tip_amount_options`.
+- Paid posts collect buyer email, create an order/access grant, and either redirect to Midtrans Snap or fallback to `checkout_url`.
+- Product checkout can stay `manual_link` or use `midtrans_snap` from the Product admin panel.
+- Orders can be reviewed from `/admin/orders`.
+- Do not add Xendit fields unless a Xendit account exists.
+- Paid unlock avoids customer login: email + order + hashed access token.
+- Post detail has a public Clap button; Writing lists sort by `clap_count` descending, then `published_at`.
+- Projects have `best_three`; homepage Featured Work uses the top 3 published `best_three` projects, ordered by project sort rules.
+
+### Commerce Deploy Notes
+
+Set runtime env vars on the deployed app:
+
+```bash
+MIDTRANS_SERVER_KEY=...
+MIDTRANS_ENV=sandbox # or production
+```
+
+In the Midtrans dashboard, set the HTTP notification/webhook URL to:
+
+```txt
+https://your-domain.com/webhooks/midtrans
+```
+
+The app verifies Midtrans `signature_key` with `MIDTRANS_SERVER_KEY`. Do not store the server key in Site Settings.
 
 ## Media, Site Settings, and Themes Admin Workflow
 

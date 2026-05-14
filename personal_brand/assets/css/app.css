@@ -593,6 +593,65 @@ li + li {
   padding: 14px 16px;
 }
 
+.tips-cta,
+.paywall-gate {
+  border: 1px solid var(--line);
+  background: var(--soft);
+  margin: 22px 0;
+  padding: 16px;
+}
+
+.tips-cta p:first-child,
+.paywall-gate h2:first-child {
+  margin-top: 0;
+}
+
+.paywall .article-body {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+  padding-bottom: 10px;
+}
+
+.checkout-form {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+  max-width: 360px;
+}
+
+.checkout-form label {
+  display: grid;
+  gap: 4px;
+  font-weight: bold;
+}
+
+.checkout-form input[type="email"] {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 8px 10px;
+}
+
+.tip-options {
+  border: 1px solid var(--line);
+  padding: 10px;
+}
+
+.tip-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 12px;
+  font-weight: normal;
+}
+
+.post-clap {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 24px 0;
+}
+
 /* ── Search Page ─────────────────────────────────────────── */
 
 .search-page {

@@ -136,6 +136,18 @@ defmodule PersonalBrand.ContentTest do
       assert hd(featured).slug == "featured-pub"
     end
 
+    test "list_best_three_projects/0 returns only best three published projects limited to three" do
+      project_fixture(%{slug: "best-a", best_three: true, status: "published", sort_order: 0})
+      project_fixture(%{slug: "best-b", best_three: true, status: "published", sort_order: 1})
+      project_fixture(%{slug: "best-c", best_three: true, status: "published", sort_order: 2})
+      project_fixture(%{slug: "best-d", best_three: true, status: "published", sort_order: 3})
+      project_fixture(%{slug: "best-draft", best_three: true, status: "draft", sort_order: 0})
+
+      best_three = Content.list_best_three_projects()
+
+      assert Enum.map(best_three, & &1.slug) == ["best-a", "best-b", "best-c"]
+    end
+
     test "get_project_by_slug/1 returns project by slug" do
       project = project_fixture(%{slug: "my-project"})
       assert Content.get_project_by_slug("my-project").id == project.id
@@ -216,11 +228,12 @@ defmodule PersonalBrand.ContentTest do
       post
     end
 
-    test "list_posts/0 returns only published posts ordered by published_at desc" do
+    test "list_posts/0 returns only published posts ordered by clap count then published_at desc" do
       p1 =
         post_fixture(%{
           slug: "post-a",
           status: "published",
+          clap_count: 10,
           published_at: ~U[2026-03-01 00:00:00Z]
         })
 
@@ -228,6 +241,7 @@ defmodule PersonalBrand.ContentTest do
         post_fixture(%{
           slug: "post-b",
           status: "published",
+          clap_count: 2,
           published_at: ~U[2026-06-01 00:00:00Z]
         })
 
@@ -235,7 +249,15 @@ defmodule PersonalBrand.ContentTest do
 
       posts = Content.list_posts()
       assert length(posts) == 2
-      assert Enum.map(posts, & &1.id) == [p2.id, p1.id]
+      assert Enum.map(posts, & &1.id) == [p1.id, p2.id]
+    end
+
+    test "clap_post/1 increments post clap count" do
+      post = post_fixture(%{clap_count: 2})
+
+      updated = Content.clap_post(post)
+
+      assert updated.clap_count == 3
     end
 
     test "list_featured_posts/0 returns only featured published posts" do

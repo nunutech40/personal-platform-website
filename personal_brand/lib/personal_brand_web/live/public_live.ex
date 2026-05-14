@@ -2,8 +2,10 @@ defmodule PersonalBrandWeb.PublicLive do
   use PersonalBrandWeb, :live_view
 
   alias PersonalBrand.Content
+  alias PersonalBrand.Content.Markdown
   alias PersonalBrand.Content.Post
   alias PersonalBrand.Content.Project
+  alias PersonalBrand.Commerce
 
   # ── Mount ────────────────────────────────────────────────
 
@@ -83,7 +85,7 @@ defmodule PersonalBrandWeb.PublicLive do
 
   # ── Route Handling ───────────────────────────────────────
 
-  def handle_params(%{"slug" => slug}, _uri, socket) do
+  def handle_params(%{"slug" => slug} = params, _uri, socket) do
     path = socket.assigns.live_action
 
     case path do
@@ -117,12 +119,14 @@ defmodule PersonalBrandWeb.PublicLive do
           post ->
             cover_media = Content.get_media(post.cover_image_id)
             og_media = Content.get_media(post.og_image_id) || cover_media
+            access_granted? = Commerce.valid_post_access?(post, params["access_token"])
 
             {:noreply,
              assign(socket,
                page: :writing_detail,
                post: post,
                post_content_html: Post.render_content(post),
+               access_granted?: access_granted?,
                cover_media: cover_media,
                page_title: post.seo_title || post.title,
                meta_description: post.seo_description || post.excerpt,
@@ -159,7 +163,7 @@ defmodule PersonalBrandWeb.PublicLive do
     socket =
       case path do
         :index ->
-          projects = Content.list_featured_projects()
+          projects = Content.list_best_three_projects()
           posts = Content.list_posts(limit: 3)
           products = Content.list_featured_products()
           project_media = media_by_id(projects)
@@ -331,6 +335,12 @@ defmodule PersonalBrandWeb.PublicLive do
      )}
   end
 
+  def handle_event("clap_post", _params, %{assigns: %{post: post}} = socket) do
+    post = Content.clap_post(post)
+
+    {:noreply, assign(socket, post: post)}
+  end
+
   # ── Render ───────────────────────────────────────────────
 
   def render(assigns) do
@@ -370,6 +380,7 @@ defmodule PersonalBrandWeb.PublicLive do
           support_links={@support_links}
           tips_cta_title={@settings.tips_cta_title}
           tips_cta_body={@settings.tips_cta_body}
+          access_granted?={@access_granted?}
         />
       <% :products_index -> %>
         <.products_index products={@products} has_more={@has_more_products} />
@@ -636,6 +647,7 @@ defmodule PersonalBrandWeb.PublicLive do
       <article class="item">
         <div class="item-title"><a href={"/writing/#{post.slug}"}>{post.title}</a></div>
         <p class="meta">{format_date(post.published_at)} · {post.reading_time} min read</p>
+        <p class="meta">{post.clap_count} claps</p>
         <p>{post.excerpt}</p>
         <div class="tag-list">
           <span :for={tag <- post.tags} class="tag">{tag}</span>
@@ -660,23 +672,92 @@ defmodule PersonalBrandWeb.PublicLive do
       <p class="meta">{format_date(@post.published_at)} · {@post.reading_time} min read</p>
       <p class="lead">{@post.excerpt}</p>
       <hr />
-      <div class="article-body">
-        {Phoenix.HTML.raw(@post_content_html)}
-      </div>
-      <section :if={@support_links != []} class="post-support">
-        <h2>{@tips_cta_title || "Support this writing"}</h2>
-        <p :if={present?(@tips_cta_body)}>{@tips_cta_body}</p>
-        <p class="cta-row">
-          <a
-            :for={{label, url} <- @support_links}
-            href={url}
-            class="button-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {label}
-          </a>
-        </p>
+      <%= case {@post.access_type, @access_granted?} do %>
+        <% {"paid", true} -> %>
+          <div class="article-body">
+            {Phoenix.HTML.raw(@post_content_html)}
+          </div>
+        <% {"paid", _access_granted?} -> %>
+          <div class="paywall">
+            <div class="article-body">
+              {Phoenix.HTML.raw(paywall_preview(@post))}
+            </div>
+            <div class="paywall-gate">
+              <h2>{@post.paywall_cta || "Baca selengkapnya"}</h2>
+              <p>Artikel ini membutuhkan akses berbayar.</p>
+              <p :if={@post.price} class="price">{@post.currency} {format_price(@post.price)}</p>
+              <form action={"/checkout/writing/#{@post.slug}"} method="post" class="checkout-form">
+                <input type="hidden" name="_csrf_token" value={csrf_token()} />
+                <label>
+                  Email
+                  <input
+                    type="email"
+                    name="buyer_email"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </label>
+                <button type="submit">Bayar & Baca</button>
+              </form>
+              <p class="meta">
+                Pembayaran memakai Midtrans jika env tersedia, atau checkout URL manual sebagai fallback.
+              </p>
+            </div>
+          </div>
+        <% {"tips", true} -> %>
+          <div class="article-body">
+            {Phoenix.HTML.raw(@post_content_html)}
+          </div>
+        <% {"tips", _access_granted?} -> %>
+          <div class="paywall">
+            <div class="article-body">
+              {Phoenix.HTML.raw(paywall_preview(@post))}
+            </div>
+            <div class="paywall-gate">
+              <h2>{@post.paywall_cta || "Support untuk lanjut baca"}</h2>
+              <p>Pilih nominal tips untuk membuka tulisan ini.</p>
+              <form action={"/checkout/writing/#{@post.slug}"} method="post" class="checkout-form">
+                <input type="hidden" name="_csrf_token" value={csrf_token()} />
+                <label>
+                  Email
+                  <input type="email" name="buyer_email" placeholder="you@example.com" required />
+                </label>
+                <fieldset class="tip-options">
+                  <legend>Nominal tips</legend>
+                  <label :for={amount <- @post.tip_amount_options}>
+                    <input type="radio" name="tip_amount" value={amount} required />
+                    Rp{format_tip_amount(amount)}
+                  </label>
+                </fieldset>
+                <button type="submit">Tips & Baca</button>
+              </form>
+            </div>
+          </div>
+        <% _other -> %>
+          <div class="article-body">
+            {Phoenix.HTML.raw(@post_content_html)}
+          </div>
+          <section :if={@support_links != []} class="post-support">
+            <h2>{@tips_cta_title || "Support this writing"}</h2>
+            <p :if={present?(@tips_cta_body)}>{@tips_cta_body}</p>
+            <p class="cta-row">
+              <a
+                :for={{label, url} <- @support_links}
+                href={url}
+                class="button-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {label}
+              </a>
+            </p>
+          </section>
+      <% end %>
+      <section class="post-clap">
+        <button type="button" phx-click="clap_post">
+          Clap
+        </button>
+        <span>{@post.clap_count} claps</span>
       </section>
       <hr />
       <p><a href="/writing">Back to writing</a> | <a href="/work">See related work</a></p>
@@ -727,9 +808,18 @@ defmodule PersonalBrandWeb.PublicLive do
           <strong>Delivery:</strong> {@product.delivery_type}<br />
           <strong>Status:</strong> {@product.stock_status}
         </p>
-        <p :if={@product.checkout_url}>
-          <a href={@product.checkout_url} class="button-link">Buy Now</a>
-        </p>
+        <form
+          :if={@product.status == "active"}
+          action={"/checkout/products/#{@product.slug}"}
+          method="post"
+          class="checkout-form"
+        >
+          <input type="hidden" name="_csrf_token" value={csrf_token()} />
+          <label>
+            Email <input type="email" name="buyer_email" placeholder="you@example.com" required />
+          </label>
+          <button type="submit">Buy Now</button>
+        </form>
         <p :if={@product.status != "active"} class="notice">
           This product is currently marked as {@product.status}.
         </p>
@@ -1012,7 +1102,7 @@ defmodule PersonalBrandWeb.PublicLive do
             <a href={"/writing/#{post.slug}"}>{post.title}</a>
             <p>{post.excerpt}</p>
             <p class="meta">
-              {format_date(post.published_at)} · {post.reading_time} min read
+              {format_date(post.published_at)} · {post.reading_time} min read · {post.clap_count} claps
             </p>
           </li>
         <% end %>
@@ -1451,6 +1541,39 @@ defmodule PersonalBrandWeb.PublicLive do
       {"Buy Me Coffee", settings.buy_me_coffee_url}
     ]
     |> Enum.filter(fn {_label, url} -> present?(url) end)
+  end
+
+  defp csrf_token, do: Plug.CSRFProtection.get_csrf_token()
+
+  defp paywall_preview(%Post{} = post) do
+    post.paid_excerpt
+    |> fallback_to(post.excerpt)
+    |> fallback_to("Preview belum tersedia.")
+    |> Markdown.to_html()
+  end
+
+  defp fallback_to(value, _fallback) when is_binary(value) and value != "", do: value
+  defp fallback_to(_value, fallback), do: fallback
+
+  defp format_price(nil), do: ""
+  defp format_price(%Decimal{} = price), do: Decimal.to_string(price, :normal)
+  defp format_price(price), do: to_string(price)
+
+  defp format_tip_amount(amount) when is_integer(amount) do
+    amount
+    |> Integer.to_string()
+    |> String.reverse()
+    |> String.replace(~r/.{3}(?=.)/, "\\0.")
+    |> String.reverse()
+  end
+
+  defp format_tip_amount(amount), do: amount |> to_string() |> format_tip_amount_string()
+
+  defp format_tip_amount_string(value) do
+    case Integer.parse(value) do
+      {amount, ""} -> format_tip_amount(amount)
+      _invalid -> value
+    end
   end
 
   defp format_date(nil), do: ""

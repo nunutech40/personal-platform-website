@@ -77,9 +77,13 @@
       <p class="px-3 pb-2 pt-7 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
         Commerce
       </p>
-      <span class="admin-nav-item cursor-not-allowed text-slate-500">
-        <.icon name="hero-receipt-percent" class="size-5" /> Orders (later)
-      </span>
+      <ul class="space-y-1">
+        <li>
+          <.link navigate={~p"/admin/orders"} class={admin_nav_class(assigns, "/admin/orders")}>
+            <.icon name="hero-receipt-percent" class="size-5" /> Orders
+          </.link>
+        </li>
+      </ul>
     </nav>
   </aside>
 

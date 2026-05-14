@@ -296,6 +296,15 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
         render_form: &render_featured_toggle/1,
         panel: :identity
       },
+      best_three: %{
+        module: Backpex.Fields.Boolean,
+        label: "Best Three Homepage",
+        help_text:
+          "Aktifkan untuk 3 project utama yang tampil di homepage. Kalau lebih dari 3 aktif, sistem mengambil 3 teratas sesuai Urutan Tampil.",
+        render: &render_best_three_badge/1,
+        render_form: &render_best_three_toggle/1,
+        panel: :identity
+      },
       sort_order: %{
         module: Backpex.Fields.Number,
         label: "Urutan Tampil",
@@ -606,6 +615,19 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       </p>
     </div>
     """
+  end
+
+  defp render_best_three_badge(assigns) do
+    ~H"""
+    <span>
+      <span :if={@value} class="badge badge-secondary badge-sm">Best Three</span>
+      <span :if={!@value} class="text-slate-400">-</span>
+    </span>
+    """
+  end
+
+  defp render_best_three_toggle(assigns) do
+    render_featured_toggle(assigns)
   end
 
   defp render_suggested_text_input(assigns) do

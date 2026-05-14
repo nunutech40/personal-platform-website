@@ -5,6 +5,8 @@ defmodule PersonalBrandWeb.PublicLiveTest do
   alias PersonalBrand.Content.SiteSetting
   alias PersonalBrand.Repo
 
+  import Phoenix.LiveViewTest
+
   setup do
     Repo.insert!(%SiteSetting{
       site_name: "Test Site",
@@ -67,6 +69,32 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "No featured work yet."
     assert html =~ "No writing published yet."
     assert html =~ "No featured products yet."
+  end
+
+  test "GET / renders best three projects on homepage", %{conn: conn} do
+    insert_project(%{
+      title: "Best One",
+      slug: "best-one",
+      status: "published",
+      best_three: true,
+      sort_order: 0
+    })
+
+    insert_project(%{
+      title: "Regular Project",
+      slug: "regular-project",
+      status: "published",
+      featured: true,
+      best_three: false
+    })
+
+    html =
+      conn
+      |> get(~p"/")
+      |> html_response(200)
+
+    assert html =~ "Best One"
+    refute html =~ "Regular Project"
   end
 
   test "GET /about /now /contact render CMS-managed settings", %{conn: conn} do
@@ -334,6 +362,74 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "Support kecil bikin eksperimen"
     assert html =~ ~s(href="https://saweria.co/nunu")
     assert html =~ ~s(href="https://www.buymeacoffee.com/nunu")
+  end
+
+  test "GET /writing/:slug renders tips paywall with configured amount options", %{conn: conn} do
+    insert_post(%{
+      title: "Open Tips Post",
+      slug: "open-tips-post",
+      excerpt: "Open article with tips.",
+      access_type: "tips",
+      tip_amount_options: [10000, 15000],
+      paid_excerpt: "Tips preview.",
+      content_markdown: "Full article stays readable."
+    })
+
+    html =
+      conn
+      |> get(~p"/writing/open-tips-post")
+      |> html_response(200)
+
+    assert html =~ "Tips preview."
+    assert html =~ "Pilih nominal tips"
+    assert html =~ "Rp10.000"
+    assert html =~ "Rp15.000"
+    assert html =~ ~s(action="/checkout/writing/open-tips-post")
+    refute html =~ "Full article stays readable."
+  end
+
+  test "GET /writing/:slug renders paid preview and hides full content", %{conn: conn} do
+    insert_post(%{
+      title: "Paid Deep Dive",
+      slug: "paid-deep-dive",
+      excerpt: "Public fallback excerpt.",
+      access_type: "paid",
+      price: Decimal.new("25000"),
+      paid_excerpt: "This is the public preview.",
+      checkout_url: "https://app.midtrans.com/payment-links/paid-deep-dive",
+      content_markdown: "Secret paid article body."
+    })
+
+    html =
+      conn
+      |> get(~p"/writing/paid-deep-dive")
+      |> html_response(200)
+
+    assert html =~ "This is the public preview."
+    assert html =~ "IDR 25000"
+    assert html =~ ~s(action="/checkout/writing/paid-deep-dive")
+    assert html =~ "Bayar & Baca"
+    refute html =~ "Secret paid article body."
+  end
+
+  test "writing detail clap button increments clap count", %{conn: conn} do
+    insert_post(%{
+      title: "Clap Post",
+      slug: "clap-post",
+      excerpt: "Clappable.",
+      clap_count: 4
+    })
+
+    {:ok, view, html} = live(conn, ~p"/writing/clap-post")
+
+    assert html =~ "4 claps"
+
+    html =
+      view
+      |> element("button", "Clap")
+      |> render_click()
+
+    assert html =~ "5 claps"
   end
 
   test "GET /work/:slug handles sparse optional list fields", %{conn: conn} do

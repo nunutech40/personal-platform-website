@@ -35,6 +35,16 @@ defmodule PersonalBrandWeb.Router do
     live "/now", PublicLive, :now_page
     live "/contact", PublicLive, :contact_page
     live "/search", PublicLive, :search
+
+    post "/checkout/writing/:slug", CommerceController, :create_post_checkout
+    post "/checkout/products/:slug", CommerceController, :create_product_checkout
+    get "/payment/success", CommerceController, :payment_success
+  end
+
+  scope "/", PersonalBrandWeb do
+    pipe_through :api
+
+    post "/webhooks/midtrans", CommerceController, :midtrans_webhook
   end
 
   # Backpex routes (for cookies, etc.)
@@ -56,6 +66,8 @@ defmodule PersonalBrandWeb.Router do
       live_resources("/posts", PostResource, only: [:index, :show, :new, :edit, :delete])
 
       live_resources("/products", ProductResource, only: [:index, :show, :new, :edit, :delete])
+
+      live_resources("/orders", OrderResource, only: [:index, :show])
 
       live_resources("/media", MediaResource, only: [:index, :show, :new, :edit, :delete])
 

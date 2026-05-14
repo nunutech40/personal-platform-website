@@ -16,6 +16,11 @@ defmodule PersonalBrand.Content.Product do
     field :stock_status, :string, default: "in_stock"
     field :delivery_type, :string, default: "digital_download"
     field :checkout_url, :string
+    field :fulfillment_type, :string, default: "instant_download"
+    field :download_media_id, :binary_id
+    field :requires_shipping, :boolean, default: false
+    field :payment_provider, :string, default: "midtrans"
+    field :checkout_mode, :string, default: "manual_link"
     field :featured, :boolean, default: false
     field :included, {:array, :string}, default: []
     field :faq, :map
@@ -48,6 +53,11 @@ defmodule PersonalBrand.Content.Product do
       :stock_status,
       :delivery_type,
       :checkout_url,
+      :fulfillment_type,
+      :download_media_id,
+      :requires_shipping,
+      :payment_provider,
+      :checkout_mode,
       :featured,
       :included,
       :faq,
@@ -65,6 +75,14 @@ defmodule PersonalBrand.Content.Product do
       "email_delivery",
       "physical_delivery"
     ])
+    |> validate_inclusion(:fulfillment_type, [
+      "instant_download",
+      "email_delivery",
+      "manual_confirmation",
+      "physical_shipping"
+    ])
+    |> validate_inclusion(:payment_provider, ["midtrans", "manual_link"])
+    |> validate_inclusion(:checkout_mode, ["manual_link", "midtrans_snap"])
     |> validate_format(:slug, ~r/^[a-z0-9-]+$/,
       message: "must be lowercase alphanumeric with hyphens only"
     )

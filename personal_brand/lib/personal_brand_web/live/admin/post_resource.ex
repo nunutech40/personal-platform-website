@@ -27,6 +27,7 @@ defmodule PersonalBrandWeb.Admin.PostResource do
       identity: "Info Dasar",
       content: "Konten",
       publishing: "Publishing",
+      monetization: "Monetisasi",
       media: "Media",
       seo: "SEO"
     ]
@@ -138,6 +139,84 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         placeholder: "5",
         help_text: "Angka 1-120 menit.",
         panel: :publishing
+      },
+      access_type: %{
+        module: Backpex.Fields.Select,
+        label: "Tipe Akses",
+        options: [
+          {"Gratis (Free)", "free"},
+          {"Tips (Locked + Pilihan Nominal)", "tips"},
+          {"Berbayar (Locked)", "paid"}
+        ],
+        help_text:
+          "Free = konten terbuka + CTA support. Tips = konten dikunci dan pembaca memilih nominal tips. Paid = konten dikunci dengan satu harga.",
+        panel: :monetization
+      },
+      price: %{
+        module: Backpex.Fields.Number,
+        label: "Harga",
+        placeholder: "25000",
+        help_text: "Wajib diisi jika tipe akses Paid. Dalam satuan mata uang (bukan sen).",
+        except: [:index],
+        panel: :monetization
+      },
+      currency: %{
+        module: Backpex.Fields.Text,
+        label: "Mata Uang",
+        placeholder: "IDR",
+        help_text: "Kode mata uang 3 huruf. Default: IDR.",
+        except: [:index],
+        panel: :monetization
+      },
+      tip_amount_options: %{
+        module: Backpex.Fields.Textarea,
+        label: "Opsi Jumlah Tips",
+        rows: 2,
+        placeholder: "10000\n15000\n25000",
+        help_text:
+          "Satu angka per baris. Untuk tipe Tips, pembaca harus memilih salah satu nominal ini.",
+        render_form: &render_textarea/1,
+        except: [:index],
+        panel: :monetization
+      },
+      paid_excerpt: %{
+        module: Backpex.Fields.Textarea,
+        label: "Preview untuk Paid Post",
+        rows: 4,
+        placeholder: "Bagian awal artikel yang bisa dibaca gratis sebelum paywall.",
+        help_text: "Teks yang tampil sebelum paywall. Jika kosong, pakai excerpt.",
+        except: [:index],
+        panel: :monetization
+      },
+      paywall_cta: %{
+        module: Backpex.Fields.Text,
+        label: "CTA Paywall",
+        placeholder: "Baca selengkapnya — Rp25.000",
+        help_text: "Teks tombol/link untuk membayar. Jika kosong, pakai default.",
+        except: [:index],
+        panel: :monetization
+      },
+      payment_provider: %{
+        module: Backpex.Fields.Select,
+        label: "Payment Provider",
+        options: [
+          {"Belum dipilih", ""},
+          {"Manual Link", "manual_link"},
+          {"Midtrans", "midtrans"}
+        ],
+        help_text:
+          "Untuk paid/tips. Manual Link = redirect ke URL eksternal. Midtrans = integrasi proper (belum aktif).",
+        except: [:index],
+        panel: :monetization
+      },
+      checkout_url: %{
+        module: Backpex.Fields.Text,
+        label: "Checkout URL",
+        placeholder: "https://app.midtrans.com/payment-links/...",
+        help_text:
+          "URL pembayaran eksternal. Harus http:// atau https://. Untuk manual_link provider.",
+        except: [:index],
+        panel: :monetization
       },
       cover_image: %{
         module: Backpex.Fields.BelongsTo,
@@ -252,6 +331,28 @@ defmodule PersonalBrandWeb.Admin.PostResource do
           {tag}
         </span>
       </div>
+      <p :if={@field_options[:help_text]} class="mt-2 text-sm opacity-70">
+        {@field_options[:help_text]}
+      </p>
+    </div>
+    """
+  end
+
+  defp render_textarea(assigns) do
+    assigns = assign(assigns, :textarea_value, textarea_value(assigns[:value]))
+
+    ~H"""
+    <div class="px-6 py-4 sm:py-3">
+      <label for={@form[@name].id} class="text-content mb-2 block break-words text-sm font-medium">
+        {@field_options[:label]}
+      </label>
+      <textarea
+        id={@form[@name].id}
+        name={@form[@name].name}
+        rows={@field_options[:rows] || 4}
+        placeholder={@field_options[:placeholder]}
+        class="textarea w-full"
+      >{@textarea_value}</textarea>
       <p :if={@field_options[:help_text]} class="mt-2 text-sm opacity-70">
         {@field_options[:help_text]}
       </p>

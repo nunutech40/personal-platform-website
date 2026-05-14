@@ -1,5 +1,9 @@
 import Config
 
+config :personal_brand, :midtrans,
+  server_key: System.get_env("MIDTRANS_SERVER_KEY"),
+  environment: System.get_env("MIDTRANS_ENV") || "sandbox"
+
 # runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before
 # the server starts, so it is typically used to load production

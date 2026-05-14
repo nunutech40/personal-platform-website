@@ -102,6 +102,11 @@ defmodule PersonalBrand.Content.PostTest do
       assert get_field(changeset, :featured) == false
     end
 
+    test "sets default clap_count to zero" do
+      changeset = Post.changeset(%Post{}, @valid_attrs)
+      assert get_field(changeset, :clap_count) == 0
+    end
+
     test "accepts published status with published_at" do
       attrs = %{@valid_attrs | status: "published"}
       changeset = Post.changeset(%Post{}, attrs)
@@ -185,6 +190,63 @@ defmodule PersonalBrand.Content.PostTest do
       attrs = %{@valid_attrs | editor_type: "rich_text"}
       changeset = Post.changeset(%Post{}, attrs)
       assert changeset.valid?
+    end
+
+    test "accepts monetization fields and normalizes admin textarea input" do
+      attrs =
+        Map.merge(@valid_attrs, %{
+          access_type: "tips",
+          tip_amount_options: "10000\n15000, 20000",
+          payment_provider: "",
+          checkout_url: "",
+          currency: ""
+        })
+
+      changeset = Post.changeset(%Post{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :access_type) == "tips"
+      assert get_field(changeset, :tip_amount_options) == [10000, 15000, 20000]
+      assert get_field(changeset, :payment_provider) == nil
+      assert get_field(changeset, :checkout_url) == nil
+      assert get_field(changeset, :currency) == "IDR"
+    end
+
+    test "defaults tips amount options for tips posts" do
+      attrs = Map.merge(@valid_attrs, %{access_type: "tips", tip_amount_options: ""})
+
+      changeset = Post.changeset(%Post{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :tip_amount_options) == [10000, 15000, 20000]
+    end
+
+    test "requires positive price for paid posts" do
+      attrs = Map.merge(@valid_attrs, %{access_type: "paid", price: nil})
+
+      changeset = Post.changeset(%Post{}, attrs)
+
+      refute changeset.valid?
+      assert "must be greater than 0 for paid posts" in errors_on(changeset)[:price]
+    end
+
+    test "rejects invalid tip amount options" do
+      attrs = Map.merge(@valid_attrs, %{access_type: "tips", tip_amount_options: "10000\nnope"})
+
+      changeset = Post.changeset(%Post{}, attrs)
+
+      refute changeset.valid?
+      assert "is invalid" in errors_on(changeset)[:tip_amount_options]
+    end
+
+    test "rejects invalid checkout URL and currency" do
+      attrs = Map.merge(@valid_attrs, %{checkout_url: "example.com/pay", currency: "idr"})
+
+      changeset = Post.changeset(%Post{}, attrs)
+
+      refute changeset.valid?
+      assert "must start with http:// or https://" in errors_on(changeset)[:checkout_url]
+      assert "must be a 3-letter currency code" in errors_on(changeset)[:currency]
     end
   end
 end

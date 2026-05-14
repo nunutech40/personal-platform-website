@@ -27,6 +27,7 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
       identity: "Info Dasar",
       commerce: "Commerce",
       delivery: "Delivery",
+      fulfillment: "Fulfillment",
       content: "Konten",
       media_links: "Media & Link"
     ]
@@ -151,6 +152,54 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
           {"Physical", "physical_delivery"}
         ],
         panel: :delivery
+      },
+      fulfillment_type: %{
+        module: Backpex.Fields.Select,
+        label: "Fulfillment Type",
+        options: [
+          {"Instant Download", "instant_download"},
+          {"Email Delivery", "email_delivery"},
+          {"Manual Confirmation", "manual_confirmation"},
+          {"Physical Shipping", "physical_shipping"}
+        ],
+        help_text:
+          "Menentukan apa yang dilakukan setelah order paid. Automation download/token bisa dikembangkan dari field ini.",
+        panel: :fulfillment
+      },
+      download_media_id: %{
+        module: Backpex.Fields.Text,
+        label: "Download Media ID",
+        placeholder: "UUID media file download",
+        help_text:
+          "Opsional untuk instant download. Upload file di Media lalu isi UUID-nya di sini.",
+        except: [:index],
+        panel: :fulfillment
+      },
+      requires_shipping: %{
+        module: Backpex.Fields.Boolean,
+        label: "Requires Shipping",
+        help_text: "Aktifkan untuk produk fisik yang butuh alamat pengiriman.",
+        panel: :fulfillment
+      },
+      payment_provider: %{
+        module: Backpex.Fields.Select,
+        label: "Payment Provider",
+        options: [
+          {"Midtrans", "midtrans"},
+          {"Manual Link", "manual_link"}
+        ],
+        panel: :commerce
+      },
+      checkout_mode: %{
+        module: Backpex.Fields.Select,
+        label: "Checkout Mode",
+        options: [
+          {"Manual Link", "manual_link"},
+          {"Midtrans Snap", "midtrans_snap"}
+        ],
+        help_text:
+          "Manual Link memakai checkout_url. Midtrans Snap membuat order dan redirect dari backend jika MIDTRANS_SERVER_KEY tersedia.",
+        panel: :commerce
       },
       checkout_url: %{
         module: Backpex.Fields.Text,
