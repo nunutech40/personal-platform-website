@@ -682,26 +682,29 @@ defmodule PersonalBrandWeb.PublicLive do
             <div class="article-body">
               {Phoenix.HTML.raw(paywall_preview(@post))}
             </div>
-            <div class="paywall-gate">
-              <h2>{@post.paywall_cta || "Baca selengkapnya"}</h2>
-              <p>Artikel ini membutuhkan akses berbayar.</p>
-              <p :if={@post.price} class="price">{@post.currency} {format_price(@post.price)}</p>
-              <form action={"/checkout/writing/#{@post.slug}"} method="post" class="checkout-form">
-                <input type="hidden" name="_csrf_token" value={csrf_token()} />
-                <label>
-                  Email
-                  <input
-                    type="email"
-                    name="buyer_email"
-                    placeholder="you@example.com"
-                    required
-                  />
-                </label>
-                <button type="submit">Bayar & Baca</button>
-              </form>
-              <p class="meta">
-                Pembayaran memakai Midtrans jika env tersedia, atau checkout URL manual sebagai fallback.
-              </p>
+            <div class="paywall-lock">
+              <.locked_continuation />
+              <div class="paywall-gate">
+                <h2>{@post.paywall_cta || "Baca selengkapnya"}</h2>
+                <p>Artikel ini membutuhkan akses berbayar.</p>
+                <p :if={@post.price} class="price">{@post.currency} {format_price(@post.price)}</p>
+                <form action={"/checkout/writing/#{@post.slug}"} method="post" class="checkout-form">
+                  <input type="hidden" name="_csrf_token" value={csrf_token()} />
+                  <label>
+                    Email
+                    <input
+                      type="email"
+                      name="buyer_email"
+                      placeholder="you@example.com"
+                      required
+                    />
+                  </label>
+                  <button type="submit">Bayar & Baca</button>
+                </form>
+                <p class="meta">
+                  Pembayaran memakai Midtrans jika env tersedia, atau checkout URL manual sebagai fallback.
+                </p>
+              </div>
             </div>
           </div>
         <% {"tips", true} -> %>
@@ -713,24 +716,27 @@ defmodule PersonalBrandWeb.PublicLive do
             <div class="article-body">
               {Phoenix.HTML.raw(paywall_preview(@post))}
             </div>
-            <div class="paywall-gate">
-              <h2>{@post.paywall_cta || "Support untuk lanjut baca"}</h2>
-              <p>Pilih nominal tips untuk membuka tulisan ini.</p>
-              <form action={"/checkout/writing/#{@post.slug}"} method="post" class="checkout-form">
-                <input type="hidden" name="_csrf_token" value={csrf_token()} />
-                <label>
-                  Email
-                  <input type="email" name="buyer_email" placeholder="you@example.com" required />
-                </label>
-                <fieldset class="tip-options">
-                  <legend>Nominal tips</legend>
-                  <label :for={amount <- @post.tip_amount_options}>
-                    <input type="radio" name="tip_amount" value={amount} required />
-                    Rp{format_tip_amount(amount)}
+            <div class="paywall-lock">
+              <.locked_continuation />
+              <div class="paywall-gate">
+                <h2>{@post.paywall_cta || "Support untuk lanjut baca"}</h2>
+                <p>Pilih nominal tips untuk membuka tulisan ini.</p>
+                <form action={"/checkout/writing/#{@post.slug}"} method="post" class="checkout-form">
+                  <input type="hidden" name="_csrf_token" value={csrf_token()} />
+                  <label>
+                    Email
+                    <input type="email" name="buyer_email" placeholder="you@example.com" required />
                   </label>
-                </fieldset>
-                <button type="submit">Tips & Baca</button>
-              </form>
+                  <fieldset class="tip-options">
+                    <legend>Nominal tips</legend>
+                    <label :for={amount <- @post.tip_amount_options}>
+                      <input type="radio" name="tip_amount" value={amount} required />
+                      Rp{format_tip_amount(amount)}
+                    </label>
+                  </fieldset>
+                  <button type="submit">Tips & Baca</button>
+                </form>
+              </div>
             </div>
           </div>
         <% _other -> %>
@@ -805,23 +811,33 @@ defmodule PersonalBrandWeb.PublicLive do
           <strong>Delivery:</strong> {@product.delivery_type}<br />
           <strong>Status:</strong> {@product.stock_status}
         </p>
-        <div :if={@product.status == "active"} class="paywall-gate">
-          <h2>{@product.paywall_cta || "Beli produk ini"}</h2>
-          <p>{product_checkout_preview(@product)}</p>
-          <form
-            action={"/checkout/products/#{@product.slug}"}
-            method="post"
-            class="checkout-form"
-          >
-            <input type="hidden" name="_csrf_token" value={csrf_token()} />
-            <label>
-              Email <input type="email" name="buyer_email" placeholder="you@example.com" required />
-            </label>
-            <button type="submit">Bayar & Dapatkan Akses</button>
-          </form>
-          <p class="meta">
-            Pembayaran memakai Midtrans jika env tersedia, atau checkout URL manual sebagai fallback.
-          </p>
+        <div :if={@product.status == "active"} class="paywall product-paywall">
+          <div class="article-body">
+            <p>{product_checkout_preview(@product)}</p>
+          </div>
+          <div class="paywall-lock">
+            <.locked_continuation />
+            <div class="paywall-gate">
+              <h2>{@product.paywall_cta || "Beli produk ini"}</h2>
+              <p>Dapatkan akses setelah pembayaran berhasil.</p>
+              <p class="price">{format_money(@product)}</p>
+              <form
+                action={"/checkout/products/#{@product.slug}"}
+                method="post"
+                class="checkout-form"
+              >
+                <input type="hidden" name="_csrf_token" value={csrf_token()} />
+                <label>
+                  Email
+                  <input type="email" name="buyer_email" placeholder="you@example.com" required />
+                </label>
+                <button type="submit">Bayar & Dapatkan Akses</button>
+              </form>
+              <p class="meta">
+                Pembayaran memakai Midtrans jika env tersedia, atau checkout URL manual sebagai fallback.
+              </p>
+            </div>
+          </div>
         </div>
         <p :if={@product.status != "active"} class="notice">
           This product is currently marked as {@product.status}.
@@ -1130,6 +1146,20 @@ defmodule PersonalBrandWeb.PublicLive do
       </ul>
       <a href="/products" class="section-link">View all products</a>
     </section>
+    """
+  end
+
+  def locked_continuation(assigns) do
+    ~H"""
+    <div class="locked-continuation" aria-hidden="true">
+      <div class="locked-line locked-line-wide"></div>
+      <div class="locked-line"></div>
+      <div class="locked-line locked-line-short"></div>
+      <div class="locked-gap"></div>
+      <div class="locked-line locked-line-wide"></div>
+      <div class="locked-line"></div>
+      <div class="locked-line locked-line-medium"></div>
+    </div>
     """
   end
 

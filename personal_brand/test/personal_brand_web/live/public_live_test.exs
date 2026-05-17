@@ -382,6 +382,8 @@ defmodule PersonalBrandWeb.PublicLiveTest do
 
     assert html =~ "Tips preview."
     assert html =~ "Pilih nominal tips"
+    assert html =~ "paywall-lock"
+    assert html =~ "locked-continuation"
     assert html =~ "Rp10.000"
     assert html =~ "Rp15.000"
     assert html =~ ~s(action="/checkout/writing/open-tips-post")
@@ -407,6 +409,8 @@ defmodule PersonalBrandWeb.PublicLiveTest do
 
     assert html =~ "This is the public preview."
     assert html =~ "IDR 25000"
+    assert html =~ "paywall-lock"
+    assert html =~ "locked-continuation"
     assert html =~ ~s(action="/checkout/writing/paid-deep-dive")
     assert html =~ "Bayar & Baca"
     refute html =~ "Secret paid article body."
@@ -493,6 +497,8 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "IDR 49000"
     assert html =~ "Ambil toolkit ini"
     assert html =~ "Preview before checkout."
+    assert html =~ "paywall-lock"
+    assert html =~ "locked-continuation"
     assert html =~ ~s(action="/checkout/products/paid-toolkit")
     assert html =~ "Bayar & Dapatkan Akses"
     assert html =~ "Template files"
