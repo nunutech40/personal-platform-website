@@ -4,7 +4,7 @@ defmodule PersonalBrand.Commerce do
   """
 
   alias Ecto.Multi
-  alias PersonalBrand.Commerce.{AccessGrant, Midtrans, Order}
+  alias PersonalBrand.Commerce.{AccessGrant, Midtrans, Order, PaymentNotifier}
   alias PersonalBrand.Content.{Post, Product}
   alias PersonalBrand.Repo
 
@@ -110,6 +110,8 @@ defmodule PersonalBrand.Commerce do
           order.paid_at
         end
 
+      notify_paid? = status == "paid" and is_nil(order.paid_at)
+
       fulfillment_status =
         if status == "paid" and order.kind in ["post_access", "tip"] do
           "fulfilled"
@@ -134,8 +136,19 @@ defmodule PersonalBrand.Commerce do
         })
         |> Repo.update()
 
-      order
+      %{order: order, notify_paid?: notify_paid?}
     end)
+    |> case do
+      {:ok, %{order: order, notify_paid?: true}} ->
+        PaymentNotifier.notify_order_paid(order)
+        {:ok, order}
+
+      {:ok, %{order: order}} ->
+        {:ok, order}
+
+      other ->
+        other
+    end
   end
 
   defp create_checkout(attrs, url_opts) do

@@ -1,5 +1,13 @@
 import Config
 
+config :personal_brand, PersonalBrand.Mailer, adapter: Swoosh.Adapters.Test
+
+config :personal_brand, :payment_notifications,
+  to: "r.fajarnugraha@gmail.com",
+  from: "Personal Brand <no-reply@example.com>"
+
+config :swoosh, :api_client, false
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used

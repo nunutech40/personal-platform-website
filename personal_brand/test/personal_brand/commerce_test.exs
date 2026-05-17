@@ -5,6 +5,8 @@ defmodule PersonalBrand.CommerceTest do
   alias PersonalBrand.Commerce.{AccessGrant, Order}
   alias PersonalBrand.Content.{Post, Product}
 
+  import Swoosh.TestAssertions
+
   setup do
     original = Application.get_env(:personal_brand, :midtrans)
 
@@ -63,6 +65,38 @@ defmodule PersonalBrand.CommerceTest do
     assert paid_order.fulfillment_status == "fulfilled"
     assert paid_order.fulfilled_at
     assert Commerce.valid_post_access?(post, access_token)
+
+    assert_email_sent(
+      subject: "[Personal Brand] Pembayaran masuk - Paid Post",
+      to: [{"", "r.fajarnugraha@gmail.com"}]
+    )
+  end
+
+  test "midtrans webhook sends paid product notification once" do
+    product = insert_product()
+
+    {:ok, %{order: order}} =
+      Commerce.create_product_purchase_checkout(product, "buyer@example.com",
+        success_url: "http://localhost:4002/payment/success",
+        notification_url: "http://localhost:4002/webhooks/midtrans"
+      )
+
+    Application.put_env(:personal_brand, :midtrans,
+      server_key: "server-key",
+      environment: "sandbox"
+    )
+
+    payload = midtrans_payload(order, "settlement")
+
+    assert {:ok, %Order{status: "paid"}} = Commerce.handle_midtrans_notification(payload)
+
+    assert_email_sent(
+      subject: "[Personal Brand] Pembayaran masuk - Digital Product",
+      to: [{"", "r.fajarnugraha@gmail.com"}]
+    )
+
+    assert {:ok, %Order{status: "paid"}} = Commerce.handle_midtrans_notification(payload)
+    refute_email_sent(subject: "[Personal Brand] Pembayaran masuk - Digital Product")
   end
 
   test "midtrans webhook rejects invalid signature" do

@@ -27,6 +27,7 @@ Saat ini:
 - `products` mendukung fulfillment foundation: `fulfillment_type`, `download_media_id`, `requires_shipping`, `payment_provider`, dan `checkout_mode`.
 - `orders` dan `access_grants` sudah tersedia untuk post access/tips/product purchase.
 - Midtrans Snap redirect dan webhook `/webhooks/midtrans` tersedia. Secret Midtrans dibaca dari env/runtime config.
+- Paid order notification email dikirim ke owner saat Midtrans webhook menandai order `paid`.
 - `site_settings` menyimpan identity site, profile, email, social links, featured IDs, dan active theme.
 - Product checkout MVP memakai `products.checkout_url` sebagai fallback external payment link, tetapi form publik tetap lewat checkout internal supaya siap memakai Midtrans Snap/webhook.
 
@@ -35,7 +36,7 @@ Gap:
 - Belum ada email delivery otomatis untuk access link.
 - Belum ada halaman download file otomatis untuk product digital.
 - Belum ada shipping/courier automation untuk product fisik.
-- Belum ada receipt email untuk buyer.
+- Belum ada receipt email otomatis untuk buyer.
 
 ## 2. Payment Provider Position
 
@@ -146,8 +147,9 @@ Flow:
 4. System membuat `orders` dengan `kind = post_access`.
 5. User bayar via Midtrans Snap/Payment Link.
 6. Webhook mengubah order ke `paid`.
-7. System membuat access token.
-8. User diarahkan atau dikirimi link:
+7. System mengirim notifikasi email ke owner.
+8. System membuat access token.
+9. User diarahkan atau dikirimi link:
 
 ```txt
 /writing/<slug>?access_token=<token>
@@ -207,6 +209,7 @@ Security rules:
 - Only show raw token once in redirect/email.
 - Webhook must verify provider signature/status.
 - Webhook must be idempotent by provider order ID.
+- Owner email notification is sent only on first transition to `paid`.
 
 ## 7. Product Commerce Model
 

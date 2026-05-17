@@ -63,7 +63,9 @@ defmodule PersonalBrand.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:backpex, "~> 0.10"},
-      {:mdex, "~> 0.12.2"}
+      {:mdex, "~> 0.12.2"},
+      {:swoosh, "~> 1.16"},
+      {:gen_smtp, "~> 1.2"}
     ]
   end
 

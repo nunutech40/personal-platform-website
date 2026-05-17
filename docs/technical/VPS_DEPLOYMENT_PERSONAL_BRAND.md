@@ -112,6 +112,12 @@ ADMIN_PASSWORD=...
 UPLOADS_DIR=/home/nunuadmin/personal-brand-shared/uploads
 MIDTRANS_SERVER_KEY=...
 MIDTRANS_ENV=sandbox
+PAYMENT_NOTIFICATION_TO=r.fajarnugraha@gmail.com
+PAYMENT_NOTIFICATION_FROM="Personal Brand <no-reply@your-domain.com>"
+SMTP_HOST=...
+SMTP_PORT=587
+SMTP_USERNAME=...
+SMTP_PASSWORD=...
 ```
 
 Generate secret locally or on VPS:
@@ -211,6 +217,9 @@ https://your-domain.com/webhooks/midtrans
 
 Keep `MIDTRANS_SERVER_KEY` only in `/home/nunuadmin/personal-brand-platform/.env`.
 
+Paid order notification email is sent when Midtrans webhook marks an order `paid`.
+Use `PAYMENT_NOTIFICATION_TO=r.fajarnugraha@gmail.com` and configure SMTP env values.
+
 ## 10.5 Security Before Public Launch
 
 - Replace `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the VPS env file before exposing `/admin`.
@@ -220,7 +229,7 @@ Keep `MIDTRANS_SERVER_KEY` only in `/home/nunuadmin/personal-brand-platform/.env
 chmod 600 /home/nunuadmin/personal-brand-platform/.env
 ```
 
-- Do not commit `.env`, database dumps, upload archives, Midtrans keys, admin password, or VPS passwords.
+- Do not commit `.env`, database dumps, upload archives, Midtrans keys, SMTP password, admin password, or VPS passwords.
 
 ## 11. Post-Deploy Admin Checks
 

@@ -35,6 +35,12 @@ Last checked: 2026-05-17.
   - `UPLOADS_DIR`
   - `MIDTRANS_SERVER_KEY`
   - `MIDTRANS_ENV`
+  - `PAYMENT_NOTIFICATION_TO`
+  - `PAYMENT_NOTIFICATION_FROM`
+  - `SMTP_HOST`
+  - `SMTP_PORT`
+  - `SMTP_USERNAME`
+  - `SMTP_PASSWORD`
 - Decision: restore local data/uploads or start fresh.
 
 ## Data Migration Reminder
@@ -52,5 +58,6 @@ After restoring the dump on VPS, run migrations again so newer schema changes ar
 - database dumps
 - upload archives
 - Midtrans keys
+- SMTP password
 - admin password
 - VPS credentials

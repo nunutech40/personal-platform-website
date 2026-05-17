@@ -8,12 +8,28 @@ config :personal_brand,
   admin_username: System.get_env("ADMIN_USERNAME") || "admin",
   admin_password: System.get_env("ADMIN_PASSWORD") || "admin123"
 
+config :personal_brand, :payment_notifications,
+  to: System.get_env("PAYMENT_NOTIFICATION_TO") || "r.fajarnugraha@gmail.com",
+  from: System.get_env("PAYMENT_NOTIFICATION_FROM") || "Personal Brand <no-reply@example.com>"
+
+config :swoosh, :api_client, false
+
 # runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before
 # the server starts, so it is typically used to load production
 # configuration and secrets from environment variables.
 
 if config_env() == :prod do
+  config :personal_brand, PersonalBrand.Mailer,
+    adapter: Swoosh.Adapters.SMTP,
+    relay: System.get_env("SMTP_HOST"),
+    port: String.to_integer(System.get_env("SMTP_PORT") || "587"),
+    username: System.get_env("SMTP_USERNAME"),
+    password: System.get_env("SMTP_PASSWORD"),
+    tls: :if_available,
+    auth: :if_available,
+    retries: 2
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

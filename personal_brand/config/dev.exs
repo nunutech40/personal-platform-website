@@ -68,6 +68,12 @@ config :personal_brand, PersonalBrandWeb.Endpoint,
 # Enable dev routes for dashboard and mailbox
 config :personal_brand, dev_routes: true
 
+config :personal_brand, PersonalBrand.Mailer, adapter: Swoosh.Adapters.Local
+
+config :personal_brand, :payment_notifications,
+  to: "r.fajarnugraha@gmail.com",
+  from: "Personal Brand <no-reply@localhost>"
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"
 
