@@ -1,0 +1,19 @@
+# Template: /etc/systemd/system/personal-brand.service
+
+[Unit]
+Description=Personal Brand Phoenix App
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=nunuadmin
+Group=nunuadmin
+WorkingDirectory=/home/nunuadmin/personal-brand-platform/personal_brand
+EnvironmentFile=/home/nunuadmin/personal-brand-platform/.env
+Environment=HOME=/home/nunuadmin
+ExecStart=/usr/bin/env mix phx.server
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

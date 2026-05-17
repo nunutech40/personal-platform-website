@@ -22,12 +22,13 @@ Saat ini:
 - `posts` mendukung monetization access: `free`, `tips`, dan `paid`.
 - `tips` dan `paid` post dikunci sampai order paid/access token valid; bedanya `tips` memakai pilihan nominal dari `tip_amount_options`, sementara `paid` memakai satu `price`.
 - `posts.clap_count` menyimpan jumlah clap; list Writing mengurutkan post published dari clap terbanyak lalu tanggal publish.
-- `products` mendukung price, currency, product type, delivery type, checkout URL, status, included, FAQ, dan cover image.
+- `products` mendukung price, currency, product type, delivery type, checkout URL, status, included, FAQ, cover image, `paid_excerpt`, dan `paywall_cta`.
+- Product selalu berbayar. Tidak ada mode free/tips untuk product; perbedaannya dari paid post hanya fulfillment/delivery.
 - `products` mendukung fulfillment foundation: `fulfillment_type`, `download_media_id`, `requires_shipping`, `payment_provider`, dan `checkout_mode`.
 - `orders` dan `access_grants` sudah tersedia untuk post access/tips/product purchase.
 - Midtrans Snap redirect dan webhook `/webhooks/midtrans` tersedia. Secret Midtrans dibaca dari env/runtime config.
 - `site_settings` menyimpan identity site, profile, email, social links, featured IDs, dan active theme.
-- Product checkout MVP memakai `products.checkout_url` untuk external payment link.
+- Product checkout MVP memakai `products.checkout_url` sebagai fallback external payment link, tetapi form publik tetap lewat checkout internal supaya siap memakai Midtrans Snap/webhook.
 
 Gap:
 
@@ -121,10 +122,10 @@ payment_provider:
 Rules:
 
 - `free`: content full terbuka. End-of-post support CTA injected otomatis.
-- `tips`: content dikunci seperti paid post, tetapi buyer memilih nominal dari `tip_amount_options`. Default amount options `10000`, `15000`, `20000`.
+- `tips`: content dikunci seperti paid post, tetapi buyer memilih nominal dari `tip_amount_options`.
 - `paid`: content dikunci setelah excerpt/paywall preview sampai payment valid.
 - `paid` wajib punya `price > 0`.
-- `tips` wajib memakai salah satu amount option yang dikonfigurasi admin.
+- `tips` wajib punya minimal satu amount option yang dikonfigurasi admin dan buyer wajib memilih salah satunya.
 - `free` tidak perlu price.
 
 ## 5. Paid Post Without User Login
@@ -209,9 +210,13 @@ Security rules:
 
 ## 7. Product Commerce Model
 
-Current product fields are enough for MVP catalog, but future commerce needs:
+Product memakai model checkout yang sejajar dengan paid post, tetapi tanpa `access_type` dan tanpa tips. Semua product harus punya `price > 0` dan currency uppercase 3 huruf.
 
 ```txt
+products.price numeric not null
+products.currency string default 'IDR'
+products.paid_excerpt text nullable
+products.paywall_cta string nullable
 products.fulfillment_type:
 - instant_download
 - email_delivery
@@ -221,10 +226,24 @@ products.fulfillment_type:
 products.download_media_id nullable
 products.requires_shipping boolean default false
 products.payment_provider string default 'midtrans'
-products.checkout_mode string default 'manual_link'
+products.checkout_mode string default 'midtrans_snap'
 ```
 
 Product flows:
+
+### Public product checkout
+
+1. User membuka detail product.
+2. User melihat summary, price, preview checkout (`paid_excerpt` atau fallback summary/description), dan form email.
+3. User submit checkout.
+4. System membuat `orders.kind = product_purchase`.
+5. Midtrans Snap dipakai jika env tersedia; `checkout_url` manual dipakai sebagai fallback.
+
+Validation:
+
+- Active product dengan `checkout_mode = manual_link` wajib punya `checkout_url`.
+- `checkout_mode = midtrans_snap` tidak wajib punya `checkout_url`.
+- `physical_shipping` wajib selaras dengan `requires_shipping = true`.
 
 ### Digital instant download
 
@@ -412,11 +431,14 @@ Output:
 - Fulfillment fields.
 - Admin paid orders list.
 - Manual delivery/physical fulfillment states.
-- Digital download token flow.
+- Product admin form distandarkan dengan paid post: price, currency, checkout preview, CTA checkout, provider, checkout mode, checkout URL.
+- Product public detail memakai checkout gate yang konsisten dengan paid post.
+- Digital download token flow foundation.
 
 Acceptance:
 
 - Product can be instant download, manual delivery, or physical shipping.
+- Product selalu paid dan menolak harga `0`.
 - Admin can distinguish paid/unfulfilled/fulfilled orders.
 
 ## 11. Open Decisions

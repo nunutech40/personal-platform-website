@@ -4,6 +4,10 @@ config :personal_brand, :midtrans,
   server_key: System.get_env("MIDTRANS_SERVER_KEY"),
   environment: System.get_env("MIDTRANS_ENV") || "sandbox"
 
+config :personal_brand,
+  admin_username: System.get_env("ADMIN_USERNAME") || "admin",
+  admin_password: System.get_env("ADMIN_PASSWORD") || "admin123"
+
 # runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before
 # the server starts, so it is typically used to load production

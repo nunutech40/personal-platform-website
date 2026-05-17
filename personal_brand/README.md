@@ -47,7 +47,11 @@ Atau pakai script dari root repo:
 | `/writing` | Blog/writing list (load more) |
 | `/writing/:slug` | Article detail (Markdown rendered) |
 | `/products` | Product catalog (load more) |
-| `/products/:slug` | Product detail |
+| `/products/:slug` | Paid product detail + checkout gate |
+| `/checkout/writing/:slug` | Paid/tips post checkout |
+| `/checkout/products/:slug` | Product purchase checkout |
+| `/webhooks/midtrans` | Midtrans HTTP notification webhook |
+| `/health` | Production health check |
 | `/about` | About page |
 | `/now` | Now page |
 | `/contact` | Contact page |
@@ -61,11 +65,12 @@ Atau pakai script dari root repo:
 | `/admin/projects` | CRUD projects (Backpex) |
 | `/admin/posts` | CRUD posts with Markdown editor |
 | `/admin/products` | CRUD products |
+| `/admin/orders` | Review commerce orders and fulfillment state |
 | `/admin/media` | Media library |
 | `/admin/site-settings` | Site settings (singleton) |
 | `/admin/themes` | Theme registry |
 
-**Login:** `admin` / `admin123`
+**Local default login:** `admin` / `admin123`. Production should set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the env file.
 
 ## Key Features
 
@@ -73,6 +78,12 @@ Atau pakai script dari root repo:
 - Discipline/platform taxonomy with checkbox admin UI
 - Load more pagination (9 items per page)
 - Unified search across projects, posts, products
+- Post monetization: free, tips-gated, and paid gated posts
+- Product checkout: products are always paid, with checkout preview/CTA, Midtrans Snap or manual link fallback
+- Orders and access grants for paid posts, tips, and product purchases
+- Midtrans webhook endpoint with signature verification
+- Project `best_three` flag for homepage Featured Work
+- Public writing claps with writing list sorted by clap count
 - Filter counts on `/work` page
 - EasyMDE Markdown editor with toolbar
 - Delete confirmation modal (Indonesian copy)
@@ -97,4 +108,4 @@ mix format --check-formatted
 mix test
 ```
 
-221 tests covering schema, context, LiveView, and admin routes.
+249 tests covering schema, context, commerce, LiveView, and admin routes.

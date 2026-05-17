@@ -2,8 +2,11 @@ defmodule PersonalBrand.MediaStorage do
   @moduledoc """
   Handles local disk storage for uploaded media files.
 
-  Files are stored under `priv/static/uploads/media/` and served
-  via Phoenix static file serving at `/uploads/media/...`.
+  Files are stored under `priv/static/uploads/media/` by default and served
+  at `/uploads/media/...`.
+
+  In production, set `UPLOADS_DIR` and configure Nginx to serve `/uploads/`
+  from that directory so uploads survive app deploys.
   """
 
   @upload_dir "uploads/media"
@@ -12,7 +15,11 @@ defmodule PersonalBrand.MediaStorage do
   Returns the absolute path to the upload directory.
   """
   def upload_dir do
-    Path.join([:code.priv_dir(:personal_brand), "static", @upload_dir])
+    case System.get_env("UPLOADS_DIR") do
+      nil -> Path.join([:code.priv_dir(:personal_brand), "static", @upload_dir])
+      "" -> Path.join([:code.priv_dir(:personal_brand), "static", @upload_dir])
+      upload_dir -> Path.join(upload_dir, "media")
+    end
   end
 
   @doc """
@@ -53,7 +60,13 @@ defmodule PersonalBrand.MediaStorage do
   Deletes a file from media storage by its relative file path.
   """
   def delete(file_path) when is_binary(file_path) do
-    absolute_path = Path.join([:code.priv_dir(:personal_brand), "static", file_path])
+    absolute_path =
+      case System.get_env("UPLOADS_DIR") do
+        nil -> Path.join([:code.priv_dir(:personal_brand), "static", file_path])
+        "" -> Path.join([:code.priv_dir(:personal_brand), "static", file_path])
+        upload_dir -> Path.join(upload_dir, Path.relative_to(file_path, "uploads"))
+      end
+
     File.rm(absolute_path)
   end
 

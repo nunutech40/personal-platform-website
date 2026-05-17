@@ -459,6 +459,7 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       description: nil,
       included: nil,
       faq: nil,
+      price: nil,
       currency: nil
     })
 
@@ -468,6 +469,33 @@ defmodule PersonalBrandWeb.PublicLiveTest do
     assert html =~ "Sparse Product"
     assert html =~ "TBD"
     refute html =~ "FAQ"
+  end
+
+  test "GET /products/:slug renders paid checkout gate", %{conn: conn} do
+    insert_product(%{
+      title: "Paid Toolkit",
+      slug: "paid-toolkit",
+      summary: "A paid product summary.",
+      description: "Full product detail.",
+      price: Decimal.new("49000"),
+      currency: "IDR",
+      paid_excerpt: "Preview before checkout.",
+      paywall_cta: "Ambil toolkit ini",
+      included: ["Template files", "Usage guide"]
+    })
+
+    html =
+      conn
+      |> get(~p"/products/paid-toolkit")
+      |> html_response(200)
+
+    assert html =~ "Paid Toolkit"
+    assert html =~ "IDR 49000"
+    assert html =~ "Ambil toolkit ini"
+    assert html =~ "Preview before checkout."
+    assert html =~ ~s(action="/checkout/products/paid-toolkit")
+    assert html =~ "Bayar & Dapatkan Akses"
+    assert html =~ "Template files"
   end
 
   test "GET /work/:slug hides draft project detail", %{conn: conn} do
@@ -517,8 +545,8 @@ defmodule PersonalBrandWeb.PublicLiveTest do
       summary: "Summary",
       product_type: "digital",
       status: "active",
-      price: nil,
-      currency: "USD"
+      price: Decimal.new("29.00"),
+      currency: "IDR"
     }
 
     struct(Product, Map.merge(defaults, attrs))

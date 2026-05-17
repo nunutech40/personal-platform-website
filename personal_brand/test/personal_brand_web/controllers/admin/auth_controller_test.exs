@@ -2,11 +2,12 @@ defmodule PersonalBrandWeb.Admin.AuthControllerTest do
   use PersonalBrandWeb.ConnCase
 
   describe "GET /admin/login" do
-    test "renders login form with local credential hint", %{conn: conn} do
+    test "renders login form without exposing credential hint", %{conn: conn} do
       conn = get(conn, ~p"/admin/login")
 
       assert html_response(conn, 200) =~ "Nunu Admin"
-      assert html_response(conn, 200) =~ "admin123"
+      assert html_response(conn, 200) =~ "Sign in to manage content and site settings."
+      refute html_response(conn, 200) =~ "admin123"
     end
   end
 

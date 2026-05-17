@@ -391,11 +391,16 @@ Posts dan Products memakai standar admin yang sama dengan Projects untuk CRUD ha
 - Array-like field (`post.tags`, `product.included`) bisa diisi satu item per baris; post tags juga menerima koma.
 - Form punya placeholder dan help text untuk mengurangi input yang ambigu.
 - Product `checkout_url` boleh kosong; jika diisi harus diawali `http://` atau `https://`.
+- Product selalu berbayar: `price` wajib lebih dari 0, default currency `IDR`, dan tidak punya mode tips/free.
+- Product checkout copy distandarkan dengan paid post melalui `paid_excerpt` dan `paywall_cta`.
 - Post monetization supports `free`, `tips`, and `paid`.
 - Free posts use global Saweria / Buy Me Coffee links from Site Settings.
 - Tips posts are locked like paid posts, but the buyer picks one configured amount from `tip_amount_options`.
 - Paid posts collect buyer email, create an order/access grant, and either redirect to Midtrans Snap or fallback to `checkout_url`.
 - Product checkout can stay `manual_link` or use `midtrans_snap` from the Product admin panel.
+- Active products using `manual_link` checkout must have `checkout_url`; Midtrans Snap products can leave it blank.
+- Physical shipping fulfillment must set `requires_shipping`.
+- Product detail renders an internal checkout gate and uses `checkout_url` only as fallback from backend checkout creation.
 - Orders can be reviewed from `/admin/orders`.
 - Do not add Xendit fields unless a Xendit account exists.
 - Paid unlock avoids customer login: email + order + hashed access token.

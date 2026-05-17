@@ -269,7 +269,8 @@ Catalog
 - products
 - product tags
 - product metadata
-- checkout_url for Midtrans Payment Link
+- paid product checkout metadata
+- checkout_url fallback for manual payment links
 
 Media
 - media records
@@ -288,12 +289,13 @@ Themes
 - theme renderer
 
 Commerce
-- future orders
-- payments
-- Midtrans proper integration
-- webhook handling
-- digital entitlement
-- shipping
+- orders
+- access grants
+- Midtrans Snap transaction creation
+- Midtrans webhook handling
+- post access tokens
+- product fulfillment status
+- future email/download/shipping automation
 ```
 
 ---
@@ -532,7 +534,7 @@ post_tags
 product_tags
 ```
 
-Add commerce tables later when moving from Midtrans Payment Link to proper Midtrans integration.
+Commerce tables are present for the MVP: orders and access_grants support paid/tips post access and product purchases.
 
 ---
 
@@ -562,8 +564,8 @@ posts
 products
   ├── many-to-many tags via product_tags
   ├── optional cover media
-  ├── checkout_url for Midtrans Payment Link
-  └── later connects to order_items
+  ├── paid checkout copy and checkout_url fallback
+  └── connects to orders/access grants for purchase flow
 
 media
   └── shared image/file registry
@@ -745,7 +747,7 @@ intro
 digital products
 physical/experimental products
 price
-checkout link
+checkout state
 footer
 ```
 
@@ -762,7 +764,7 @@ description
 what is included
 preview
 FAQ
-Buy Now link
+checkout gate
 ```
 
 ### About
@@ -878,13 +880,20 @@ product_type
 price
 currency
 checkout_url
+paid_excerpt
+paywall_cta
+payment_provider
+checkout_mode
+fulfillment_type
+download_media_id
+requires_shipping
 cover_image_id
 gallery_images
 status
 featured
 ```
 
-For MVP, `checkout_url` is where Midtrans Payment Link goes.
+For MVP, product detail uses an internal checkout form. `checkout_url` is only the manual payment-link fallback when Midtrans Snap is not configured.
 
 ### Admin site settings
 
@@ -920,18 +929,20 @@ save theme button
 
 ### MVP commerce
 
-Use manual Midtrans Payment Link.
+Use internal checkout first. Midtrans Snap is used when `MIDTRANS_SERVER_KEY` is configured; manual `checkout_url` remains a fallback for payment links.
 
 ```txt
 Product page
 ↓
-Buy Now
+Checkout gate + buyer email
 ↓
-products.checkout_url
+orders.kind = product_purchase
 ↓
-Midtrans hosted payment page
+Midtrans Snap or products.checkout_url fallback
 ↓
-manual fulfillment
+webhook/order status
+↓
+manual or future automated fulfillment
 ```
 
 For writing monetization, free posts use support links while gated posts use Midtrans:
@@ -964,22 +975,18 @@ No customer login is required for the first paid-content implementation. Access 
 
 The project focus is portfolio first.
 
-MVP only needs to show that products exist and can be purchased.
+MVP needs products to be purchasable without customer accounts, while keeping fulfillment simple enough to operate manually.
 
 ### Future commerce proper
 
 Later upgrade to:
 
 ```txt
-checkout page
-orders
-payments
-Midtrans Snap/API
-Midtrans webhook
-digital entitlement
-post access grants
-shipping flow
-admin order management
+receipt/access email
+download page/file delivery
+customer account or library if needed
+shipping address/courier integration
+richer payment reporting
 ```
 
 Provider rule:
@@ -990,7 +997,7 @@ Xendit is not used unless the user explicitly adds a Xendit account later.
 Saweria and Buy Me Coffee are donation/support links only.
 ```
 
-Do not build the full commerce system in MVP unless specifically requested.
+Do not add carts, subscriptions, or customer accounts unless specifically requested.
 
 ---
 
@@ -1013,16 +1020,11 @@ SECRET_KEY_BASE
 PHX_HOST
 UPLOAD_STORAGE_DRIVER
 UPLOADS_DIR
-S3_BUCKET
-S3_REGION
-S3_ACCESS_KEY_ID
-S3_SECRET_ACCESS_KEY
 MIDTRANS_SERVER_KEY
-MIDTRANS_CLIENT_KEY
 MIDTRANS_ENV
 ```
 
-For MVP, Midtrans keys may not be needed if only using manually created Payment Links.
+If Midtrans keys are missing, checkout falls back to manually configured `checkout_url` where available.
 
 ---
 
@@ -1067,7 +1069,8 @@ homepage has navigation
 all public pages have footer
 mobile layout readable
 admin forms save correctly
-Buy Now link opens checkout_url
+paid/tips/product checkout creates orders and does not expose secrets
+health route returns ok
 ```
 
 ---
@@ -1085,7 +1088,7 @@ Buy Now link opens checkout_url
 8. Admin CRUD
 9. Site settings
 10. Theme switching
-11. Product checkout_url support
+11. Product commerce checkout support
 12. Media upload
 13. SEO/RSS polish
 14. Responsive polish

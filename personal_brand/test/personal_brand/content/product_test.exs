@@ -10,15 +10,17 @@ defmodule PersonalBrand.Content.ProductTest do
     description: "Full description",
     product_type: "digital",
     price: Decimal.new("29.00"),
-    currency: "USD",
+    currency: "IDR",
     status: "active",
     stock_status: "in_stock",
     delivery_type: "digital_download",
     checkout_url: "https://example.com/checkout",
+    paid_excerpt: "Preview before checkout",
+    paywall_cta: "Buy the toolkit",
     fulfillment_type: "instant_download",
     requires_shipping: false,
     payment_provider: "midtrans",
-    checkout_mode: "manual_link",
+    checkout_mode: "midtrans_snap",
     featured: false,
     included: ["Item 1", "Item 2"]
   }
@@ -66,9 +68,9 @@ defmodule PersonalBrand.Content.ProductTest do
       assert get_field(changeset, :product_type) == "digital"
     end
 
-    test "sets default currency to USD" do
-      changeset = Product.changeset(%Product{}, @valid_attrs)
-      assert get_field(changeset, :currency) == "USD"
+    test "sets default currency to IDR when blank" do
+      changeset = Product.changeset(%Product{}, %{@valid_attrs | currency: ""})
+      assert get_field(changeset, :currency) == "IDR"
     end
 
     test "sets default stock_status to in_stock" do
@@ -129,6 +131,14 @@ defmodule PersonalBrand.Content.ProductTest do
       assert get_field(changeset, :checkout_url) == nil
     end
 
+    test "allows blank optional checkout copy from admin forms" do
+      attrs = %{@valid_attrs | paid_excerpt: "", paywall_cta: ""}
+      changeset = Product.changeset(%Product{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :paid_excerpt) == nil
+      assert get_field(changeset, :paywall_cta) == nil
+    end
+
     test "rejects missing price" do
       attrs = Map.delete(@valid_attrs, :price)
       changeset = Product.changeset(%Product{}, attrs)
@@ -178,10 +188,24 @@ defmodule PersonalBrand.Content.ProductTest do
       refute changeset.valid?
     end
 
+    test "rejects zero price because products are always paid" do
+      attrs = %{@valid_attrs | price: Decimal.new("0.00")}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+      assert "must be greater than 0" in errors_on(changeset)[:price]
+    end
+
     test "rejects currency with wrong length" do
       attrs = %{@valid_attrs | currency: "US"}
       changeset = Product.changeset(%Product{}, attrs)
       refute changeset.valid?
+    end
+
+    test "rejects lowercase currency" do
+      attrs = %{@valid_attrs | currency: "idr"}
+      changeset = Product.changeset(%Product{}, attrs)
+      refute changeset.valid?
+      assert "must be a 3-letter currency code" in errors_on(changeset)[:currency]
     end
 
     test "accepts coming_soon status" do
@@ -214,7 +238,7 @@ defmodule PersonalBrand.Content.ProductTest do
         | fulfillment_type: "physical_shipping",
           requires_shipping: true,
           payment_provider: "manual_link",
-          checkout_mode: "midtrans_snap"
+          checkout_mode: "manual_link"
       }
 
       changeset = Product.changeset(%Product{}, attrs)
@@ -223,7 +247,61 @@ defmodule PersonalBrand.Content.ProductTest do
       assert get_field(changeset, :fulfillment_type) == "physical_shipping"
       assert get_field(changeset, :requires_shipping) == true
       assert get_field(changeset, :payment_provider) == "manual_link"
+      assert get_field(changeset, :checkout_mode) == "manual_link"
+    end
+
+    test "defaults checkout to Midtrans Snap without checkout_url" do
+      attrs = %{@valid_attrs | checkout_url: ""}
+
+      changeset = Product.changeset(%Product{}, attrs)
+
+      assert changeset.valid?
       assert get_field(changeset, :checkout_mode) == "midtrans_snap"
+      assert get_field(changeset, :payment_provider) == "midtrans"
+      assert get_field(changeset, :checkout_url) == nil
+    end
+
+    test "requires checkout_url for active manual link products" do
+      attrs = %{@valid_attrs | checkout_mode: "manual_link", checkout_url: ""}
+
+      changeset = Product.changeset(%Product{}, attrs)
+
+      refute changeset.valid?
+
+      assert "is required when checkout mode is Manual Link" in errors_on(changeset)[
+               :checkout_url
+             ]
+
+      assert get_field(changeset, :payment_provider) == "manual_link"
+    end
+
+    test "allows manual link without checkout_url for draft products" do
+      attrs = %{@valid_attrs | status: "draft", checkout_mode: "manual_link", checkout_url: ""}
+
+      changeset = Product.changeset(%Product{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :payment_provider) == "manual_link"
+    end
+
+    test "requires shipping flag and physical fulfillment to agree" do
+      requires_shipping =
+        Product.changeset(%Product{}, %{@valid_attrs | requires_shipping: true})
+
+      physical_without_flag =
+        Product.changeset(%Product{}, %{@valid_attrs | fulfillment_type: "physical_shipping"})
+
+      refute requires_shipping.valid?
+
+      assert "must be physical_shipping when shipping is required" in errors_on(requires_shipping)[
+               :fulfillment_type
+             ]
+
+      refute physical_without_flag.valid?
+
+      assert "must be true for physical shipping" in errors_on(physical_without_flag)[
+               :requires_shipping
+             ]
     end
 
     test "rejects invalid fulfillment and payment configuration fields" do

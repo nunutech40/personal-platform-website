@@ -44,6 +44,7 @@ defmodule PersonalBrandWeb.Router do
   scope "/", PersonalBrandWeb do
     pipe_through :api
 
+    get "/health", HealthController, :show
     post "/webhooks/midtrans", CommerceController, :midtrans_webhook
   end
 

@@ -770,10 +770,7 @@ defmodule PersonalBrandWeb.PublicLive do
   def products_index(assigns) do
     ~H"""
     <h1>Products</h1>
-    <p>Digital products and experiments. MVP checkout uses external payment links.</p>
-    <div class="notice">
-      Phase 1 commerce mode: product detail pages redirect to a manual Midtrans Payment Link through <code>checkout_url</code>.
-    </div>
+    <p>Digital products, services, and experiments available through checkout.</p>
     <hr />
     <%= if @products == [] do %>
       <.empty_state text="No products are listed yet." />
@@ -808,18 +805,24 @@ defmodule PersonalBrandWeb.PublicLive do
           <strong>Delivery:</strong> {@product.delivery_type}<br />
           <strong>Status:</strong> {@product.stock_status}
         </p>
-        <form
-          :if={@product.status == "active"}
-          action={"/checkout/products/#{@product.slug}"}
-          method="post"
-          class="checkout-form"
-        >
-          <input type="hidden" name="_csrf_token" value={csrf_token()} />
-          <label>
-            Email <input type="email" name="buyer_email" placeholder="you@example.com" required />
-          </label>
-          <button type="submit">Buy Now</button>
-        </form>
+        <div :if={@product.status == "active"} class="paywall-gate">
+          <h2>{@product.paywall_cta || "Beli produk ini"}</h2>
+          <p>{product_checkout_preview(@product)}</p>
+          <form
+            action={"/checkout/products/#{@product.slug}"}
+            method="post"
+            class="checkout-form"
+          >
+            <input type="hidden" name="_csrf_token" value={csrf_token()} />
+            <label>
+              Email <input type="email" name="buyer_email" placeholder="you@example.com" required />
+            </label>
+            <button type="submit">Bayar & Dapatkan Akses</button>
+          </form>
+          <p class="meta">
+            Pembayaran memakai Midtrans jika env tersedia, atau checkout URL manual sebagai fallback.
+          </p>
+        </div>
         <p :if={@product.status != "active"} class="notice">
           This product is currently marked as {@product.status}.
         </p>
@@ -1550,6 +1553,13 @@ defmodule PersonalBrandWeb.PublicLive do
     |> fallback_to(post.excerpt)
     |> fallback_to("Preview belum tersedia.")
     |> Markdown.to_html()
+  end
+
+  defp product_checkout_preview(product) do
+    product.paid_excerpt
+    |> fallback_to(product.summary)
+    |> fallback_to(product.description)
+    |> fallback_to("Checkout untuk mendapatkan akses produk ini.")
   end
 
   defp fallback_to(value, _fallback) when is_binary(value) and value != "", do: value

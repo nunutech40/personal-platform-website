@@ -174,7 +174,7 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         rows: 2,
         placeholder: "10000\n15000\n25000",
         help_text:
-          "Satu angka per baris. Untuk tipe Tips, pembaca harus memilih salah satu nominal ini.",
+          "Wajib untuk tipe Tips. Satu angka per baris; pembaca harus memilih salah satu nominal ini.",
         render_form: &render_textarea/1,
         except: [:index],
         panel: :monetization
@@ -339,7 +339,14 @@ defmodule PersonalBrandWeb.Admin.PostResource do
   end
 
   defp render_textarea(assigns) do
-    assigns = assign(assigns, :textarea_value, textarea_value(assigns[:value]))
+    errors =
+      assigns.form[assigns.name].errors
+      |> Enum.map(&PersonalBrandWeb.CoreComponents.translate_error/1)
+
+    assigns =
+      assigns
+      |> assign(:textarea_value, textarea_value(assigns[:value]))
+      |> assign(:errors, errors)
 
     ~H"""
     <div class="px-6 py-4 sm:py-3">
@@ -351,8 +358,11 @@ defmodule PersonalBrandWeb.Admin.PostResource do
         name={@form[@name].name}
         rows={@field_options[:rows] || 4}
         placeholder={@field_options[:placeholder]}
-        class="textarea w-full"
+        class={["textarea w-full", @errors != [] && "textarea-error"]}
       >{@textarea_value}</textarea>
+      <p :for={error <- @errors} class="mt-2 text-sm font-medium text-red-600">
+        {error}
+      </p>
       <p :if={@field_options[:help_text]} class="mt-2 text-sm opacity-70">
         {@field_options[:help_text]}
       </p>

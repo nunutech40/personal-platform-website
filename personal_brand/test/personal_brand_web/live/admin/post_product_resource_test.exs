@@ -48,6 +48,61 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
     assert post.tags == ["Elixir", "Phoenix LiveView"]
   end
 
+  test "admin post form saves tips access type with required amount options", %{conn: conn} do
+    post = insert_post(%{title: "Mode Switch Post", slug: "mode-switch-post"})
+
+    {:ok, view, _html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/posts/#{post.id}/edit")
+
+    view
+    |> element("#resource-form")
+    |> render_submit(%{
+      "change" =>
+        post_attrs(%{
+          "title" => "Mode Switch Post",
+          "slug" => "mode-switch-post",
+          "access_type" => "tips",
+          "price" => "25000",
+          "currency" => "IDR",
+          "tip_amount_options" => "10000\n15000\n25000"
+        }),
+      "save-type" => "save"
+    })
+
+    assert_redirect(view, ~p"/admin/posts")
+
+    post = Repo.get_by!(Post, slug: "mode-switch-post")
+    assert post.access_type == "tips"
+    assert post.price == nil
+    assert post.tip_amount_options == [10000, 15000, 25000]
+  end
+
+  test "admin post form keeps tips invalid when amount options are blank", %{conn: conn} do
+    {:ok, view, _html} =
+      conn
+      |> log_in_admin()
+      |> live(~p"/admin/posts/new")
+
+    html =
+      view
+      |> element("#resource-form")
+      |> render_submit(%{
+        "change" =>
+          post_attrs(%{
+            "title" => "Tips Without Amounts",
+            "slug" => "",
+            "access_type" => "tips",
+            "tip_amount_options" => ""
+          }),
+        "save-type" => "save"
+      })
+
+    assert html =~ "must contain at least one amount for tips posts"
+    refute Repo.get_by(Post, slug: "tips-without-amounts")
+  end
+
   test "GET /admin/posts includes edit preview and delete row actions", %{conn: conn} do
     post = insert_post(%{title: "Post Row Actions", slug: "post-row-actions"})
 
@@ -69,10 +124,12 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
       |> live(~p"/admin/products/new")
 
     assert html =~ "Info Dasar"
-    assert html =~ "Commerce"
+    assert html =~ "Monetisasi"
     assert html =~ "Delivery"
+    assert html =~ "Preview untuk Checkout"
+    assert html =~ "CTA Checkout"
     assert html =~ "Kosongkan saat membuat produk baru"
-    assert html =~ ~s(value="USD")
+    assert html =~ ~s(value="IDR")
     assert html =~ "Usage examples"
   end
 
@@ -153,10 +210,12 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
         "status" => "active",
         "product_type" => "digital",
         "price" => "29.00",
-        "currency" => "USD",
+        "currency" => "IDR",
         "stock_status" => "in_stock",
         "delivery_type" => "digital_download",
         "checkout_url" => "",
+        "paid_excerpt" => "Checkout preview",
+        "paywall_cta" => "Beli produk ini",
         "featured" => "false",
         "included" => "Download files\nUsage examples"
       },
@@ -189,7 +248,7 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
       description: "Description",
       product_type: "digital",
       price: Decimal.new("29.00"),
-      currency: "USD",
+      currency: "IDR",
       status: "active",
       stock_status: "in_stock",
       delivery_type: "digital_download",

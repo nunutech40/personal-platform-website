@@ -207,18 +207,21 @@ defmodule PersonalBrand.Content.PostTest do
       assert changeset.valid?
       assert get_field(changeset, :access_type) == "tips"
       assert get_field(changeset, :tip_amount_options) == [10000, 15000, 20000]
-      assert get_field(changeset, :payment_provider) == nil
+      assert get_field(changeset, :payment_provider) == "midtrans"
       assert get_field(changeset, :checkout_url) == nil
       assert get_field(changeset, :currency) == "IDR"
     end
 
-    test "defaults tips amount options for tips posts" do
+    test "requires tips amount options for tips posts" do
       attrs = Map.merge(@valid_attrs, %{access_type: "tips", tip_amount_options: ""})
 
       changeset = Post.changeset(%Post{}, attrs)
 
-      assert changeset.valid?
-      assert get_field(changeset, :tip_amount_options) == [10000, 15000, 20000]
+      refute changeset.valid?
+
+      assert "must contain at least one amount for tips posts" in errors_on(changeset)[
+               :tip_amount_options
+             ]
     end
 
     test "requires positive price for paid posts" do
@@ -230,6 +233,62 @@ defmodule PersonalBrand.Content.PostTest do
       assert "must be greater than 0 for paid posts" in errors_on(changeset)[:price]
     end
 
+    test "can switch a post from paid to tips" do
+      paid_post =
+        %Post{}
+        |> Post.changeset(
+          Map.merge(@valid_attrs, %{access_type: "paid", price: Decimal.new("25000")})
+        )
+        |> Repo.insert!()
+
+      changeset =
+        Post.changeset(paid_post, %{
+          access_type: "tips",
+          price: nil,
+          tip_amount_options: "10000\n20000",
+          paywall_cta: "Tips dulu buat lanjut baca"
+        })
+
+      assert changeset.valid?
+      assert get_field(changeset, :access_type) == "tips"
+      assert get_field(changeset, :tip_amount_options) == [10000, 20000]
+    end
+
+    test "can switch a post from tips to free or paid" do
+      tips_post =
+        %Post{}
+        |> Post.changeset(
+          Map.merge(@valid_attrs, %{access_type: "tips", tip_amount_options: [10000, 15000]})
+        )
+        |> Repo.insert!()
+
+      free_changeset = Post.changeset(tips_post, %{access_type: "free", price: nil})
+
+      assert free_changeset.valid?
+      assert get_field(free_changeset, :access_type) == "free"
+
+      paid_changeset =
+        Post.changeset(tips_post, %{access_type: "paid", price: Decimal.new("30000")})
+
+      assert paid_changeset.valid?
+      assert get_field(paid_changeset, :access_type) == "paid"
+      assert get_field(paid_changeset, :price) == Decimal.new("30000")
+    end
+
+    test "does not overwrite existing access type when update attrs omit it" do
+      tips_post =
+        %Post{}
+        |> Post.changeset(
+          Map.merge(@valid_attrs, %{access_type: "tips", tip_amount_options: [10000, 15000]})
+        )
+        |> Repo.insert!()
+
+      changeset = Post.changeset(tips_post, %{title: "Updated title"})
+
+      assert changeset.valid?
+      assert get_field(changeset, :access_type) == "tips"
+    end
+
     test "rejects invalid tip amount options" do
       attrs = Map.merge(@valid_attrs, %{access_type: "tips", tip_amount_options: "10000\nnope"})
 
@@ -239,14 +298,58 @@ defmodule PersonalBrand.Content.PostTest do
       assert "is invalid" in errors_on(changeset)[:tip_amount_options]
     end
 
-    test "rejects invalid checkout URL and currency" do
-      attrs = Map.merge(@valid_attrs, %{checkout_url: "example.com/pay", currency: "idr"})
+    test "free posts ignore inactive monetization fields" do
+      attrs =
+        Map.merge(@valid_attrs, %{
+          access_type: "free",
+          price: "not-a-number",
+          tip_amount_options: "nope",
+          checkout_url: "example.com/pay",
+          currency: "idr"
+        })
+
+      changeset = Post.changeset(%Post{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :access_type) == "free"
+      assert get_field(changeset, :price) == nil
+      assert get_field(changeset, :tip_amount_options) == []
+      assert get_field(changeset, :checkout_url) == nil
+      assert get_field(changeset, :currency) == "IDR"
+    end
+
+    test "rejects invalid checkout URL and currency for monetized posts" do
+      attrs =
+        Map.merge(@valid_attrs, %{
+          access_type: "paid",
+          price: Decimal.new("25000"),
+          checkout_url: "example.com/pay",
+          currency: "idr"
+        })
 
       changeset = Post.changeset(%Post{}, attrs)
 
       refute changeset.valid?
       assert "must start with http:// or https://" in errors_on(changeset)[:checkout_url]
       assert "must be a 3-letter currency code" in errors_on(changeset)[:currency]
+    end
+
+    test "requires checkout URL when monetized post uses manual link" do
+      attrs =
+        Map.merge(@valid_attrs, %{
+          access_type: "paid",
+          price: Decimal.new("25000"),
+          payment_provider: "manual_link",
+          checkout_url: ""
+        })
+
+      changeset = Post.changeset(%Post{}, attrs)
+
+      refute changeset.valid?
+
+      assert "is required when payment provider is Manual Link" in errors_on(changeset)[
+               :checkout_url
+             ]
     end
   end
 end

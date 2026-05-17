@@ -42,9 +42,10 @@ defmodule PersonalBrand.Content.Post do
   def changeset(post, attrs) do
     attrs =
       attrs
+      |> prune_inactive_monetization_values()
       |> normalize_list_inputs()
       |> normalize_blank_values()
-      |> put_default_monetization_values()
+      |> put_default_monetization_values(post)
       |> put_generated_slug()
       |> put_rendered_content_html()
 
@@ -86,15 +87,16 @@ defmodule PersonalBrand.Content.Post do
     |> validate_inclusion(:editor_type, ["markdown", "rich_text"])
     |> validate_inclusion(:access_type, ["free", "tips", "paid"])
     |> validate_inclusion(:payment_provider, ["manual_link", "midtrans", nil])
-    |> validate_format(:currency, ~r/^[A-Z]{3}$/, message: "must be a 3-letter currency code")
     |> validate_format(:slug, ~r/^[a-z0-9-]+$/,
       message: "must be lowercase alphanumeric with hyphens only"
     )
     |> validate_number(:reading_time, greater_than_or_equal_to: 1, less_than_or_equal_to: 120)
     |> validate_number(:clap_count, greater_than_or_equal_to: 0)
+    |> validate_currency()
     |> validate_tip_amount_options()
     |> validate_checkout_url()
     |> validate_paid_price()
+    |> validate_payment_config()
     |> unique_constraint(:slug)
   end
 
@@ -231,6 +233,35 @@ defmodule PersonalBrand.Content.Post do
 
   defp blank?(value), do: is_nil(value) or value == ""
 
+  defp prune_inactive_monetization_values(attrs) when is_map(attrs) do
+    case get_attr(attrs, :access_type) do
+      "free" ->
+        attrs
+        |> delete_attr(:price)
+        |> delete_attr(:currency)
+        |> delete_attr(:tip_amount_options)
+        |> delete_attr(:payment_provider)
+        |> delete_attr(:checkout_url)
+
+      "paid" ->
+        delete_attr(attrs, :tip_amount_options)
+
+      "tips" ->
+        delete_attr(attrs, :price)
+
+      _other ->
+        attrs
+    end
+  end
+
+  defp prune_inactive_monetization_values(attrs), do: attrs
+
+  defp delete_attr(attrs, field) do
+    attrs
+    |> Map.delete(field)
+    |> Map.delete(Atom.to_string(field))
+  end
+
   defp normalize_blank_values(attrs) when is_map(attrs) do
     attrs
     |> normalize_blank_value(:payment_provider)
@@ -253,30 +284,66 @@ defmodule PersonalBrand.Content.Post do
     end
   end
 
-  defp put_default_monetization_values(attrs) when is_map(attrs) do
+  defp put_default_monetization_values(attrs, post) when is_map(attrs) do
     attrs
-    |> put_default_if_blank(:access_type, "free")
+    |> put_default_access_type(post)
     |> put_default_if_blank(:currency, "IDR")
-    |> put_default_tip_options()
+    |> put_default_payment_provider()
   end
 
-  defp put_default_monetization_values(attrs), do: attrs
+  defp put_default_monetization_values(attrs, _post), do: attrs
+
+  defp put_default_access_type(attrs, post) do
+    cond do
+      !blank?(get_attr(attrs, :access_type)) ->
+        attrs
+
+      is_nil(Map.get(post, :id)) ->
+        put_attr(attrs, :access_type, "free")
+
+      Map.has_key?(attrs, :access_type) or Map.has_key?(attrs, "access_type") ->
+        put_attr(attrs, :access_type, "free")
+
+      true ->
+        attrs
+    end
+  end
 
   defp put_default_if_blank(attrs, field, value) do
     if blank?(get_attr(attrs, field)), do: put_attr(attrs, field, value), else: attrs
   end
 
-  defp put_default_tip_options(attrs) do
-    if get_attr(attrs, :access_type) == "tips" and
-         Enum.empty?(get_attr(attrs, :tip_amount_options) || []) do
-      put_attr(attrs, :tip_amount_options, [10000, 15000, 20000])
+  defp put_default_payment_provider(attrs) do
+    if get_attr(attrs, :access_type) in ["tips", "paid"] do
+      put_default_if_blank(attrs, :payment_provider, "midtrans")
     else
       attrs
     end
   end
 
+  defp validate_currency(changeset) do
+    if get_field(changeset, :access_type) in ["tips", "paid"] do
+      validate_format(changeset, :currency, ~r/^[A-Z]{3}$/,
+        message: "must be a 3-letter currency code"
+      )
+    else
+      changeset
+    end
+  end
+
   defp validate_tip_amount_options(changeset) do
     tip_amount_options = get_field(changeset, :tip_amount_options) || []
+
+    changeset =
+      if get_field(changeset, :access_type) == "tips" and Enum.empty?(tip_amount_options) do
+        add_error(
+          changeset,
+          :tip_amount_options,
+          "must contain at least one amount for tips posts"
+        )
+      else
+        changeset
+      end
 
     if Enum.any?(tip_amount_options, &(&1 <= 0)) do
       add_error(changeset, :tip_amount_options, "must contain positive amounts only")
@@ -286,6 +353,14 @@ defmodule PersonalBrand.Content.Post do
   end
 
   defp validate_checkout_url(changeset) do
+    if get_field(changeset, :access_type) == "free" do
+      changeset
+    else
+      validate_active_checkout_url(changeset)
+    end
+  end
+
+  defp validate_active_checkout_url(changeset) do
     case get_field(changeset, :checkout_url) do
       nil ->
         changeset
@@ -312,6 +387,18 @@ defmodule PersonalBrand.Content.Post do
     if access_type == "paid" and
          (is_nil(price) or Decimal.compare(price, Decimal.new("0")) != :gt) do
       add_error(changeset, :price, "must be greater than 0 for paid posts")
+    else
+      changeset
+    end
+  end
+
+  defp validate_payment_config(changeset) do
+    monetized? = get_field(changeset, :access_type) in ["tips", "paid"]
+    manual_link? = get_field(changeset, :payment_provider) == "manual_link"
+    checkout_url = get_field(changeset, :checkout_url)
+
+    if monetized? and manual_link? and blank?(checkout_url) do
+      add_error(changeset, :checkout_url, "is required when payment provider is Manual Link")
     else
       changeset
     end

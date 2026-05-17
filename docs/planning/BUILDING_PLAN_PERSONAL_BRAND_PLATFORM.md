@@ -2,7 +2,7 @@
 
 ## Current Implementation Snapshot
 
-Status per 2026-05-10 (updated):
+Status per 2026-05-17 (updated):
 
 ```txt
 Current repo contains a Phoenix LiveView app with PostgreSQL/Ecto contexts,
@@ -24,7 +24,11 @@ What is implemented in the Phoenix app:
 - admin auth with simple configured credential flow
 - protected /admin dashboard with counts, active theme, recent content, and quick actions
 - Backpex LiveResources for projects, posts, products, media, site settings, and themes
-- products with checkout_url for manual Midtrans Payment Link flow
+- post monetization for free, tips-gated, and paid gated writing
+- product checkout gate; products are always paid and can use Midtrans Snap or manual checkout_url fallback
+- orders/access_grants, Midtrans transaction wrapper, webhook, and admin orders page
+- project best_three flag and writing claps
+- VPS deploy templates, uploads directory support, and /health route
 ```
 
 The old static prototype remains useful only as UI/data-contract reference.
@@ -40,7 +44,9 @@ posts                         -> posts
 products                      -> products
 media                         -> media
 active public theme           -> site_settings.active_theme
-product checkout URL          -> products.checkout_url
+product checkout fallback     -> products.checkout_url
+post monetization             -> posts.access_type / price / tip_amount_options
+commerce orders               -> orders / access_grants
 admin CRUD                    -> Backpex LiveResources
 ```
 
@@ -52,11 +58,11 @@ Phase 1: mostly done - core content/settings/theme/media schemas and tests exist
 Phase 2: mostly done - public routes and slug detail pages exist
 Phase 3: mostly done - old_web_classic public UI is ported
 Phase 4: partial - active_theme is persisted; full theme renderer/preview validation is not complete
-Phase 5: partial - admin auth/dashboard and Backpex CRUD exist; admin editor UX, filters, badges, and media picker workflows need work
-Phase 6: partial - checkout_url exists as external link; no Midtrans API/webhook/orders
+Phase 5: mostly done - admin auth/dashboard, Backpex CRUD, admin order review, media picker workflows, and editor UX exist
+Phase 6: done for commerce MVP - checkout creates orders, uses Midtrans Snap when configured, and falls back to manual checkout_url
 Phase 7: done - media upload with Backpex.Fields.Upload, local disk storage, alt text, and file management
 Phase 8+: not started or not verified - SEO/RSS/sitemap/robots need dedicated implementation
-Content monetization: planned - see `docs/planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md`
+Content monetization: implemented for MVP - see `docs/planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md`
 ```
 
 Next recommended step:
@@ -121,7 +127,7 @@ Custom admin forms/workflows           -> pbp-building-admin-forms
 Themes and old_web_classic UI          -> pbp-theming-public-interfaces
 Draft/publish/slug/tag logic           -> pbp-managing-publishing-workflows
 Images/uploads/media library           -> pbp-handling-media-assets
-Buy Now / checkout_url / Midtrans      -> pbp-integrating-external-checkout
+Checkout / orders / Midtrans          -> pbp-integrating-external-checkout
 Verification before finishing          -> pbp-testing-and-qa
 ```
 
@@ -206,10 +212,10 @@ Slice 2.3 - Writing pages
   Skill: pbp-building-liveview-pages, pbp-managing-publishing-workflows
   Output: /writing and /writing/:slug
 
-Slice 2.4 - Product pages and external checkout
+Slice 2.4 - Product pages and commerce checkout
   Phase: 2 and 6
   Skill: pbp-building-liveview-pages, pbp-integrating-external-checkout
-  Output: /products and /products/:slug with Buy Now using checkout_url
+  Output: /products and /products/:slug with paid checkout gate
 
 Slice 2.5 - About, now, contact
   Phase: 2
@@ -352,7 +358,7 @@ MVP harus memungkinkan:
 - Membuka detail produk.
 - Membuka about page.
 - Membuka now page.
-- Klik tombol buy yang mengarah ke Midtrans Payment Link/manual checkout URL.
+- Checkout paid/tips post dan product melalui form internal yang membuat order, lalu Midtrans/manual fallback.
 
 ### Admin dapat:
 
@@ -397,8 +403,8 @@ Backend: Elixir / Phoenix
 Database: PostgreSQL
 Storage: local disk storage
 Styling: Tailwind CSS or simple CSS
-Payment MVP: Midtrans Payment Link via checkout_url
-Payment Future: Midtrans API + webhook
+Payment MVP: Midtrans Snap/webhook with manual checkout_url fallback
+Payment Future: email delivery, downloads, customer library if needed
 ```
 
 ## 2.2 Reasoning
@@ -451,23 +457,22 @@ PostgreSQL + app-owned media storage
 ```txt
 User opens product page
    ↓
-Clicks Buy Now
+Submits checkout gate with buyer email
    ↓
-Redirects to products.checkout_url
+Phoenix creates product_purchase order
    ↓
-User pays via Midtrans Payment Link
+Midtrans Snap redirect or products.checkout_url fallback
    ↓
-Fulfillment is handled manually
+Webhook marks order paid; fulfillment is handled manually first
 ```
 
-## 3.3 Future Payment Architecture
+## 3.3 Future Commerce Extensions
 
 ```txt
-User clicks Buy Now
-   ↓
-Checkout page inside website
-   ↓
-Phoenix creates order
+Receipt/access email delivery
+Digital download page
+Customer account/library only if needed
+Shipping address/courier integrations
    ↓
 Phoenix requests transaction to Midtrans
    ↓
@@ -750,9 +755,14 @@ Important MVP field:
 
 ```txt
 checkout_url
+paid_excerpt
+paywall_cta
+payment_provider
+checkout_mode
+fulfillment_type
 ```
 
-Untuk MVP, field ini bisa diisi Midtrans Payment Link.
+Untuk MVP, `checkout_url` adalah fallback manual payment link. Checkout utama tetap lewat form internal.
 
 ---
 
@@ -1195,16 +1205,19 @@ Must include:
 - description
 - what is included
 - FAQ optional
-- Buy Now link
+- checkout gate
 ```
 
-Buy Now behavior in MVP:
+Checkout behavior in MVP:
 
 ```txt
-If product.checkout_url exists:
-  render Buy Now link to checkout_url
-Else:
-  render Contact / Coming Soon state
+Active product:
+  render buyer email checkout form
+  create product_purchase order
+  use Midtrans Snap when configured
+  fallback to checkout_url if configured
+Non-active product:
+  render safe status notice
 ```
 
 ---
@@ -1419,7 +1432,7 @@ Admin post gaps to close before treating Writing as production-ready:
 - Add SEO character counters and social preview UI in the admin form.
 - Add a slug-change warning for already published posts.
 - Add auto reading-time calculation or a clear manual override workflow.
-- Future monetization fields belong in a later slice: `access_type`, `price`, `currency`, `tip_amount_options`, `paid_excerpt`, `paywall_cta`, `payment_provider`, and `checkout_url`.
+- Monetization fields are implemented: `access_type`, `price`, `currency`, `tip_amount_options`, `paid_excerpt`, `paywall_cta`, `payment_provider`, and `checkout_url`.
 
 ---
 
@@ -1435,6 +1448,9 @@ Must support:
 - set featured
 - set price
 - set checkout_url
+- set checkout preview and CTA
+- set payment provider / checkout mode
+- set fulfillment type
 - attach cover image
 - attach gallery images
 - manage tags
@@ -1451,6 +1467,13 @@ product_type
 price
 currency
 checkout_url
+paid_excerpt
+paywall_cta
+payment_provider
+checkout_mode
+fulfillment_type
+download_media_id
+requires_shipping
 cover_image_url
 gallery_images
 status
@@ -1460,7 +1483,7 @@ tags
 
 MVP note:
 
-`checkout_url` is used for Midtrans Payment Link.
+Products are always paid. Public detail uses an internal checkout gate; `checkout_url` is used only as manual payment-link fallback.
 
 ---
 
@@ -1987,33 +2010,37 @@ Done when:
 
 ---
 
-## Phase 6 — Product Catalog + Midtrans Payment Link
+## Phase 6 — Product Catalog + Commerce Checkout
 
 Priority: Medium-High
 
-Current prototype note:
+Implementation status per 2026-05-17:
 
 ```txt
-Product detail pages already render Buy Now links from checkout_url.
-Use this behavior unchanged for MVP manual Midtrans Payment Link mode.
+Done for commerce MVP. Product detail pages render an internal checkout gate,
+collect buyer email, create product_purchase orders, use Midtrans Snap when
+configured, and fall back to products.checkout_url for manual payment links.
+Products are always paid and reject price 0.
 ```
 
 Tasks:
 
 ```txt
-- Add checkout_url field to product form
-- Add Buy Now link on product detail
-- Add product status handling
-- Add coming soon state
-- Add manual fulfillment note if needed
+- Add checkout_url fallback field to product form
+- Add price/currency, checkout preview, and CTA fields
+- Add internal checkout form on product detail
+- Add product status handling and coming soon state
+- Add manual fulfillment state through orders
 ```
 
 Done when:
 
 ```txt
-- Product page has Buy Now
-- Buy Now redirects to checkout_url
-- Midtrans Payment Link can be used manually
+- Product page has checkout gate
+- Checkout creates product_purchase order
+- Midtrans Snap works when env is configured
+- Manual checkout_url is used as fallback
+- Admin can review fulfillment from /admin/orders
 ```
 
 ---
@@ -2067,28 +2094,27 @@ Done when:
 
 ---
 
-## Phase 9 — Future Commerce Proper
+## Phase 9 — Commerce Extensions
 
 Priority: Low for MVP, High for monetization phase
+
+Implementation status per 2026-05-17:
+
+```txt
+Core orders, access_grants, Midtrans Snap/webhook, admin order list,
+paid/tips post access, and product purchase order creation are implemented.
+Remaining extensions are customer accounts, receipt email, automated product
+download page/email delivery, and courier/shipping integrations.
+```
 
 Tasks:
 
 ```txt
-- Add customers table
-- Add orders table
-- Add order_items table
-- Add payments table
-- Add product_files table
-- Add digital_entitlements table
-- Add shipping_addresses table
-- Add shipments table
-- Create checkout page
-- Integrate Midtrans API
-- Handle Midtrans webhook
-- Update order/payment status
-- Create admin orders page
-- Create digital download flow
-- Create physical shipping flow
+- Add customer accounts only if membership/library becomes necessary
+- Add receipt/access email delivery
+- Add automated product download page/file delivery
+- Add shipping address and courier integration for physical products
+- Add richer payment/order reporting if needed
 ```
 
 Done when:
@@ -2157,12 +2183,13 @@ Done when:
 - theme settings
 ```
 
-## Sprint 6 — Product Catalog + Payment Link
+## Sprint 6 — Product Catalog + Commerce Checkout
 
 ```txt
 - checkout_url
-- Buy Now link
-- Midtrans Payment Link manual flow
+- checkout gate
+- Midtrans Snap/webhook flow
+- manual checkout_url fallback
 - product status/coming soon handling
 ```
 
@@ -2203,7 +2230,7 @@ MVP is complete when:
 - Writing detail renders by slug
 - Products list renders from DB
 - Product detail renders by slug
-- Buy Now uses checkout_url
+- Product checkout creates order and uses Midtrans/manual fallback
 - About page renders
 - Now page renders
 - Admin can login
@@ -2243,11 +2270,13 @@ Create a theme resolver or equivalent structure so future themes can be added.
 
 The admin dashboard can be visually simple. Functionality matters more than polish.
 
-## 16.5 Midtrans MVP is Manual
+## 16.5 Midtrans MVP
 
-For the first version, products only need `checkout_url`.
+For the current MVP, posts/products use internal checkout and orders.
+Midtrans Snap/webhook is supported when env keys are configured.
+`checkout_url` remains a manual fallback.
 
-Do not build automatic payment handling until the commerce proper phase.
+Do not add carts, subscriptions, customer accounts, or courier automation until explicitly needed.
 
 ## 16.6 Keep UX Clear
 
@@ -2326,7 +2355,7 @@ No need for fancy dashboard UI.
 Mitigation:
 
 ```txt
-Use Midtrans Payment Link in checkout_url first.
+Keep commerce simple: Midtrans Snap/webhook plus manual checkout_url fallback; no cart/customer account until needed.
 ```
 
 ## Risk 5 — Old-Web Design Becomes Confusing

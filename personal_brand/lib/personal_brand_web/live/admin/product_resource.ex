@@ -25,11 +25,11 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
   def panels do
     [
       identity: "Info Dasar",
-      commerce: "Commerce",
+      monetization: "Monetisasi",
       delivery: "Delivery",
       fulfillment: "Fulfillment",
       content: "Konten",
-      media_links: "Media & Link"
+      media: "Media"
     ]
   end
 
@@ -110,28 +110,45 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
           {"Coming Soon", "coming_soon"}
         ],
         render: &render_status_badge/1,
-        panel: :commerce
+        panel: :identity
       },
       product_type: %{
         module: Backpex.Fields.Select,
         label: "Tipe Produk",
         options: [{"Digital", "digital"}, {"Physical", "physical"}, {"Service", "service"}],
-        panel: :commerce
+        panel: :identity
       },
       price: %{
         module: Backpex.Fields.Number,
         label: "Harga",
-        placeholder: "29.00",
-        help_text: "Gunakan 0 untuk produk gratis atau coming soon.",
-        panel: :commerce
+        placeholder: "49000",
+        help_text: "Wajib diisi dan harus lebih dari 0. Products selalu berbayar.",
+        panel: :monetization
       },
       currency: %{
         module: Backpex.Fields.Text,
-        label: "Currency",
-        placeholder: "USD",
-        help_text: "Kode mata uang 3 huruf, contoh: USD atau IDR.",
+        label: "Mata Uang",
+        placeholder: "IDR",
+        help_text: "Kode mata uang 3 huruf. Default: IDR.",
         render_form: &render_suggested_text_input/1,
-        panel: :commerce
+        panel: :monetization
+      },
+      paid_excerpt: %{
+        module: Backpex.Fields.Textarea,
+        label: "Preview untuk Checkout",
+        rows: 4,
+        placeholder: "Bagian ringkas yang tampil di box pembelian sebelum user bayar.",
+        help_text: "Jika kosong, halaman publik memakai summary/deskripsi sebagai preview.",
+        except: [:index],
+        panel: :monetization
+      },
+      paywall_cta: %{
+        module: Backpex.Fields.Text,
+        label: "CTA Checkout",
+        placeholder: "Beli sekarang",
+        help_text: "Judul di box pembayaran. Jika kosong, pakai default.",
+        except: [:index],
+        panel: :monetization
       },
       stock_status: %{
         module: Backpex.Fields.Select,
@@ -188,7 +205,7 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
           {"Midtrans", "midtrans"},
           {"Manual Link", "manual_link"}
         ],
-        panel: :commerce
+        panel: :monetization
       },
       checkout_mode: %{
         module: Backpex.Fields.Select,
@@ -199,7 +216,7 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
         ],
         help_text:
           "Manual Link memakai checkout_url. Midtrans Snap membuat order dan redirect dari backend jika MIDTRANS_SERVER_KEY tersedia.",
-        panel: :commerce
+        panel: :monetization
       },
       checkout_url: %{
         module: Backpex.Fields.Text,
@@ -207,7 +224,7 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
         placeholder: "https://app.midtrans.com/payment-links/example",
         help_text: "Opsional. Harus diawali http:// atau https:// jika diisi.",
         except: [:index],
-        panel: :media_links
+        panel: :monetization
       },
       featured: %{
         module: Backpex.Fields.Boolean,
@@ -215,7 +232,7 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
         help_text: "Aktifkan untuk produk yang ingin ditonjolkan.",
         render: &render_featured_badge/1,
         render_form: &render_featured_toggle/1,
-        panel: :commerce
+        panel: :identity
       },
       included: %{
         module: Backpex.Fields.Textarea,
@@ -234,6 +251,14 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
         label: "Terakhir Diubah",
         except: [:new, :edit],
         orderable: true
+      },
+      cover_image_id: %{
+        module: Backpex.Fields.Text,
+        label: "Cover Image ID",
+        placeholder: "UUID media cover",
+        help_text: "Opsional. Upload gambar di Admin > Media lalu isi UUID-nya di sini.",
+        except: [:index],
+        panel: :media
       }
     ]
   end
@@ -421,7 +446,7 @@ defmodule PersonalBrandWeb.Admin.ProductResource do
   end
 
   defp suggested_values_for(:currency),
-    do: Content.list_product_field_values(:currency) ++ ["USD", "IDR"]
+    do: Content.list_product_field_values(:currency) ++ ["IDR", "USD"]
 
   defp suggested_values_for(_field), do: []
 

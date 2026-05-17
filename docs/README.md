@@ -36,6 +36,8 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 - [planning/BUILDING_PLAN_PROJECT_PORTFOLIO_IMPROVEMENT.md](planning/BUILDING_PLAN_PROJECT_PORTFOLIO_IMPROVEMENT.md) — portfolio taxonomy and case study
 - [planning/BUILDING_PLAN_UNIFIED_SEARCH.md](planning/BUILDING_PLAN_UNIFIED_SEARCH.md) — unified search feature
 - [planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md](planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md) — Midtrans, tips, paid posts
+- [technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md](technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md) — VPS deployment checklist, env, systemd, Nginx, data migration
+- [deployment/DEPLOY_PREP_CHECKLIST.md](deployment/DEPLOY_PREP_CHECKLIST.md) — current pre-deploy readiness checklist
 - [planning/QUICK_FIXES_2026_05_11.md](planning/QUICK_FIXES_2026_05_11.md) — admin UX polish
 
 ## Standards
@@ -49,7 +51,7 @@ PRD dan TRD disimpan sebagai `.docx` dan tidak bisa diedit oleh AI agent secara 
 - `product/PRD_Personal_Brand_Platform_COMMERCE_READY.docx`
 - `technical/TRD_Personal_Brand_Platform_COMMERCE_READY.docx`
 
-**Catatan sinkronisasi (per 2026-05-13):**
+**Catatan sinkronisasi (per 2026-05-17):**
 
 PRD/TRD .docx ditulis sebelum implementasi berikut dan belum mencakup:
 
@@ -58,6 +60,12 @@ PRD/TRD .docx ditulis sebelum implementasi berikut dan belum mencakup:
 - Load more pagination di `/work`, `/writing`, `/products`
 - Filter counts di `/work`
 - EasyMDE Markdown editor di admin posts
+- Content monetization: free/tips/paid posts, support CTA, orders, access grants, Midtrans Snap/webhook
+- Products are always paid, with checkout preview/CTA fields and Midtrans/manual fallback
+- Admin `/admin/orders`
+- Project `best_three` homepage flag and writing `clap_count`
+- VPS deployment templates under `docs/deployment/`
+- Health check route `/health`
 - Delete confirmation modal (custom Backpex item action)
 - Default sort `updated_at DESC` di semua admin resources
 

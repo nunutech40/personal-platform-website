@@ -13,10 +13,6 @@ defmodule PersonalBrandWeb.Admin.AuthHTML do
           </p>
           <h1 class="mt-2 text-3xl font-bold text-slate-950">Nunu Admin</h1>
           <p class="mt-2 text-sm text-slate-500">Sign in to manage content and site settings.</p>
-          <p class="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600">
-            Local login: <span class="font-semibold text-slate-900">admin</span>
-            / <span class="font-semibold text-slate-900">admin123</span>
-          </p>
         </div>
 
         <%= if assigns[:error] do %>
@@ -36,7 +32,7 @@ defmodule PersonalBrandWeb.Admin.AuthHTML do
               type="text"
               name="username"
               id="username"
-              placeholder="admin"
+              placeholder="Username"
               autocomplete="username"
               required
               class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
@@ -51,7 +47,7 @@ defmodule PersonalBrandWeb.Admin.AuthHTML do
               type="password"
               name="password"
               id="password"
-              placeholder="admin123"
+              placeholder="Password"
               autocomplete="current-password"
               required
               class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-950 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"

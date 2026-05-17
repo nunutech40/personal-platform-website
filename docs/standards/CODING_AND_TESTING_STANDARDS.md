@@ -10,9 +10,9 @@ Stack final:
 Elixir / Phoenix / LiveView
 Ecto
 PostgreSQL
-Local disk media storage for MVP
+Local disk media storage for MVP, with UPLOADS_DIR for VPS persistence
 S3-compatible object storage later if needed
-Midtrans Payment Link first, API/webhook later
+Midtrans Snap/API + webhook, with manual Payment Link fallback via checkout_url
 ```
 
 Filosofi utama:
@@ -233,8 +233,9 @@ service role key stays server-side
 Required:
 
 ```txt
-active product with checkout_url shows Buy Now
-missing checkout_url does not show broken checkout
+active product shows internal checkout gate and buyer email form
+products reject zero/negative prices because products are always paid
+product checkout can use Midtrans Snap or checkout_url fallback
 coming_soon product shows safe state
 future payment secrets are not exposed
 ```
