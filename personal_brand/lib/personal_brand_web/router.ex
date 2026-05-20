@@ -89,4 +89,18 @@ defmodule PersonalBrandWeb.Router do
     post "/login", AuthController, :create
     get "/logout", AuthController, :delete
   end
+
+  # Admin fallback routes must stay after explicit auth routes so /admin/login
+  # remains reachable when the user is not authenticated.
+  scope "/admin", PersonalBrandWeb.Admin do
+    pipe_through [:browser, :require_admin]
+
+    get "/*path", FallbackController, :not_found
+  end
+
+  scope "/", PersonalBrandWeb do
+    pipe_through :browser
+
+    live "/*path", PublicLive, :not_found
+  end
 end
