@@ -210,6 +210,7 @@ defmodule PersonalBrand.Content do
   defp project_order do
     [
       asc: :sort_order,
+      desc: :featured,
       desc_nulls_last: :sort_date,
       desc: :year,
       desc: :inserted_at

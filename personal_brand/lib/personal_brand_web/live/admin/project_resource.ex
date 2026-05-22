@@ -289,9 +289,9 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       },
       featured: %{
         module: Backpex.Fields.Boolean,
-        label: "Tampilkan di Urutan Teratas",
+        label: "Bintang / Unggulan",
         help_text:
-          "Aktifkan untuk project yang paling penting untuk recruiter. Project yang di-featured muncul paling atas di halaman Work dan homepage.",
+          "Aktifkan untuk memberi tanda project unggulan. Urutan utama tetap mengikuti Angka Prioritas; jika angkanya sama, project berbintang tampil lebih dulu.",
         render: &render_featured_badge/1,
         render_form: &render_featured_toggle/1,
         panel: :identity
@@ -307,11 +307,11 @@ defmodule PersonalBrandWeb.Admin.ProjectResource do
       },
       sort_order: %{
         module: Backpex.Fields.Number,
-        label: "Urutan Tampil",
+        label: "Angka Prioritas",
         placeholder: "0",
         index_column_class: "w-24",
         help_text:
-          "Angka untuk mengatur urutan project di halaman Work. Angka lebih kecil tampil lebih dulu. Contoh: project paling penting isi 0, berikutnya 10, lalu 20. Kosongkan atau isi 0 kalau tidak yakin.",
+          "Sumber utama urutan project di halaman Work. Angka lebih kecil tampil lebih dulu. Contoh: project paling penting isi 0, berikutnya 10, lalu 20.",
         panel: :identity
       },
       impact_summary: %{

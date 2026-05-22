@@ -33,7 +33,7 @@ defmodule PersonalBrand.ContentTest do
       project
     end
 
-    test "list_projects/0 returns all projects ordered by manual order then year/month" do
+    test "list_projects/0 returns all projects ordered by manual order then featured and year/month" do
       p1 =
         project_fixture(%{
           slug: "project-a",
@@ -61,8 +61,55 @@ defmodule PersonalBrand.ContentTest do
           sort_date: ~D[2025-04-01]
         })
 
+      featured =
+        project_fixture(%{
+          slug: "featured-project",
+          year: "2023",
+          title: "Featured",
+          featured: true,
+          sort_order: 10,
+          sort_date: ~D[2023-01-01]
+        })
+
       projects = Content.list_projects()
-      assert Enum.map(projects, & &1.id) == [p2.id, p3.id, p1.id]
+      assert Enum.map(projects, & &1.id) == [p2.id, p3.id, p1.id, featured.id]
+    end
+
+    test "list_published_projects/0 uses featured only as a tie-breaker after manual order" do
+      non_featured =
+        project_fixture(%{
+          slug: "non-featured-priority-zero",
+          status: "published",
+          featured: false,
+          sort_order: 0,
+          sort_date: ~D[2026-01-01]
+        })
+
+      featured =
+        project_fixture(%{
+          slug: "featured-priority-ten",
+          status: "published",
+          featured: true,
+          sort_order: 10,
+          sort_date: ~D[2025-01-01]
+        })
+
+      featured_same_priority =
+        project_fixture(%{
+          slug: "featured-priority-zero",
+          status: "published",
+          featured: true,
+          sort_order: 0,
+          sort_date: ~D[2024-01-01]
+        })
+
+      projects = Content.list_published_projects()
+
+      assert Enum.map(projects, & &1.id) == [
+               featured_same_priority.id,
+               non_featured.id,
+               featured.id
+             ]
     end
 
     test "list_published_projects/0 sorts same order projects by sort_date desc" do
