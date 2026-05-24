@@ -1,7 +1,7 @@
 defmodule PersonalBrandWeb.Plugs.RequireAdmin do
   @moduledoc """
   Plug that checks for a valid admin session token.
-  Redirects to /admin/login if not authenticated.
+  Redirects to /nunu-ops-7f3c/login if not authenticated.
   """
   import Plug.Conn
 
@@ -16,7 +16,7 @@ defmodule PersonalBrandWeb.Plugs.RequireAdmin do
 
       _ ->
         conn
-        |> Phoenix.Controller.redirect(to: "/admin/login")
+        |> Phoenix.Controller.redirect(to: "/nunu-ops-7f3c/login")
         |> halt()
     end
   end

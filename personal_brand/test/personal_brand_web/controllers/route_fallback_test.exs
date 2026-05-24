@@ -4,18 +4,18 @@ defmodule PersonalBrandWeb.RouteFallbackTest do
   alias PersonalBrand.Accounts
 
   test "unknown admin route redirects unauthenticated users to login", %{conn: conn} do
-    conn = get(conn, "/admin/p")
+    conn = get(conn, "/nunu-ops-7f3c/p")
 
-    assert redirected_to(conn) == "/admin/login"
+    assert redirected_to(conn) == "/nunu-ops-7f3c/login"
   end
 
   test "unknown admin route redirects authenticated users to dashboard", %{conn: conn} do
     conn =
       conn
       |> init_test_session(admin_token: Accounts.generate_session_token(1))
-      |> get("/admin/p")
+      |> get("/nunu-ops-7f3c/p")
 
-    assert redirected_to(conn) == "/admin"
+    assert redirected_to(conn) == "/nunu-ops-7f3c"
     assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Admin page tidak ditemukan."
   end
 

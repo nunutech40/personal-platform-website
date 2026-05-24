@@ -9,11 +9,11 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
 
   import Phoenix.LiveViewTest
 
-  test "GET /admin/media/new renders standardized media form", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/media/new renders standardized media form", %{conn: conn} do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/media/new")
+      |> live(~p"/nunu-ops-7f3c/media/new")
 
     assert html =~ "Upload"
     assert html =~ "Metadata"
@@ -23,21 +23,21 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     assert html =~ "Storage Path"
   end
 
-  test "GET /admin/media includes preview and row actions", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/media includes preview and row actions", %{conn: conn} do
     media = insert_media(%{filename: "cover.png", url: "/uploads/media/cover.png"})
 
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/media")
+      |> live(~p"/nunu-ops-7f3c/media")
 
     assert html =~ "cover.png"
-    assert html =~ ~s(href="/admin/media/#{media.id}/edit")
+    assert html =~ ~s(href="/nunu-ops-7f3c/media/#{media.id}/edit")
     assert html =~ ~s(href="/uploads/media/cover.png")
     assert html =~ ~s(phx-value-action-key="delete")
   end
 
-  test "GET /admin/media previews external image URL without content type", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/media previews external image URL without content type", %{conn: conn} do
     insert_media(%{
       filename: "github-cover.png",
       content_type: nil,
@@ -47,13 +47,13 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/media")
+      |> live(~p"/nunu-ops-7f3c/media")
 
     assert html =~
              ~s(src="https://raw.githubusercontent.com/nunutech40/repo/main/docs/assets/cover.png")
   end
 
-  test "GET /admin/site-settings redirects directly to singleton edit form", %{
+  test "GET /nunu-ops-7f3c/site-settings redirects directly to singleton edit form", %{
     conn: conn
   } do
     insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
@@ -62,19 +62,21 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     assert {:error, {:live_redirect, %{to: path}}} =
              conn
              |> log_in_admin()
-             |> live(~p"/admin/site-settings")
+             |> live(~p"/nunu-ops-7f3c/site-settings")
 
-    assert path == ~p"/admin/site-settings/#{setting.id}/edit"
+    assert path == ~p"/nunu-ops-7f3c/site-settings/#{setting.id}/edit"
   end
 
-  test "GET /admin/site-settings/:id/edit keeps settings singleton actions clean", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/site-settings/:id/edit keeps settings singleton actions clean", %{
+    conn: conn
+  } do
     insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
     setting = insert_site_setting()
 
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/site-settings/#{setting.id}/edit")
+      |> live(~p"/nunu-ops-7f3c/site-settings/#{setting.id}/edit")
 
     assert html =~ "Nunu Test"
     refute html =~ "New Site Setting"
@@ -82,14 +84,16 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     refute html =~ "Hapus"
   end
 
-  test "GET /admin/site-settings/:id/edit renders standardized settings form", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/site-settings/:id/edit renders standardized settings form", %{
+    conn: conn
+  } do
     insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
     setting = insert_site_setting()
 
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/site-settings/#{setting.id}/edit")
+      |> live(~p"/nunu-ops-7f3c/site-settings/#{setting.id}/edit")
 
     assert html =~ "Identitas Website"
     assert html =~ "Homepage CTA"
@@ -115,7 +119,7 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/site-settings/#{setting.id}/edit")
+      |> live(~p"/nunu-ops-7f3c/site-settings/#{setting.id}/edit")
 
     view
     |> element("#resource-form")
@@ -136,7 +140,7 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
       "save-type" => "save"
     })
 
-    assert_redirect(view, ~p"/admin/site-settings/#{setting.id}/edit")
+    assert_redirect(view, ~p"/nunu-ops-7f3c/site-settings/#{setting.id}/edit")
 
     setting = Repo.get!(SiteSetting, setting.id)
     assert setting.site_name == "Nunu Test"
@@ -151,11 +155,11 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     assert setting.featured_product_ids == [product_id]
   end
 
-  test "GET /admin/themes/new renders standardized theme form", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/themes/new renders standardized theme form", %{conn: conn} do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/themes/new")
+      |> live(~p"/nunu-ops-7f3c/themes/new")
 
     assert html =~ "Info Theme"
     assert html =~ "Konfigurasi"
@@ -167,7 +171,7 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/themes/new")
+      |> live(~p"/nunu-ops-7f3c/themes/new")
 
     view
     |> element("#resource-form")
@@ -181,22 +185,22 @@ defmodule PersonalBrandWeb.Admin.MediaSettingsThemeResourceTest do
       "save-type" => "save"
     })
 
-    assert_redirect(view, ~p"/admin/themes")
+    assert_redirect(view, ~p"/nunu-ops-7f3c/themes")
 
     theme = Repo.get_by!(Theme, key: "clean_focus")
     assert theme.config == %{"accent_color" => "#111827"}
   end
 
-  test "GET /admin/themes includes edit preview row actions", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/themes includes edit preview row actions", %{conn: conn} do
     theme = insert_theme(%{key: "old_web_classic", name: "Old Web Classic"})
 
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/themes")
+      |> live(~p"/nunu-ops-7f3c/themes")
 
     assert html =~ "Old Web Classic"
-    assert html =~ ~s(href="/admin/themes/#{theme.id}/edit")
+    assert html =~ ~s(href="/nunu-ops-7f3c/themes/#{theme.id}/edit")
     assert html =~ ~s(href="/")
   end
 

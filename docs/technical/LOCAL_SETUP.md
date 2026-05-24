@@ -5,7 +5,7 @@
 Project ini adalah **Phoenix LiveView** app (Elixir) dengan **PostgreSQL** database.
 
 - **App:** http://localhost:4000
-- **Admin:** http://localhost:4000/admin
+- **Admin:** http://localhost:4000/nunu-ops-7f3c
 - **Login:** admin / admin123
 
 > Frontend publik sekarang dirender oleh Phoenix LiveView di port `4000`.
@@ -245,17 +245,17 @@ personal_brand/
 
 | Route | Description | Status |
 |-------|-------------|--------|
-| `/admin` | Dashboard | ✅ Backpex |
-| `/admin/login` | Login | ✅ |
-| `/admin/logout` | Logout | ✅ |
-| `/admin/projects` | List/search projects | ✅ Backpex |
-| `/admin/projects/new` | Create project | ✅ Backpex |
-| `/admin/projects/:id/edit` | Edit project | ✅ Backpex |
-| `/admin/posts` | CRUD posts | ✅ Backpex |
-| `/admin/products` | CRUD products | ✅ Backpex |
-| `/admin/media` | Media library | ✅ Backpex |
-| `/admin/site-settings` | Site settings singleton edit shortcut | ✅ Backpex |
-| `/admin/themes` | Theme settings | ✅ Backpex |
+| `/nunu-ops-7f3c` | Dashboard | ✅ Backpex |
+| `/nunu-ops-7f3c/login` | Login | ✅ |
+| `/nunu-ops-7f3c/logout` | Logout | ✅ |
+| `/nunu-ops-7f3c/projects` | List/search projects | ✅ Backpex |
+| `/nunu-ops-7f3c/projects/new` | Create project | ✅ Backpex |
+| `/nunu-ops-7f3c/projects/:id/edit` | Edit project | ✅ Backpex |
+| `/nunu-ops-7f3c/posts` | CRUD posts | ✅ Backpex |
+| `/nunu-ops-7f3c/products` | CRUD products | ✅ Backpex |
+| `/nunu-ops-7f3c/media` | Media library | ✅ Backpex |
+| `/nunu-ops-7f3c/site-settings` | Site settings singleton edit shortcut | ✅ Backpex |
+| `/nunu-ops-7f3c/themes` | Theme settings | ✅ Backpex |
 
 ---
 
@@ -321,9 +321,9 @@ http://localhost:4000/work/<slug>
 Gunakan admin berikut untuk input dan edit:
 
 ```text
-http://localhost:4000/admin/projects
-http://localhost:4000/admin/projects/new
-http://localhost:4000/admin/projects/<id>/edit
+http://localhost:4000/nunu-ops-7f3c/projects
+http://localhost:4000/nunu-ops-7f3c/projects/new
+http://localhost:4000/nunu-ops-7f3c/projects/<id>/edit
 ```
 
 Field project saat ini:
@@ -401,7 +401,7 @@ Posts dan Products memakai standar admin yang sama dengan Projects untuk CRUD ha
 - Active products using `manual_link` checkout must have `checkout_url`; Midtrans Snap products can leave it blank.
 - Physical shipping fulfillment must set `requires_shipping`.
 - Product detail renders an internal checkout gate and uses `checkout_url` only as fallback from backend checkout creation.
-- Orders can be reviewed from `/admin/orders`.
+- Orders can be reviewed from `/nunu-ops-7f3c/orders`.
 - Do not add Xendit fields unless a Xendit account exists.
 - Paid unlock avoids customer login: email + order + hashed access token.
 - Post detail has a public Clap button; Writing lists sort by `clap_count` descending, then `published_at`.
@@ -430,14 +430,14 @@ Media dan Themes mengikuti standar admin yang sama: index punya aksi cepat, form
 
 Media:
 
-- `/admin/media` menampilkan preview thumbnail untuk gambar, link buka file, edit, dan delete.
-- `/admin/media/new` bisa upload file lewat Backpex upload field atau mengisi metadata manual.
+- `/nunu-ops-7f3c/media` menampilkan preview thumbnail untuk gambar, link buka file, edit, dan delete.
+- `/nunu-ops-7f3c/media/new` bisa upload file lewat Backpex upload field atau mengisi metadata manual.
 - `filename` dan `url` wajib. URL harus diawali `http://`, `https://`, atau `/uploads/`.
 - `alt_text` perlu diisi untuk gambar portfolio agar screenshot tetap punya konteks aksesibilitas.
 
 Site Settings:
 
-- `/admin/site-settings` langsung membuka edit form singleton Site Settings; tidak ada list, new, atau delete flow untuk resource ini.
+- `/nunu-ops-7f3c/site-settings` langsung membuka edit form singleton Site Settings; tidak ada list, new, atau delete flow untuk resource ini.
 - Site Settings mengatur identitas website, CTA homepage, profil, halaman About/Now, support links, payment reference links, social links, active theme, dan daftar featured ID opsional.
 - Data personal website seperti nama, headline homepage, bio, email, lokasi, dan link sosial hidup di tabel `site_settings`. Setelah reset kosong, restore satu record Site Settings dari seed/SQL fallback, lalu edit record tersebut dari admin.
 - `active_theme` dipilih dari theme yang ada di database. Kalau belum ada theme, fallback admin menampilkan `old_web_classic`.
@@ -450,7 +450,7 @@ Site Settings:
 
 Themes:
 
-- `/admin/themes` mengelola registry theme.
+- `/nunu-ops-7f3c/themes` mengelola registry theme.
 - `key` harus lowercase alphanumeric dengan underscore, contoh `old_web_classic`.
 - `config` bisa dikosongkan atau diisi JSON object valid, contoh `{"accent_color":"#111827"}`.
 - Toggle `Aktif di registry` menandai theme tersedia. Theme publik yang dipakai tetap dipilih lewat Site Settings > Active Theme.

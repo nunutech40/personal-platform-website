@@ -2,6 +2,8 @@ defmodule PersonalBrandWeb.Router do
   use PersonalBrandWeb, :router
   import Backpex.Router
 
+  @ops_base "/nunu-ops-7f3c"
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -20,7 +22,7 @@ defmodule PersonalBrandWeb.Router do
     plug PersonalBrandWeb.Plugs.RequireAdmin
   end
 
-  # ── Public Routes ────────────────────────────────────────
+  # Public Routes
   scope "/", PersonalBrandWeb do
     pipe_through :browser
 
@@ -54,8 +56,8 @@ defmodule PersonalBrandWeb.Router do
     backpex_routes()
   end
 
-  # ── Admin Routes (protected) ─────────────────────────────
-  scope "/admin", PersonalBrandWeb.Admin do
+  # Protected operations routes
+  scope @ops_base, PersonalBrandWeb.Admin do
     pipe_through [:browser, :require_admin]
 
     live_session :admin, on_mount: Backpex.InitAssigns do
@@ -81,8 +83,8 @@ defmodule PersonalBrandWeb.Router do
     end
   end
 
-  # Admin auth routes (outside require_admin pipeline)
-  scope "/admin", PersonalBrandWeb.Admin do
+  # Operations auth routes (outside require_admin pipeline)
+  scope @ops_base, PersonalBrandWeb.Admin do
     pipe_through :browser
 
     get "/login", AuthController, :new
@@ -90,9 +92,9 @@ defmodule PersonalBrandWeb.Router do
     get "/logout", AuthController, :delete
   end
 
-  # Admin fallback routes must stay after explicit auth routes so /admin/login
-  # remains reachable when the user is not authenticated.
-  scope "/admin", PersonalBrandWeb.Admin do
+  # Fallback routes must stay after explicit auth routes so login remains reachable
+  # when the user is not authenticated.
+  scope @ops_base, PersonalBrandWeb.Admin do
     pipe_through [:browser, :require_admin]
 
     get "/*path", FallbackController, :not_found

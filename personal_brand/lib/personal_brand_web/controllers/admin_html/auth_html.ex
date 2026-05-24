@@ -21,7 +21,7 @@ defmodule PersonalBrandWeb.Admin.AuthHTML do
           </div>
         <% end %>
 
-        <form action="/admin/login" method="post" class="space-y-4">
+        <form action="/nunu-ops-7f3c/login" method="post" class="space-y-4">
           <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
 
           <div>

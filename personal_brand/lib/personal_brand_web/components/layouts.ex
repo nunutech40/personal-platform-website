@@ -164,7 +164,7 @@ defmodule PersonalBrandWeb.Layouts do
   end
 
   def admin_current_url(assigns) do
-    assigns[:current_url] || admin_resource_path(assigns[:live_resource]) || "/admin"
+    assigns[:current_url] || admin_resource_path(assigns[:live_resource]) || "/nunu-ops-7f3c"
   end
 
   def admin_nav_class(assigns, path) do
@@ -210,12 +210,12 @@ defmodule PersonalBrandWeb.Layouts do
   defp changeset_data(_changeset), do: nil
 
   defp admin_breadcrumb_parts(nil), do: ["Dashboard"]
-  defp admin_breadcrumb_parts("/admin"), do: ["Dashboard"]
-  defp admin_breadcrumb_parts("/admin/"), do: ["Dashboard"]
+  defp admin_breadcrumb_parts("/nunu-ops-7f3c"), do: ["Dashboard"]
+  defp admin_breadcrumb_parts("/nunu-ops-7f3c/"), do: ["Dashboard"]
 
   defp admin_breadcrumb_parts(path) do
     path
-    |> String.trim_leading("/admin")
+    |> String.trim_leading("/nunu-ops-7f3c")
     |> String.trim("/")
     |> String.split("/", trim: true)
     |> Enum.map(&format_breadcrumb_part/1)
@@ -231,7 +231,7 @@ defmodule PersonalBrandWeb.Layouts do
   defp admin_resource_path(nil), do: nil
 
   defp admin_resource_path(live_resource) do
-    "/admin/" <> resource_slug(live_resource.plural_name())
+    "/nunu-ops-7f3c/" <> resource_slug(live_resource.plural_name())
   end
 
   defp resource_slug(name) do
@@ -240,8 +240,8 @@ defmodule PersonalBrandWeb.Layouts do
     |> String.replace(" ", "-")
   end
 
-  defp admin_active_path?(current_url, "/admin") do
-    URI.parse(current_url).path in ["/admin", "/admin/"]
+  defp admin_active_path?(current_url, "/nunu-ops-7f3c") do
+    URI.parse(current_url).path in ["/nunu-ops-7f3c", "/nunu-ops-7f3c/"]
   end
 
   defp admin_active_path?(current_url, path) do

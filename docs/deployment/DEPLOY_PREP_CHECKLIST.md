@@ -1,12 +1,12 @@
 # Deploy Prep Checklist - Personal Brand Platform
 
-Last checked: 2026-05-17.
+Last checked: 2026-05-24.
 
 ## Local Readiness
 
 - `mix ecto.migrate` applied locally, including `20260517090000_standardize_product_monetization` and `20260517093000_update_product_checkout_defaults`.
 - `mix format --check-formatted` passes.
-- `mix test` passes with 249 tests.
+- `mix test` passes with 263 tests.
 - Production compile check passes with env placeholders.
 - `mix assets.deploy` passes with env placeholders.
 - Build artifacts from `mix assets.deploy` are ignored by `.gitignore`.
@@ -22,12 +22,12 @@ Last checked: 2026-05-17.
 
 ## VPS Inputs Still Needed
 
-- Domain name.
+- Domain name: `nunugraha.web.id`.
 - Cloudflare DNS records:
-  - `A @ 103.181.143.73`
-  - `A www 103.181.143.73`
+  - `A nunugraha.web.id 103.181.143.73`
+  - `A www.nunugraha.web.id 103.181.143.73`
 - Production `.env` values:
-  - `PHX_HOST`
+  - `PHX_HOST=nunugraha.web.id`
   - `SECRET_KEY_BASE`
   - `DATABASE_URL`
   - `ADMIN_USERNAME`
@@ -41,7 +41,26 @@ Last checked: 2026-05-17.
   - `SMTP_PORT`
   - `SMTP_USERNAME`
   - `SMTP_PASSWORD`
-- Decision: restore local data/uploads or start fresh.
+- Decision: restore local data/uploads so no CMS content is left behind.
+
+## VPS Readiness Snapshot
+
+Checked over SSH on 2026-05-24:
+
+- Host: `BelajarSains`
+- User: `nunuadmin`
+- OS: Ubuntu 24.04.4 LTS
+- CPU/RAM: 2 vCPU, 1.9 GiB RAM, 2.0 GiB swap
+- Disk: 31G free on `/`
+- PostgreSQL 16: active
+- Nginx: active
+- Port `4000`: free
+- UFW: active, allows SSH + HTTP/HTTPS
+- Git HTTPS to GitHub repo: works
+- Git SSH to GitHub: not ready (`Host key verification failed`)
+- Elixir/Mix: not installed
+
+Do not install Ubuntu apt `elixir` unless it provides `>= 1.15`; apt currently offers `1.14`, while the app requires `~> 1.15`.
 
 ## Data Migration Reminder
 

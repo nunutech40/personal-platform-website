@@ -8,11 +8,11 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
 
   import Phoenix.LiveViewTest
 
-  test "GET /admin/posts/new renders standardized writing form", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/posts/new renders standardized writing form", %{conn: conn} do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/posts/new")
+      |> live(~p"/nunu-ops-7f3c/posts/new")
 
     assert html =~ "Info Dasar"
     assert html =~ "Konten"
@@ -32,7 +32,7 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/posts/new")
+      |> live(~p"/nunu-ops-7f3c/posts/new")
 
     view
     |> element("#resource-form")
@@ -41,7 +41,7 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
       "save-type" => "save"
     })
 
-    assert_redirect(view, ~p"/admin/posts")
+    assert_redirect(view, ~p"/nunu-ops-7f3c/posts")
 
     post = Repo.get_by!(Post, slug: "admin-writing-post")
     assert post.title == "Admin Writing Post"
@@ -54,7 +54,7 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/posts/#{post.id}/edit")
+      |> live(~p"/nunu-ops-7f3c/posts/#{post.id}/edit")
 
     view
     |> element("#resource-form")
@@ -71,7 +71,7 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
       "save-type" => "save"
     })
 
-    assert_redirect(view, ~p"/admin/posts")
+    assert_redirect(view, ~p"/nunu-ops-7f3c/posts")
 
     post = Repo.get_by!(Post, slug: "mode-switch-post")
     assert post.access_type == "tips"
@@ -83,7 +83,7 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/posts/new")
+      |> live(~p"/nunu-ops-7f3c/posts/new")
 
     html =
       view
@@ -103,25 +103,25 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
     refute Repo.get_by(Post, slug: "tips-without-amounts")
   end
 
-  test "GET /admin/posts includes edit preview and delete row actions", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/posts includes edit preview and delete row actions", %{conn: conn} do
     post = insert_post(%{title: "Post Row Actions", slug: "post-row-actions"})
 
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/posts")
+      |> live(~p"/nunu-ops-7f3c/posts")
 
     assert html =~ "Post Row Actions"
-    assert html =~ ~s(href="/admin/posts/#{post.id}/edit")
+    assert html =~ ~s(href="/nunu-ops-7f3c/posts/#{post.id}/edit")
     assert html =~ ~s(href="/writing/post-row-actions")
     assert html =~ ~s(phx-value-action-key="delete")
   end
 
-  test "GET /admin/products/new renders standardized product form", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/products/new renders standardized product form", %{conn: conn} do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/products/new")
+      |> live(~p"/nunu-ops-7f3c/products/new")
 
     assert html =~ "Info Dasar"
     assert html =~ "Monetisasi"
@@ -137,7 +137,7 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/products/new")
+      |> live(~p"/nunu-ops-7f3c/products/new")
 
     view
     |> element("#resource-form")
@@ -146,32 +146,32 @@ defmodule PersonalBrandWeb.Admin.PostProductResourceTest do
       "save-type" => "save"
     })
 
-    assert_redirect(view, ~p"/admin/products")
+    assert_redirect(view, ~p"/nunu-ops-7f3c/products")
 
     product = Repo.get_by!(Product, slug: "admin-product")
     assert product.title == "Admin Product"
     assert product.included == ["Download files", "Usage examples"]
   end
 
-  test "GET /admin/products includes edit preview and delete row actions", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/products includes edit preview and delete row actions", %{conn: conn} do
     product = insert_product(%{title: "Product Row Actions", slug: "product-row-actions"})
 
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/products")
+      |> live(~p"/nunu-ops-7f3c/products")
 
     assert html =~ "Product Row Actions"
-    assert html =~ ~s(href="/admin/products/#{product.id}/edit")
+    assert html =~ ~s(href="/nunu-ops-7f3c/products/#{product.id}/edit")
     assert html =~ ~s(href="/products/product-row-actions")
     assert html =~ ~s(phx-value-action-key="delete")
   end
 
-  test "GET /admin/products empty state is polished and hides bulk delete", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/products empty state is polished and hides bulk delete", %{conn: conn} do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/products")
+      |> live(~p"/nunu-ops-7f3c/products")
 
     assert html =~ "Belum ada data yang dibuat."
     assert html =~ "Mulai dengan satu item yang rapi."

@@ -171,7 +171,7 @@ defmodule PersonalBrandWeb.Admin.MediaResource do
     ~H"""
     <div class="flex min-w-56 items-center gap-2">
       <.link
-        navigate={"/admin/media/#{@primary_key}/edit"}
+        navigate={"/nunu-ops-7f3c/media/#{@primary_key}/edit"}
         class="rounded border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-700 transition hover:border-blue-300 hover:bg-blue-50"
       >
         Ubah

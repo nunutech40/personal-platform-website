@@ -5,11 +5,11 @@ defmodule PersonalBrandWeb.Admin.DashboardLiveTest do
 
   import Phoenix.LiveViewTest
 
-  test "GET /admin renders with an empty database", %{conn: conn} do
+  test "GET /nunu-ops-7f3c renders with an empty database", %{conn: conn} do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin")
+      |> live(~p"/nunu-ops-7f3c")
 
     assert html =~ "Dashboard"
     assert html =~ "Projects"

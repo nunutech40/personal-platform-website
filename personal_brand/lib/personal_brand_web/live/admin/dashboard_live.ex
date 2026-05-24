@@ -8,7 +8,7 @@ defmodule PersonalBrandWeb.Admin.DashboardLive do
     socket =
       socket
       |> assign(:page_title, "Admin Dashboard")
-      |> assign(:current_url, "/admin")
+      |> assign(:current_url, "/nunu-ops-7f3c")
       |> assign(:summary, Content.admin_dashboard_summary())
 
     {:ok, socket}
@@ -32,13 +32,13 @@ defmodule PersonalBrandWeb.Admin.DashboardLive do
 
           <div class="flex flex-wrap gap-2">
             <.link
-              navigate={~p"/admin/posts/new"}
+              navigate={~p"/nunu-ops-7f3c/posts/new"}
               class="btn btn-primary bg-blue-600 text-white hover:bg-blue-700"
             >
               New Post
             </.link>
             <.link
-              navigate={~p"/admin/projects/new"}
+              navigate={~p"/nunu-ops-7f3c/projects/new"}
               class="btn btn-outline border-slate-300 text-slate-700"
             >
               New Project
@@ -51,25 +51,25 @@ defmodule PersonalBrandWeb.Admin.DashboardLive do
             label="Projects"
             value={@summary.counts.projects}
             detail={"#{@summary.drafts.projects} drafts"}
-            href={~p"/admin/projects"}
+            href={~p"/nunu-ops-7f3c/projects"}
           />
           <.metric_card
             label="Posts"
             value={@summary.counts.posts}
             detail={"#{@summary.drafts.posts} drafts"}
-            href={~p"/admin/posts"}
+            href={~p"/nunu-ops-7f3c/posts"}
           />
           <.metric_card
             label="Products"
             value={@summary.counts.products}
             detail="Catalog entries"
-            href={~p"/admin/products"}
+            href={~p"/nunu-ops-7f3c/products"}
           />
           <.metric_card
             label="Media"
             value={@summary.counts.media}
             detail="Library assets"
-            href={~p"/admin/media"}
+            href={~p"/nunu-ops-7f3c/media"}
           />
         </section>
 
@@ -82,7 +82,7 @@ defmodule PersonalBrandWeb.Admin.DashboardLive do
                   Latest updates across posts, projects, and products.
                 </p>
               </div>
-              <.link navigate={~p"/admin/posts"} class="btn btn-sm btn-ghost text-blue-700">
+              <.link navigate={~p"/nunu-ops-7f3c/posts"} class="btn btn-sm btn-ghost text-blue-700">
                 Open Posts
               </.link>
             </div>
@@ -126,19 +126,19 @@ defmodule PersonalBrandWeb.Admin.DashboardLive do
               <h2 class="text-xl font-bold tracking-normal text-slate-950">Quick Actions</h2>
               <div class="mt-5 grid gap-2">
                 <.link
-                  navigate={~p"/admin/site-settings"}
+                  navigate={~p"/nunu-ops-7f3c/site-settings"}
                   class="btn btn-outline justify-start border-slate-300 text-slate-700"
                 >
                   Site Settings
                 </.link>
                 <.link
-                  navigate={~p"/admin/themes"}
+                  navigate={~p"/nunu-ops-7f3c/themes"}
                   class="btn btn-outline justify-start border-slate-300 text-slate-700"
                 >
                   Theme Settings
                 </.link>
                 <.link
-                  navigate={~p"/admin/products/new"}
+                  navigate={~p"/nunu-ops-7f3c/products/new"}
                   class="btn btn-outline justify-start border-slate-300 text-slate-700"
                 >
                   Add Product

@@ -9,7 +9,7 @@
   </label>
 
   <aside class="admin-sidebar fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col overflow-y-auto bg-slate-950 px-4 py-6 text-slate-300 transition-transform duration-200 peer-checked:translate-x-0 md:translate-x-0">
-    <.link navigate={~p"/admin"} class="mb-8 flex items-center gap-3 px-3 no-underline">
+    <.link navigate={~p"/nunu-ops-7f3c"} class="mb-8 flex items-center gap-3 px-3 no-underline">
       <img src="/icon-192.png" alt="Logo" class="size-9 rounded-lg" />
       <div>
         <span class="block text-2xl font-bold tracking-normal text-white">Nunu Admin</span>
@@ -23,33 +23,39 @@
       </p>
       <ul class="space-y-1">
         <li>
-          <.link navigate={~p"/admin"} class={admin_nav_class(assigns, "/admin")}>
+          <.link navigate={~p"/nunu-ops-7f3c"} class={admin_nav_class(assigns, "/nunu-ops-7f3c")}>
             <.icon name="hero-squares-2x2" class="size-5" /> Dashboard
           </.link>
         </li>
         <li>
           <.link
-            navigate={~p"/admin/projects"}
-            class={admin_nav_class(assigns, "/admin/projects")}
+            navigate={~p"/nunu-ops-7f3c/projects"}
+            class={admin_nav_class(assigns, "/nunu-ops-7f3c/projects")}
           >
             <.icon name="hero-briefcase" class="size-5" /> Projects
           </.link>
         </li>
         <li>
-          <.link navigate={~p"/admin/posts"} class={admin_nav_class(assigns, "/admin/posts")}>
+          <.link
+            navigate={~p"/nunu-ops-7f3c/posts"}
+            class={admin_nav_class(assigns, "/nunu-ops-7f3c/posts")}
+          >
             <.icon name="hero-document-text" class="size-5" /> Posts
           </.link>
         </li>
         <li>
           <.link
-            navigate={~p"/admin/products"}
-            class={admin_nav_class(assigns, "/admin/products")}
+            navigate={~p"/nunu-ops-7f3c/products"}
+            class={admin_nav_class(assigns, "/nunu-ops-7f3c/products")}
           >
             <.icon name="hero-shopping-bag" class="size-5" /> Products
           </.link>
         </li>
         <li>
-          <.link navigate={~p"/admin/media"} class={admin_nav_class(assigns, "/admin/media")}>
+          <.link
+            navigate={~p"/nunu-ops-7f3c/media"}
+            class={admin_nav_class(assigns, "/nunu-ops-7f3c/media")}
+          >
             <.icon name="hero-photo" class="size-5" /> Media
           </.link>
         </li>
@@ -61,14 +67,17 @@
       <ul class="space-y-1">
         <li>
           <.link
-            navigate={~p"/admin/site-settings"}
-            class={admin_nav_class(assigns, "/admin/site-settings")}
+            navigate={~p"/nunu-ops-7f3c/site-settings"}
+            class={admin_nav_class(assigns, "/nunu-ops-7f3c/site-settings")}
           >
             <.icon name="hero-adjustments-horizontal" class="size-5" /> Site Settings
           </.link>
         </li>
         <li>
-          <.link navigate={~p"/admin/themes"} class={admin_nav_class(assigns, "/admin/themes")}>
+          <.link
+            navigate={~p"/nunu-ops-7f3c/themes"}
+            class={admin_nav_class(assigns, "/nunu-ops-7f3c/themes")}
+          >
             <.icon name="hero-swatch" class="size-5" /> Themes
           </.link>
         </li>
@@ -79,7 +88,10 @@
       </p>
       <ul class="space-y-1">
         <li>
-          <.link navigate={~p"/admin/orders"} class={admin_nav_class(assigns, "/admin/orders")}>
+          <.link
+            navigate={~p"/nunu-ops-7f3c/orders"}
+            class={admin_nav_class(assigns, "/nunu-ops-7f3c/orders")}
+          >
             <.icon name="hero-receipt-percent" class="size-5" /> Orders
           </.link>
         </li>
@@ -115,7 +127,7 @@
           Preview
         </.link>
         <.link
-          href={~p"/admin/logout"}
+          href={~p"/nunu-ops-7f3c/logout"}
           class="btn btn-sm border-blue-600 bg-blue-600 text-white hover:border-blue-700 hover:bg-blue-700"
         >
           Logout

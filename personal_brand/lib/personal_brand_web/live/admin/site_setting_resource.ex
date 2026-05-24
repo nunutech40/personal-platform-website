@@ -49,7 +49,7 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
 
   @impl true
   def return_to(_socket, _assigns, _live_action, _form_action, %SiteSetting{id: id}) do
-    ~p"/admin/site-settings/#{id}/edit"
+    ~p"/nunu-ops-7f3c/site-settings/#{id}/edit"
   end
 
   @impl true
@@ -369,7 +369,7 @@ defmodule PersonalBrandWeb.Admin.SiteSettingResource do
     ~H"""
     <div class="flex min-w-48 items-center gap-2">
       <.link
-        navigate={"/admin/site-settings/#{@primary_key}/edit"}
+        navigate={"/nunu-ops-7f3c/site-settings/#{@primary_key}/edit"}
         class="rounded border border-blue-200 px-2 py-1 text-xs font-semibold text-blue-700 transition hover:border-blue-300 hover:bg-blue-50"
       >
         Ubah

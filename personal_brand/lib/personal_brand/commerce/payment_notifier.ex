@@ -67,7 +67,7 @@ defmodule PersonalBrand.Commerce.PaymentNotifier do
     Provider transaction ID: #{order.provider_transaction_id || "-"}
     Paid at: #{format_datetime(order.paid_at)}
 
-    Cek detailnya di Midtrans dashboard dan /admin/orders.
+    Cek detailnya di Midtrans dashboard dan /nunu-ops-7f3c/orders.
     """
   end
 

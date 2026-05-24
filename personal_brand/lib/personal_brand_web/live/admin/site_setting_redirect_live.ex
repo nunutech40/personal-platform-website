@@ -13,12 +13,12 @@ defmodule PersonalBrandWeb.Admin.SiteSettingRedirectLive do
             :error,
             "Site Settings belum tersedia. Jalankan seed atau restore data settings dulu."
           )
-          |> push_navigate(to: ~p"/admin")
+          |> push_navigate(to: ~p"/nunu-ops-7f3c")
 
         {:ok, socket}
 
       settings ->
-        {:ok, push_navigate(socket, to: ~p"/admin/site-settings/#{settings.id}/edit")}
+        {:ok, push_navigate(socket, to: ~p"/nunu-ops-7f3c/site-settings/#{settings.id}/edit")}
     end
   end
 

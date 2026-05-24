@@ -7,11 +7,11 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
 
   import Phoenix.LiveViewTest
 
-  test "GET /admin/projects/new renders grouped portfolio form", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/projects/new renders grouped portfolio form", %{conn: conn} do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/projects/new")
+      |> live(~p"/nunu-ops-7f3c/projects/new")
 
     assert html =~ "Info Dasar"
     assert html =~ "Klasifikasi &amp; Peran"
@@ -31,9 +31,10 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     assert html =~ "Ketik sendiri atau pilih dari saran"
   end
 
-  test "GET /admin/projects/new combines existing text suggestions with common defaults", %{
-    conn: conn
-  } do
+  test "GET /nunu-ops-7f3c/projects/new combines existing text suggestions with common defaults",
+       %{
+         conn: conn
+       } do
     insert_project(%{
       title: "Existing Role Project",
       slug: "existing-role-project",
@@ -47,7 +48,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/projects/new")
+      |> live(~p"/nunu-ops-7f3c/projects/new")
 
     assert html =~ "Existing Mobile Lead"
     assert html =~ "Feature owner for checkout"
@@ -59,7 +60,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     refute html =~ ~s(value="Lead iOS Dev")
   end
 
-  test "GET /admin/projects/:id/edit warns before changing published slug", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/projects/:id/edit warns before changing published slug", %{conn: conn} do
     project =
       insert_project(%{
         title: "Personal Platform Website",
@@ -70,14 +71,16 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/projects/#{project.id}/edit")
+      |> live(~p"/nunu-ops-7f3c/projects/#{project.id}/edit")
 
     assert html =~ "Project ini sudah terbit"
     assert html =~ "/work/personal-platform-website"
     assert html =~ "Mengubah URL Project"
   end
 
-  test "GET /admin/projects includes public preview action and updated column", %{conn: conn} do
+  test "GET /nunu-ops-7f3c/projects includes public preview action and updated column", %{
+    conn: conn
+  } do
     insert_project(%{
       title: "RajaOngkir iOS App",
       slug: "rajaongkir-ios-app",
@@ -87,7 +90,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/projects")
+      |> live(~p"/nunu-ops-7f3c/projects")
 
     assert html =~ "RajaOngkir iOS App"
     assert html =~ "Ubah"
@@ -101,7 +104,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/projects/new")
+      |> live(~p"/nunu-ops-7f3c/projects/new")
 
     attrs = form_attrs(%{"title" => "Admin CRUD Project", "slug" => ""})
 
@@ -109,7 +112,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     |> element("#resource-form")
     |> render_submit(%{"change" => attrs, "save-type" => "save"})
 
-    assert_redirect(view, ~p"/admin/projects")
+    assert_redirect(view, ~p"/nunu-ops-7f3c/projects")
 
     project = Repo.get_by!(Project, slug: "admin-crud-project")
     assert project.title == "Admin CRUD Project"
@@ -130,7 +133,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     {:ok, view, _html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/projects/#{project.id}/edit")
+      |> live(~p"/nunu-ops-7f3c/projects/#{project.id}/edit")
 
     attrs =
       form_attrs(%{
@@ -150,7 +153,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     |> element("#resource-form")
     |> render_submit(%{"change" => attrs, "save-type" => "save"})
 
-    assert_redirect(view, ~p"/admin/projects")
+    assert_redirect(view, ~p"/nunu-ops-7f3c/projects")
 
     updated = Repo.get!(Project, project.id)
     assert updated.title == "Project After Edit"
@@ -174,7 +177,7 @@ defmodule PersonalBrandWeb.Admin.ProjectResourceTest do
     {:ok, _view, html} =
       conn
       |> log_in_admin()
-      |> live(~p"/admin/projects")
+      |> live(~p"/nunu-ops-7f3c/projects")
 
     assert html =~ "Project To Delete"
     assert html =~ ~s(phx-value-action-key="delete")
