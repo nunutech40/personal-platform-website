@@ -2014,13 +2014,15 @@ Done when:
 
 Priority: Medium-High
 
-Implementation status per 2026-05-17:
+Implementation status per 2026-05-24:
 
 ```txt
-Done for commerce MVP. Product detail pages render an internal checkout gate,
+Done for commerce MVP in code. Product detail pages render an internal checkout gate,
 collect buyer email, create product_purchase orders, use Midtrans Snap when
 configured, and fall back to products.checkout_url for manual payment links.
-Products are always paid and reject price 0.
+Products are always paid and reject price 0. Production VPS is live, but
+MIDTRANS_SERVER_KEY and SMTP env values still need to be filled before paid
+checkout/email notification can be treated as production-ready.
 ```
 
 Tasks:
@@ -2098,13 +2100,14 @@ Done when:
 
 Priority: Low for MVP, High for monetization phase
 
-Implementation status per 2026-05-17:
+Implementation status per 2026-05-24:
 
 ```txt
 Core orders, access_grants, Midtrans Snap/webhook, admin order list,
 paid/tips post access, and product purchase order creation are implemented.
 Remaining extensions are customer accounts, receipt email, automated product
-download page/email delivery, and courier/shipping integrations.
+download page/email delivery, and courier/shipping integrations. Production
+env still needs real Midtrans/SMTP values.
 ```
 
 Tasks:
