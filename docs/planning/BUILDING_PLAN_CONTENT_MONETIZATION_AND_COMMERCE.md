@@ -365,7 +365,7 @@ Fulfillment
 - Checkout mode
 ```
 
-Orders are visible at `/admin/orders`; admin can distinguish paid/unfulfilled/fulfilled.
+Orders are visible at `/nunu-ops-7f3c/orders`; admin can distinguish paid/unfulfilled/fulfilled.
 
 ## 10. Implementation Slices
 

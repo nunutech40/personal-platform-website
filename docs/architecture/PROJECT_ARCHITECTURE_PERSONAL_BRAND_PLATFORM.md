@@ -201,8 +201,8 @@ This project should not become a JavaScript-style frontend app with backend call
 │ └─────────────────────────────────────────┘ │
 │                                             │
 │ ┌─────────────────────────────────────────┐ │
-│ │ Admin Dashboard                         │ │
-│ │ /admin/projects/posts/products/settings │ │
+│ │ Ops/Admin Dashboard                     │ │
+│ │ /nunu-ops-7f3c/projects/posts/products  │ │
 │ └─────────────────────────────────────────┘ │
 │                                             │
 │ ┌─────────────────────────────────────────┐ │
@@ -435,7 +435,7 @@ end
 ### Admin routes
 
 ```elixir
-scope "/admin", PersonalBrandWeb.Admin do
+scope "/nunu-ops-7f3c", PersonalBrandWeb.Admin do
   pipe_through [:browser, :require_admin]
 
   live "/", DashboardLive, :index

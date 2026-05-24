@@ -26,9 +26,21 @@ mix phx.server
 
 ```txt
 Public:  http://localhost:4000
-Admin:   http://localhost:4000/admin (admin / admin123)
+Admin:   http://localhost:4000/nunu-ops-7f3c (admin / admin123 locally)
 Search:  http://localhost:4000/search
 ```
+
+## Production
+
+```txt
+Public:  https://nunugraha.web.id
+Work:    https://nunugraha.web.id/work
+Health:  https://nunugraha.web.id/health
+Admin:   https://nunugraha.web.id/nunu-ops-7f3c/login
+```
+
+Production runs on VPS `103.181.143.73` as systemd service `personal-brand`.
+Deployment runbook: [docs/technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md](docs/technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md)
 
 ## Public Pages
 
@@ -67,8 +79,9 @@ Start here: [docs/README.md](docs/README.md)
 - **Disciplines taxonomy:** 12 controlled values (`mobile_developer`, `flutter_developer`, `ios_developer`, `swift`, `kotlin`, `flutter`, `android_developer`, `backend_developer`, `frontend_developer`, `fullstack_developer`, `ai_automation`, `cli_tooling`)
 - **Search:** PostgreSQL ILIKE across projects/posts/products, LiveView real-time with debounce
 - **Pagination:** Load more (9 per page) on work, writing, products
-- **Admin:** Backpex resources with custom delete modal, EasyMDE editor, sorted by `updated_at DESC`
-- **Tests:** 221 tests (schema, context, LiveView, admin)
+- **Admin:** private `/nunu-ops-7f3c` route, Backpex resources with custom delete modal, EasyMDE editor, project priority sorting, and commerce orders
+- **Deploy/data:** production data is restored from local PostgreSQL dump plus `priv/static/uploads`; do not fresh deploy empty data when CMS edits must be preserved
+- **Tests:** 263 tests (schema, context, commerce, LiveView, admin)
 
 ## Scripts
 

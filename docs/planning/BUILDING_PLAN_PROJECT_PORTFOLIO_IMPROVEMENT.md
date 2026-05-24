@@ -6,7 +6,7 @@ Plan ini fokus untuk memperbaiki fitur Projects sebagai portfolio utama untuk me
 
 Area yang disentuh:
 
-- Admin project list/create/edit di `http://localhost:4000/admin/projects`
+- Admin project list/create/edit di `http://localhost:4000/nunu-ops-7f3c/projects`
 - Public project list di `http://localhost:4000/work`
 - Public project detail di `http://localhost:4000/work/:slug`
 
@@ -227,7 +227,7 @@ Contoh:
 
 ### Project Index
 
-Admin `/admin/projects` harus menampilkan:
+Admin `/nunu-ops-7f3c/projects` harus menampilkan:
 
 - title
 - status
@@ -240,7 +240,7 @@ Admin `/admin/projects` harus menampilkan:
 
 ### Create Project
 
-Admin `/admin/projects/new` harus dibagi menjadi section:
+Admin `/nunu-ops-7f3c/projects/new` harus dibagi menjadi section:
 
 - Identity: title, generated slug, status, featured, sort_order
 - Classification: project_type, platforms, disciplines, role
@@ -251,7 +251,7 @@ Admin `/admin/projects/new` harus dibagi menjadi section:
 
 ### Edit Project
 
-Admin `/admin/projects/:id/edit` wajib nyaman untuk revisi data portfolio:
+Admin `/nunu-ops-7f3c/projects/:id/edit` wajib nyaman untuk revisi data portfolio:
 
 - Slug tampil tapi tidak menjadi field utama.
 - Ada warning jika mengubah slug project published.

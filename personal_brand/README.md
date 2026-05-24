@@ -57,20 +57,20 @@ Atau pakai script dari root repo:
 | `/contact` | Contact page |
 | `/search` | Unified search across all content |
 
-### Admin
+### Admin / Ops
 
 | Route | Description |
 |-------|-------------|
-| `/admin` | Dashboard |
-| `/admin/projects` | CRUD projects (Backpex) |
-| `/admin/posts` | CRUD posts with Markdown editor |
-| `/admin/products` | CRUD products |
-| `/admin/orders` | Review commerce orders and fulfillment state |
-| `/admin/media` | Media library |
-| `/admin/site-settings` | Site settings (singleton) |
-| `/admin/themes` | Theme registry |
+| `/nunu-ops-7f3c` | Dashboard |
+| `/nunu-ops-7f3c/projects` | CRUD projects (Backpex) |
+| `/nunu-ops-7f3c/posts` | CRUD posts with Markdown editor |
+| `/nunu-ops-7f3c/products` | CRUD products |
+| `/nunu-ops-7f3c/orders` | Review commerce orders and fulfillment state |
+| `/nunu-ops-7f3c/media` | Media library |
+| `/nunu-ops-7f3c/site-settings` | Site settings (singleton) |
+| `/nunu-ops-7f3c/themes` | Theme registry |
 
-**Local default login:** `admin` / `admin123`. Production should set `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the env file.
+**Local default login:** `admin` / `admin123`. Production uses configured env credentials and the private ops/admin path above.
 
 ## Key Features
 
@@ -83,6 +83,7 @@ Atau pakai script dari root repo:
 - Orders and access grants for paid posts, tips, and product purchases
 - Midtrans webhook endpoint with signature verification
 - Project `best_three` flag for homepage Featured Work
+- Project `sort_order` priority for Work list ordering, with `featured` as tie-breaker
 - Public writing claps with writing list sorted by clap count
 - Filter counts on `/work` page
 - EasyMDE Markdown editor with toolbar
@@ -100,6 +101,7 @@ Full docs at `../docs/`:
 - Technical: `docs/technical/`
 - Workflows: `docs/workflows/`
 - Standards: `docs/standards/`
+- VPS deploy runbook: `docs/technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md`
 
 ## Testing
 
@@ -108,4 +110,4 @@ mix format --check-formatted
 mix test
 ```
 
-249 tests covering schema, context, commerce, LiveView, and admin routes.
+263 tests covering schema, context, commerce, LiveView, and admin routes.

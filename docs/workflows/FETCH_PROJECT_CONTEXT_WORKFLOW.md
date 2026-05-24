@@ -30,6 +30,8 @@ Baca dokumen ini lebih dulu:
 docs/README.md
 docs/architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md
 docs/technical/LOCAL_SETUP.md
+docs/technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md
+docs/deployment/DEPLOY_PREP_CHECKLIST.md
 docs/planning/BUILDING_PLAN_PERSONAL_BRAND_PLATFORM.md
 docs/planning/BUILDING_PLAN_PROJECT_PORTFOLIO_IMPROVEMENT.md
 docs/planning/BUILDING_PLAN_UNIFIED_SEARCH.md
@@ -49,7 +51,7 @@ Gunakan search terarah:
 ```bash
 rg -n "live_resource|Backpex|ProjectResource|PostResource|ProductResource|MediaResource|SiteSettingResource|ThemeResource" personal_brand/lib personal_brand/test
 rg -n "defmodule PersonalBrand.Content|schema \"projects\"|schema \"posts\"|schema \"products\"|schema \"media\"|schema \"site_settings\"|schema \"themes\"" personal_brand/lib
-rg -n "live \"/work|/admin|ProjectLive|PublicLive|work/:slug|project" personal_brand/lib/personal_brand_web
+rg -n "live \"/work|nunu-ops-7f3c|ProjectLive|PublicLive|work/:slug|project" personal_brand/lib/personal_brand_web
 ```
 
 Untuk task portfolio project, file yang biasanya relevan:
@@ -145,3 +147,8 @@ mix test
 - Public pages pakai load more (9 per page) untuk `/work`, `/writing`, `/products`.
 - `/search` adalah unified search across projects, posts, products via PostgreSQL ILIKE.
 - Navigation: Home, Work, Writing, Products, About, Now, Contact, Search.
+- Production domain is `https://nunugraha.web.id`; VPS is `nunuadmin@103.181.143.73`; systemd service is `personal-brand`.
+- Private ops/admin path is `/nunu-ops-7f3c` (module/folder names may still use `admin` internally).
+- Production admin username is `nunuops`; admin password reminder is local Mac file `/private/tmp/personal_brand_prod_secrets.txt`, line 2. Never commit that file.
+- Production data sync rule: if local CMS data must appear in production, restore both `personal_brand_dev` PostgreSQL dump and `personal_brand/priv/static/uploads`.
+- Current full test count is 263.

@@ -20,6 +20,7 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 3. architecture/PROJECT_ARCHITECTURE_PERSONAL_BRAND_PLATFORM.md (architecture, contexts, routes)
 4. standards/CODING_AND_TESTING_STANDARDS.md (if task touches implementation)
 5. technical/LOCAL_SETUP.md (routes, fields, admin workflow)
+6. technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md (production deploy/runbook, if task touches deploy or data sync)
 ```
 
 ## Operational Workflows
@@ -36,8 +37,8 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 - [planning/BUILDING_PLAN_PROJECT_PORTFOLIO_IMPROVEMENT.md](planning/BUILDING_PLAN_PROJECT_PORTFOLIO_IMPROVEMENT.md) — portfolio taxonomy and case study
 - [planning/BUILDING_PLAN_UNIFIED_SEARCH.md](planning/BUILDING_PLAN_UNIFIED_SEARCH.md) — unified search feature
 - [planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md](planning/BUILDING_PLAN_CONTENT_MONETIZATION_AND_COMMERCE.md) — Midtrans, tips, paid posts
-- [technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md](technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md) — VPS deployment checklist, env, systemd, Nginx, data migration
-- [deployment/DEPLOY_PREP_CHECKLIST.md](deployment/DEPLOY_PREP_CHECKLIST.md) — current pre-deploy readiness checklist
+- [technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md](technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md) — live VPS production status and deploy runbook
+- [deployment/DEPLOY_PREP_CHECKLIST.md](deployment/DEPLOY_PREP_CHECKLIST.md) — current production deploy checklist and follow-up deploy steps
 - [planning/QUICK_FIXES_2026_05_11.md](planning/QUICK_FIXES_2026_05_11.md) — admin UX polish
 
 ## Standards
@@ -46,12 +47,12 @@ Dokumentasi project disusun berdasarkan kategori supaya mudah dibaca manusia dan
 
 ## PRD and TRD (.docx)
 
-PRD dan TRD disimpan sebagai `.docx` dan tidak bisa diedit oleh AI agent secara langsung:
+PRD dan TRD disimpan sebagai `.docx` legacy reference:
 
 - `product/PRD_Personal_Brand_Platform_COMMERCE_READY.docx`
 - `technical/TRD_Personal_Brand_Platform_COMMERCE_READY.docx`
 
-**Catatan sinkronisasi (per 2026-05-17):**
+**Catatan sinkronisasi (per 2026-05-24):**
 
 PRD/TRD .docx ditulis sebelum implementasi berikut dan belum mencakup:
 
@@ -62,14 +63,17 @@ PRD/TRD .docx ditulis sebelum implementasi berikut dan belum mencakup:
 - EasyMDE Markdown editor di admin posts
 - Content monetization: free/tips/paid posts, support CTA, orders, access grants, Midtrans Snap/webhook
 - Products are always paid, with checkout preview/CTA fields and Midtrans/manual fallback
-- Admin `/admin/orders`
-- Project `best_three` homepage flag and writing `clap_count`
-- VPS deployment templates under `docs/deployment/`
+- Private ops/admin path `/nunu-ops-7f3c` replacing public-facing `/admin`
+- Admin `/nunu-ops-7f3c/orders`
+- Project `best_three` homepage flag, `sort_order` work priority, and writing `clap_count`
+- Production deploy to `https://nunugraha.web.id` on VPS `103.181.143.73`
+- VPS deployment runbook under `docs/technical/VPS_DEPLOYMENT_PERSONAL_BRAND.md`
+- Data migration rule: restore both PostgreSQL dump and uploads when local CMS edits must go to production
 - Health check route `/health`
 - Delete confirmation modal (custom Backpex item action)
 - Default sort `updated_at DESC` di semua admin resources
 
-Untuk fitur-fitur di atas, gunakan planning docs `.md` sebagai source of truth, bukan PRD/TRD .docx.
+Untuk fitur-fitur di atas, gunakan planning docs `.md`, README, dan deployment runbook sebagai source of truth, bukan PRD/TRD .docx. Edit PRD/TRD `.docx` hanya jika user memang meminta deliverable dokumen Word yang tersinkron.
 
 ## Source of Truth
 

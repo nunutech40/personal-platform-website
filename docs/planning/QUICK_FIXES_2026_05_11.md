@@ -93,7 +93,7 @@ Admin paham convention sort order tanpa perlu trial-error.
 ## Testing Checklist
 
 ### Admin Tests
-- [ ] Navigate to `/admin/projects`
+- [ ] Navigate to `/nunu-ops-7f3c/projects`
 - [ ] Verify platforms and disciplines badges visible di index table
 - [ ] Verify status badges colored correctly (green/yellow/gray)
 - [ ] Verify featured badge shows "Featured" or "-"

@@ -2,7 +2,7 @@
 
 ## Current Implementation Snapshot
 
-Status per 2026-05-17 (updated):
+Status per 2026-05-24 (updated):
 
 ```txt
 Current repo contains a Phoenix LiveView app with PostgreSQL/Ecto contexts,
@@ -22,7 +22,7 @@ What is implemented in the Phoenix app:
 - old_web_classic public theme with placeholder future theme classes
 - active_theme stored in site_settings
 - admin auth with simple configured credential flow
-- protected /admin dashboard with counts, active theme, recent content, and quick actions
+- protected `/nunu-ops-7f3c` ops/admin dashboard with counts, active theme, recent content, and quick actions
 - Backpex LiveResources for projects, posts, products, media, site settings, and themes
 - post monetization for free, tips-gated, and paid gated writing
 - product checkout gate; products are always paid and can use Midtrans Snap or manual checkout_url fallback
@@ -230,7 +230,7 @@ Slice 4.1 - Theme resolver
 Slice 5.1 - Admin auth and dashboard
   Phase: 5
   Skill: pbp-architecting-phoenix-platforms, pbp-building-admin-forms
-  Output: protected /admin with counts and quick actions
+  Output: protected /nunu-ops-7f3c with counts and quick actions
 
 Slice 5.2 - Admin projects
   Phase: 5
@@ -1284,19 +1284,19 @@ Must include:
 ## 8.1 Required Admin Routes
 
 ```txt
-/admin
-/admin/projects
-/admin/projects/new
-/admin/projects/:id/edit
-/admin/posts
-/admin/posts/new
-/admin/posts/:id/edit
-/admin/products
-/admin/products/new
-/admin/products/:id/edit
-/admin/media
-/admin/site-settings
-/admin/themes
+/nunu-ops-7f3c
+/nunu-ops-7f3c/projects
+/nunu-ops-7f3c/projects/new
+/nunu-ops-7f3c/projects/:id/edit
+/nunu-ops-7f3c/posts
+/nunu-ops-7f3c/posts/new
+/nunu-ops-7f3c/posts/:id/edit
+/nunu-ops-7f3c/products
+/nunu-ops-7f3c/products/new
+/nunu-ops-7f3c/products/:id/edit
+/nunu-ops-7f3c/media
+/nunu-ops-7f3c/site-settings
+/nunu-ops-7f3c/themes
 ```
 
 ---
@@ -1306,7 +1306,7 @@ Must include:
 Route:
 
 ```txt
-/admin
+/nunu-ops-7f3c
 ```
 
 Must include:
@@ -2040,7 +2040,7 @@ Done when:
 - Checkout creates product_purchase order
 - Midtrans Snap works when env is configured
 - Manual checkout_url is used as fallback
-- Admin can review fulfillment from /admin/orders
+- Admin can review fulfillment from `/nunu-ops-7f3c/orders`
 ```
 
 ---
