@@ -1,6 +1,6 @@
-# Deploy Prep Checklist - Personal Brand Platform
+# Deploy Checklist - Personal Brand Platform
 
-Last checked: 2026-05-24.
+Last checked after production deploy: 2026-05-24.
 
 ## Local Readiness
 
@@ -16,32 +16,37 @@ Last checked: 2026-05-24.
 - `/health` route returns `ok`.
 - `UPLOADS_DIR` is supported for persistent VPS media storage.
 - Admin credentials can be configured with `ADMIN_USERNAME` and `ADMIN_PASSWORD`.
+- Private ops/admin route is `/nunu-ops-7f3c`.
 - Login page no longer displays the local default password.
 - Products are always paid, reject price `0`, and use a paid-post-style checkout gate.
 - Paid/tips posts and products create orders and use Midtrans/manual fallback.
 
-## VPS Inputs Still Needed
+## Production Status
 
 - Domain name: `nunugraha.web.id`.
+- Public site: `https://nunugraha.web.id`.
+- Health check: `https://nunugraha.web.id/health`.
+- Ops/admin login: `https://nunugraha.web.id/nunu-ops-7f3c/login`.
+- VPS app path: `/home/nunuadmin/personal-brand-platform`.
+- Shared uploads path: `/home/nunuadmin/personal-brand-shared/uploads`.
+- Env file path: `/home/nunuadmin/personal-brand-platform/.env`.
+- Systemd service: `personal-brand`.
+- Nginx site: `/etc/nginx/sites-available/personal-brand`.
+- Production DB: `personal_brand_prod`.
+- Production DB user: `personal_brand_user`.
+- Current admin username: `nunuops`.
+- Current admin password reminder: local Mac file `/private/tmp/personal_brand_prod_secrets.txt`, line 2.
+- Deployed commit: `9f92c20 Prepare VPS deployment`.
 - Cloudflare DNS records:
   - `A nunugraha.web.id 103.181.143.73`
   - `A www.nunugraha.web.id 103.181.143.73`
-- Production `.env` values:
-  - `PHX_HOST=nunugraha.web.id`
-  - `SECRET_KEY_BASE`
-  - `DATABASE_URL`
-  - `ADMIN_USERNAME`
-  - `ADMIN_PASSWORD`
-  - `UPLOADS_DIR`
-  - `MIDTRANS_SERVER_KEY`
-  - `MIDTRANS_ENV`
-  - `PAYMENT_NOTIFICATION_TO`
-  - `PAYMENT_NOTIFICATION_FROM`
-  - `SMTP_HOST`
-  - `SMTP_PORT`
-  - `SMTP_USERNAME`
-  - `SMTP_PASSWORD`
-- Decision: restore local data/uploads so no CMS content is left behind.
+- Cloudflare SSL mode: `Full`.
+- Restored data:
+  - `29` projects
+  - `2` posts
+  - `5` media records
+  - `1` site settings record
+  - `10` upload files
 
 ## VPS Readiness Snapshot
 
@@ -58,18 +63,49 @@ Checked over SSH on 2026-05-24:
 - UFW: active, allows SSH + HTTP/HTTPS
 - Git HTTPS to GitHub repo: works
 - Git SSH to GitHub: not ready (`Host key verification failed`)
-- Elixir/Mix: not installed
+- Erlang: OTP 25
+- Elixir/Mix: 1.15.8
 
-Do not install Ubuntu apt `elixir` unless it provides `>= 1.15`; apt currently offers `1.14`, while the app requires `~> 1.15`.
+Do not install Ubuntu apt `elixir` unless it provides `>= 1.15`; apt offered `1.14` during the first deploy, while the app requires `~> 1.15`. The VPS currently uses precompiled Elixir 1.15.8 in `/opt/elixir-1.15.8`.
+
+## Follow-Up Deploy
+
+For code-only deploys:
+
+```bash
+ssh nunuadmin@103.181.143.73
+cd /home/nunuadmin/personal-brand-platform
+git pull origin main
+
+cd personal_brand
+set -a
+. /home/nunuadmin/personal-brand-platform/.env
+set +a
+
+MIX_ENV=prod mix deps.get --only prod
+MIX_ENV=prod mix compile
+MIX_ENV=prod mix assets.deploy
+MIX_ENV=prod mix ecto.migrate
+sudo systemctl restart personal-brand
+curl -fsS https://nunugraha.web.id/health
+```
 
 ## Data Migration Reminder
 
-To carry all local content to VPS, migrate both:
+To carry all local content changes from local dev to VPS, migrate both:
 
 - PostgreSQL data: `pg_dump -Fc personal_brand_dev`
 - Uploaded files: `personal_brand/priv/static/uploads`
 
 After restoring the dump on VPS, run migrations again so newer schema changes are applied.
+
+Do not run a fresh empty deploy if CMS content needs to be preserved.
+
+## Remaining Setup
+
+- Fill `MIDTRANS_SERVER_KEY` in VPS `.env` before testing paid checkout seriously.
+- Fill SMTP env values in VPS `.env` before relying on paid-order email notifications.
+- Configure GitHub SSH on VPS later if HTTPS pulls become annoying.
 
 ## Do Not Commit
 
@@ -80,3 +116,4 @@ After restoring the dump on VPS, run migrations again so newer schema changes ar
 - SMTP password
 - admin password
 - VPS credentials
+- `/private/tmp/personal_brand_prod_secrets.txt`
