@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
-ARG ELIXIR_VERSION=1.15.8
-ARG OTP_VERSION=25
-ARG DEBIAN_VERSION=bullseye-slim
+ARG ELIXIR_VERSION=1.16.3
+ARG OTP_VERSION=26
+ARG DEBIAN_VERSION=bookworm-slim
 
 FROM elixir:${ELIXIR_VERSION}-otp-${OTP_VERSION}-slim AS build
 
