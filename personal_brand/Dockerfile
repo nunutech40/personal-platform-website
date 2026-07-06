@@ -11,8 +11,6 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
     git \
     curl \
     ca-certificates \
-    nodejs \
-    npm \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
