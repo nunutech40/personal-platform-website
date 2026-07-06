@@ -1,0 +1,90 @@
+name: personal-brand-production
+
+services:
+  app:
+    container_name: personal-brand-app
+    build:
+      context: ./personal_brand
+      dockerfile: Dockerfile
+    image: personal-brand:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    init: true
+    environment: &app_environment
+      MIX_ENV: prod
+      PHX_SERVER: "true"
+      PHX_HOST: ${PHX_HOST:?Set PHX_HOST in .env.production}
+      PORT: 4000
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?Set SECRET_KEY_BASE in .env.production}
+      DATABASE_URL: ecto://personal_brand:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}@postgres:5432/personal_brand_prod
+      POOL_SIZE: ${POOL_SIZE:-5}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:?Set ADMIN_USERNAME in .env.production}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
+      UPLOADS_DIR: /app/uploads
+      MIDTRANS_SERVER_KEY: ${MIDTRANS_SERVER_KEY:-}
+      MIDTRANS_ENV: ${MIDTRANS_ENV:-sandbox}
+      PAYMENT_NOTIFICATION_TO: ${PAYMENT_NOTIFICATION_TO:-}
+      PAYMENT_NOTIFICATION_FROM: ${PAYMENT_NOTIFICATION_FROM:-Personal Brand <no-reply@${PHX_HOST}>}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    expose: ["4000"]
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:4000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - internal
+      - kohnu_edge
+    logging: &logging
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  migrate:
+    image: personal-brand:${IMAGE_TAG:-latest}
+    profiles: ["tools"]
+    environment: *app_environment
+    command: ["/app/bin/personal_brand", "eval", "PersonalBrand.Release.migrate"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+
+  postgres:
+    image: postgres:17.5-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: personal_brand_prod
+      POSTGRES_USER: personal_brand
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U personal_brand -d personal_brand_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+    logging: *logging
+
+networks:
+  internal:
+    internal: true
+  kohnu_edge:
+    external: true
+    name: kohnu-production_edge
+
+volumes:
+  postgres_data:
+  uploads:

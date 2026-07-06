@@ -61,6 +61,7 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
+    server: System.get_env("PHX_SERVER") in ~w(true 1),
     secret_key_base: secret_key_base
 
   # Configure tailwind for production
